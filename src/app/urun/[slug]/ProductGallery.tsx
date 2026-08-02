@@ -61,14 +61,14 @@ export function ProductGallery({ images, alt }: { images: { url: string }[], alt
         {images.length > 1 && (
           <>
             <button 
-              onClick={prevImage}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={(e) => { e.preventDefault(); prevImage(); }}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md md:opacity-0 md:group-hover:opacity-100 transition-opacity"
             >
               <ChevronLeft size={24} className="text-gray-800" />
             </button>
             <button 
-              onClick={nextImage}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={(e) => { e.preventDefault(); nextImage(); }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md md:opacity-0 md:group-hover:opacity-100 transition-opacity"
             >
               <ChevronRight size={24} className="text-gray-800" />
             </button>
