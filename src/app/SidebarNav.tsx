@@ -1,20 +1,37 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ChevronRight, ChevronDown } from 'lucide-react'
+import { usePathname, useSearchParams } from 'next/navigation'
 
-export function SidebarNav({ tree }: { tree: any[] }) {
+export function SidebarNav({ tree, onNavigate }: { tree: any[], onNavigate?: () => void }) {
   const [openCategory, setOpenCategory] = useState<string | null>(null)
   const [openBrand, setOpenBrand] = useState<string | null>(null)
+  
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const activeBrand = searchParams.get('brand')
+  const activeModel = searchParams.get('model')
+
+  // Auto open based on current URL
+  useEffect(() => {
+    const slugMatch = pathname.match(/\/kategori\/([^\/]+)/)
+    if (slugMatch) {
+      setOpenCategory(slugMatch[1])
+    }
+    if (activeBrand) {
+      setOpenBrand(activeBrand)
+    }
+  }, [pathname, activeBrand])
 
   const toggleCategory = (slug: string) => {
     if (openCategory === slug) {
       setOpenCategory(null)
-      setOpenBrand(null) // Close brands when closing category
+      setOpenBrand(null)
     } else {
       setOpenCategory(slug)
-      setOpenBrand(null) // Reset brand when changing category
+      setOpenBrand(null)
     }
   }
 
@@ -30,13 +47,19 @@ export function SidebarNav({ tree }: { tree: any[] }) {
     <div className="p-4">
       <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Kategoriler</h3>
       <ul className="space-y-2">
-        {tree.map(cat => (
+        {tree.map(cat => {
+          const isCatActive = pathname === `/kategori/${cat.slug}` && !activeBrand && !activeModel
+          return (
           <li key={cat.id} className="group">
             <div className="flex items-center justify-between py-1">
               <Link 
                 href={`/kategori/${cat.slug}`} 
-                className="font-semibold text-gray-700 hover:text-trust-blue-600 flex-1"
-                onClick={() => setOpenCategory(cat.slug)}
+                className={`flex-1 transition-colors ${isCatActive ? 'font-bold text-trust-blue-600' : 'font-semibold text-gray-700 hover:text-trust-blue-600'}`}
+                onClick={() => {
+                  setOpenCategory(cat.slug)
+                  setOpenBrand(null)
+                  if (onNavigate) onNavigate()
+                }}
               >
                 {cat.name}
               </Link>
@@ -50,16 +73,20 @@ export function SidebarNav({ tree }: { tree: any[] }) {
               )}
             </div>
             
-            {/* Brands (Only show if this category is open) */}
             {openCategory === cat.slug && cat.brands.length > 0 && (
               <ul className="pl-4 mt-1 border-l-2 border-gray-100 space-y-1">
-                {cat.brands.map((brand: any) => (
+                {cat.brands.map((brand: any) => {
+                  const isBrandActive = pathname === `/kategori/${cat.slug}` && activeBrand === brand.name && !activeModel
+                  return (
                   <li key={brand.name}>
                     <div className="flex items-center justify-between">
                       <Link 
                         href={`/kategori/${cat.slug}?brand=${brand.name}`} 
-                        className="text-sm text-gray-600 hover:text-trust-blue-600 flex-1 py-1"
-                        onClick={() => setOpenBrand(brand.name)}
+                        className={`flex-1 py-1 transition-colors ${isBrandActive ? 'font-bold text-trust-blue-600 text-sm' : 'text-sm text-gray-600 hover:text-trust-blue-600'}`}
+                        onClick={() => {
+                          setOpenBrand(brand.name)
+                          if (onNavigate) onNavigate()
+                        }}
                       >
                         {brand.name}
                       </Link>
@@ -73,27 +100,31 @@ export function SidebarNav({ tree }: { tree: any[] }) {
                       )}
                     </div>
                     
-                    {/* Models (Only show if this brand is open) */}
                     {openBrand === brand.name && brand.models.length > 0 && (
                       <ul className="pl-5 mt-1 space-y-1 mb-2">
-                        {brand.models.map((model: string) => (
+                        {brand.models.map((model: string) => {
+                          const isModelActive = pathname === `/kategori/${cat.slug}` && activeBrand === brand.name && activeModel === model
+                          return (
                           <li key={model}>
                             <Link 
                               href={`/kategori/${cat.slug}?brand=${brand.name}&model=${model}`} 
-                              className="text-xs text-gray-500 hover:text-trust-blue-600 truncate block w-full py-0.5"
+                              className={`truncate block w-full py-0.5 transition-colors ${isModelActive ? 'font-bold text-trust-blue-600 text-xs' : 'text-xs text-gray-500 hover:text-trust-blue-600'}`}
+                              onClick={() => {
+                                if (onNavigate) onNavigate()
+                              }}
                             >
                               {model}
                             </Link>
                           </li>
-                        ))}
+                        )})}
                       </ul>
                     )}
                   </li>
-                ))}
+                )})}
               </ul>
             )}
           </li>
-        ))}
+        )})}
         {tree.length === 0 && (
           <div className="text-xs text-gray-400">Kategori bulunamadı.</div>
         )}

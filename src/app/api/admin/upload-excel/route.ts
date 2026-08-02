@@ -92,12 +92,21 @@ export async function POST(req: Request) {
           let salePrice = trendyolPrice
           let refPrice = trendyolPrice
 
-          if (priceIncreasePercent > 0 || discountPercent > 0) {
-            // "oradaki fiyattan önce %eklemek"
-            refPrice = trendyolPrice * (1 + (priceIncreasePercent / 100))
+          if (trendyolPrice > 0) {
+            let netPrice = trendyolPrice
+            if (trendyolPrice <= 199.99) {
+              netPrice = trendyolPrice - 41
+            } else if (trendyolPrice <= 349.99) {
+              netPrice = trendyolPrice - 79
+            } else {
+              netPrice = trendyolPrice - 93
+            }
             
-            // "ekledikten sonra indirim oranınızı girin"
-            salePrice = refPrice * (1 - (discountPercent / 100))
+            salePrice = netPrice * 0.80 // %20 iskonto
+            refPrice = trendyolPrice // Eski fiyat olarak Trendyol fiyatını göster
+
+            if (salePrice < 0) salePrice = 0
+            if (refPrice < 0) refPrice = 0
           }
 
           const stockQtyStr = String(row['Ürün Stok Adedi'] || row['Stok'] || row['Stok Adedi'] || '0')

@@ -114,7 +114,7 @@ export function Header({ tree }: { tree: any[] }) {
             </form>
             
             <div className="bg-gray-50 rounded-xl overflow-hidden">
-              <SidebarNav tree={tree} />
+              <SidebarNav tree={tree} onNavigate={() => setMobileMenuOpen(false)} />
             </div>
             
             <div className="pt-4 flex flex-col items-center bg-gray-50 rounded-xl p-4">
