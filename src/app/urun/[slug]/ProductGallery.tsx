@@ -22,10 +22,36 @@ export function ProductGallery({ images, alt }: { images: { url: string }[], alt
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
   }
 
+  // Swipe handlers for mobile
+  const [touchStart, setTouchStart] = useState<number | null>(null)
+  const [touchEnd, setTouchEnd] = useState<number | null>(null)
+  const minSwipeDistance = 40
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null)
+    setTouchStart(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return
+    const distance = touchStart - touchEnd
+    if (distance > minSwipeDistance) nextImage() // Swipe left -> next
+    if (distance < -minSwipeDistance) prevImage() // Swipe right -> prev
+  }
+
   return (
     <div className="flex flex-col space-y-4">
       {/* Main Image Container */}
-      <div className="relative aspect-square bg-white rounded-lg border border-gray-100 flex items-center justify-center overflow-hidden group">
+      <div 
+        className="relative aspect-square bg-white rounded-lg border border-gray-100 flex items-center justify-center overflow-hidden group touch-pan-y select-none"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         <img 
           src={images[currentIndex].url} 
           alt={`${alt} - ${currentIndex + 1}`} 
