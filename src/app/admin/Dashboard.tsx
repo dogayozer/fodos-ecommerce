@@ -8,6 +8,8 @@ export function Dashboard() {
   const [uploading, setUploading] = useState(false)
   const [result, setResult] = useState<any>(null)
   const [error, setError] = useState('')
+  const [priceIncreasePercent, setPriceIncreasePercent] = useState<string>('')
+  const [discountPercent, setDiscountPercent] = useState<string>('')
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -27,6 +29,8 @@ export function Dashboard() {
 
     const formData = new FormData()
     formData.append('file', file)
+    if (priceIncreasePercent) formData.append('priceIncreasePercent', priceIncreasePercent)
+    if (discountPercent) formData.append('discountPercent', discountPercent)
 
     try {
       const res = await fetch('/api/admin/upload-excel', {
@@ -67,7 +71,7 @@ export function Dashboard() {
 
         <div className="mb-8">
           <h2 className="text-lg font-semibold mb-4 text-gray-800">Trendyol Ürün Senkronizasyonu (Excel)</h2>
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50">
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50 mb-4">
             <input 
               type="file" 
               accept=".xlsx" 
@@ -75,6 +79,31 @@ export function Dashboard() {
               className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-trust-blue-50 file:text-trust-blue-600 hover:file:bg-trust-blue-100 cursor-pointer"
             />
             {file && <p className="mt-4 text-sm text-gray-600">Seçilen dosya: {file.name}</p>}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Fiyata Eklenecek Zam Oranı (%)</label>
+              <input 
+                type="number" 
+                placeholder="Örn: 40 (Boş bırakırsanız değişmez)" 
+                value={priceIncreasePercent}
+                onChange={(e) => setPriceIncreasePercent(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
+              />
+              <p className="text-xs text-gray-400 mt-1">Trendyol fiyatına bu oranda zam yapılıp üstü çizili fiyat (referans) oluşturulur.</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Uygulanacak İndirim Oranı (%)</label>
+              <input 
+                type="number" 
+                placeholder="Örn: 40 (Boş bırakırsanız değişmez)" 
+                value={discountPercent}
+                onChange={(e) => setDiscountPercent(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
+              />
+              <p className="text-xs text-gray-400 mt-1">Oluşturulan zamlı fiyattan yapılacak indirimle son satış fiyatı belirlenir.</p>
+            </div>
           </div>
           
           <button

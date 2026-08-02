@@ -17,20 +17,24 @@ export const metadata: Metadata = {
 
 export const revalidate = 60; // 60 saniyede bir önbelleği otomatik yenile
 
-export default function RootLayout({
+import { getCategoryTree } from "@/lib/data";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const tree = await getCategoryTree();
+
   return (
     <html
       lang="tr"
       className={`${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-gray-50 text-gray-900 font-display">
-        <Header />
+        <Header tree={tree} />
         <div className="flex flex-1 max-w-7xl mx-auto w-full">
-          <Sidebar />
+          <Sidebar tree={tree} />
           <div className="flex-1 min-w-0">
             {children}
           </div>

@@ -4,7 +4,9 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Search, ShoppingCart, Menu, X, Smartphone } from 'lucide-react'
 
-export function Header() {
+import { SidebarNav } from './SidebarNav'
+
+export function Header({ tree }: { tree: any[] }) {
   const [query, setQuery] = useState('')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -74,7 +76,7 @@ export function Header() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-gray-100 bg-white">
+        <div className="md:hidden border-t border-gray-100 bg-white absolute w-full left-0 shadow-xl overflow-y-auto" style={{ maxHeight: 'calc(100vh - 64px)' }}>
           <div className="px-4 pt-4 pb-6 space-y-4">
             <form onSubmit={handleSearch} className="w-full relative">
               <input 
@@ -89,16 +91,8 @@ export function Header() {
               </button>
             </form>
             
-            <div className="flex flex-col space-y-3">
-              <Link href="/kategori/telefon-kasasi" className="font-medium text-gray-900 py-2 border-b border-gray-50 flex items-center">
-                <Smartphone size={18} className="mr-2 text-trust-blue-500" /> Telefon Kasaları
-              </Link>
-              <Link href="/kategori/telefon-bataryasi" className="font-medium text-gray-900 py-2 border-b border-gray-50 flex items-center">
-                <Smartphone size={18} className="mr-2 text-trust-blue-500" /> Bataryalar
-              </Link>
-              <Link href="/kategori/sarj-aleti" className="font-medium text-gray-900 py-2 border-b border-gray-50 flex items-center">
-                <Smartphone size={18} className="mr-2 text-trust-blue-500" /> Şarj Aletleri
-              </Link>
+            <div className="bg-gray-50 rounded-xl overflow-hidden">
+              <SidebarNav tree={tree} />
             </div>
             
             <div className="pt-4 flex flex-col items-center bg-gray-50 rounded-xl p-4">

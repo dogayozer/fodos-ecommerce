@@ -31,9 +31,11 @@ export async function POST(req: Request) {
   try {
     const formData = await req.formData()
     const file = formData.get('file') as File
+    const priceIncreasePercent = parseFloat(formData.get('priceIncreasePercent') as string) || 0
+    const discountPercent = parseFloat(formData.get('discountPercent') as string) || 0
     
     if (!file) {
-      return NextResponse.json({ error: 'No file provided' }, { status: 400 })
+      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
     }
 
     const buffer = await file.arrayBuffer()
@@ -84,11 +86,19 @@ export async function POST(req: Request) {
             })
           }
 
-          const salePriceStr = String(row["Trendyol'da Satılacak Fiyat"] || row["Satış Fiyatı"] || row["Trendyol'da Satılacak Fiyat (KDV Dahil)"] || row["Satış Fiyatı (KDV Dahil)"] || row["Fiyat"] || '0')
-          const salePrice = parseFloat(salePriceStr.replace(',', '.')) || 0
+          const trendyolPriceStr = String(row["Trendyol'da Satılacak Fiyat"] || row["Satış Fiyatı"] || row["Trendyol'da Satılacak Fiyat (KDV Dahil)"] || row["Satış Fiyatı (KDV Dahil)"] || row["Fiyat"] || '0')
+          const trendyolPrice = parseFloat(trendyolPriceStr.replace(',', '.')) || 0
           
-          // Müşteri İsteği: "Trendyol fiyatını %40 yükseltip üstünü çizeceğiz"
-          const refPrice = salePrice * 1.40
+          let salePrice = trendyolPrice
+          let refPrice = trendyolPrice
+
+          if (priceIncreasePercent > 0 || discountPercent > 0) {
+            // "oradaki fiyattan önce %eklemek"
+            refPrice = trendyolPrice * (1 + (priceIncreasePercent / 100))
+            
+            // "ekledikten sonra indirim oranınızı girin"
+            salePrice = refPrice * (1 - (discountPercent / 100))
+          }
 
           const stockQtyStr = String(row['Ürün Stok Adedi'] || row['Stok'] || row['Stok Adedi'] || '0')
           const stockQty = parseInt(stockQtyStr) || 0
