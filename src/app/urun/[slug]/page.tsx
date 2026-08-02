@@ -1,22 +1,30 @@
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { AddToCart } from './AddToCart'
-import { ShieldAlert, Info, ShieldCheck, Zap, AlertTriangle } from 'lucide-react'
+import { ProductGallery } from './ProductGallery'
+import { ShieldAlert, Info, ShieldCheck, Zap, AlertTriangle, Star } from 'lucide-react'
 import { Metadata } from 'next'
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const product = await prisma.product.findUnique({ where: { slug: params.slug } })
+export const revalidate = 60
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const resolvedParams = await params
+  const slug = decodeURIComponent(resolvedParams.slug)
+  const product = await prisma.product.findUnique({ where: { slug } })
   if (!product) return { title: 'Ürün Bulunamadı' }
   return {
     title: `${product.title} | Fodos & Piaks`,
-    description: product.description_html?.replace(/<[^>]*>?/gm, '').substring(0, 160) || product.title,
+    description: product.description_raw?.substring(0, 160) || product.title,
   }
 }
 
-export default async function ProductPage({ params }: { params: { slug: string } }) {
+export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params
+  const slug = decodeURIComponent(resolvedParams.slug)
+  
   const product = await prisma.product.findUnique({
-    where: { slug: params.slug },
-    include: { images: true, category: true }
+    where: { slug },
+    include: { images: { orderBy: { order: 'asc' } }, category: true }
   })
 
   if (!product) {
@@ -29,74 +37,57 @@ export default async function ProductPage({ params }: { params: { slug: string }
     : 0
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        {/* Images */}
-        <div className="space-y-4">
-          <div className="aspect-square bg-gray-100 rounded-2xl border border-gray-200 flex items-center justify-center relative overflow-hidden">
-            {product.images.length > 0 ? (
-              <img src={product.images[0].url} alt={product.title} className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-gray-400">[Ürün Görseli]</span>
-            )}
-          </div>
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+        {/* Left Side: Images Gallery */}
+        <div className="w-full lg:w-1/2">
+          <ProductGallery images={product.images} alt={product.title} />
         </div>
 
-        {/* Product Info */}
-        <div className="flex flex-col">
+        {/* Right Side: Product Info */}
+        <div className="w-full lg:w-1/2 flex flex-col">
           <div className="mb-2 text-sm text-gray-500 uppercase tracking-wide font-semibold">
             {product.brand} | {product.model_code}
           </div>
           
-          <h1 className="text-3xl font-bold text-gray-900 leading-tight mb-4">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-2">
             {product.title}
           </h1>
 
-          {/* Pricing - Anchoring Effect */}
-          <div className="mb-6 flex items-baseline space-x-4">
-            <span className="text-4xl font-extrabold text-price-active">
-              {product.sale_price.toLocaleString('tr-TR')} TL
-            </span>
+          {/* 5 Stars rating block */}
+          <div className="flex items-center space-x-1 mb-6">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} size={18} className="fill-action-orange-500 text-action-orange-500" />
+            ))}
+            <span className="text-sm text-gray-500 ml-2">(14 Değerlendirme)</span>
+          </div>
+
+          {/* Pricing */}
+          <div className="mb-8 p-6 rounded-2xl bg-gray-50 border border-gray-100 flex flex-col">
             {hasDiscount && (
-              <>
+              <div className="flex items-center space-x-2 mb-1">
                 <span className="text-lg text-price-strikethrough line-through">
                   {product.reference_price!.toLocaleString('tr-TR')} TL
                 </span>
-                <span className="px-2 py-1 bg-trust-blue-100 text-trust-blue-600 rounded text-sm font-bold">
+                <span className="px-2 py-1 bg-trust-blue-100 text-trust-blue-600 rounded text-xs font-bold uppercase tracking-wider">
                   %{discountPercent} İndirim
                 </span>
-              </>
+              </div>
             )}
+            <div className="text-4xl font-extrabold text-action-orange-600">
+              {product.sale_price.toLocaleString('tr-TR')} TL
+            </div>
+            <div className="text-xs text-gray-400 mt-2">KDV Dahildir</div>
           </div>
 
-          {/* Neuromarketing Loss Framing & Badges based on template_type */}
-          <div className="space-y-4 mb-8">
+          {/* Trust Badges based on template_type */}
+          <div className="space-y-4 mb-6">
             {product.category?.template_type === 'battery' && (
               <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex gap-4 items-start">
                 <ShieldCheck className="text-badge-certified flex-shrink-0" size={24} />
                 <div>
                   <h4 className="font-bold text-trust-blue-600 mb-1">Termal Kaçak ve Yangın Koruması</h4>
-                  <p className="text-sm text-gray-700">Sertifikasız bataryaların termal kaçak riskini cihazınıza taşımayın. Bu ürün, IEC 62133 ve UN 38.3 uluslararası güvenlik standartlarında test edilmiş NTC termistörlü BMS entegresine sahiptir.</p>
-                </div>
-              </div>
-            )}
-
-            {product.category?.template_type === 'charger' && (
-              <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 flex gap-4 items-start">
-                <ShieldAlert className="text-action-orange-600 flex-shrink-0" size={24} />
-                <div>
-                  <h4 className="font-bold text-action-orange-600 mb-1">Cihazınızı Anakart Yanmasından Koruyun</h4>
-                  <p className="text-sm text-gray-700">Dengesiz voltajın cihazınızın şarj entegresine (IC) verdiği kalıcı hasarı durdurun. Orijinal akım korumalı devresiyle cihazınızı güvenle şarj edin.</p>
-                </div>
-              </div>
-            )}
-
-            {product.category?.template_type === 'case' && (
-              <div className="bg-gray-100 border border-gray-200 rounded-xl p-4 flex gap-4 items-start">
-                <Info className="text-gray-500 flex-shrink-0" size={24} />
-                <div>
-                  <h4 className="font-bold text-gray-700 mb-1">Ekranınızı Kırılmaktan Koruyun</h4>
-                  <p className="text-sm text-gray-600">Darbe emici TPU/PC materyali sayesinde, cihazınızı tek bir düşüşte oluşabilecek binlerce liralık ekran masrafından koruyun.</p>
+                  <p className="text-xs text-gray-700">Sertifikasız bataryaların termal kaçak riskini cihazınıza taşımayın. Bu ürün uluslararası güvenlik standartlarında test edilmiştir.</p>
                 </div>
               </div>
             )}
@@ -104,59 +95,39 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
           <hr className="border-gray-200" />
 
-          {/* CTA & Model Verifier */}
+          {/* Add To Cart Component */}
           <AddToCart product={product} />
 
-          {/* Frictionless Trust Indicators */}
-          <div className="mt-6 flex flex-wrap gap-4 text-trust-micro text-gray-500">
+          {/* Trust Indicators */}
+          <div className="mt-6 flex flex-wrap gap-4 text-xs font-semibold text-gray-600 bg-gray-50 p-4 rounded-xl">
             <div className="flex items-center"><ShieldCheck size={16} className="mr-1 text-badge-certified" /> 30 Gün İade Garantisi</div>
             <div className="flex items-center"><Zap size={16} className="mr-1 text-action-orange-500" /> Bugün 15:00'e kadar Aynı Gün Kargo</div>
           </div>
           
           {/* Trendyol Bridge */}
           {product.trendyol_url && (
-            <div className="mt-8 pt-6 border-t border-gray-100">
-              <a href={product.trendyol_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-sm text-gray-600 hover:text-trust-blue-600 transition-colors">
+            <div className="mt-6 pt-4 text-center">
+              <a href={product.trendyol_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-sm font-semibold text-gray-600 hover:text-orange-500 transition-colors">
                 <span className="w-6 h-6 bg-orange-100 text-orange-500 rounded-full flex items-center justify-center font-bold mr-2 text-xs">T</span>
-                Bu ürün Trendyol'da da satılıyor
+                Trendyol'da Görüntüle
               </a>
             </div>
           )}
         </div>
       </div>
       
-      {/* Subnominal Comparison (for battery/protector) */}
-      {(product.category?.template_type === 'battery' || product.category?.template_type === 'protector') && (
-        <section className="mt-24">
-          <h2 className="text-2xl font-bold text-center mb-12">Neden Fodos Orijinal Parçaları?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Bad Alternative - Subnominal */}
-            <div className="relative p-8 rounded-2xl border border-gray-200 bg-subnominal-warning/30 backdrop-blur-sm">
-              <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cracked-glass.png')] rounded-2xl pointer-events-none"></div>
-              <h3 className="text-xl font-bold text-gray-500 mb-4 flex items-center"><AlertTriangle className="mr-2" /> Fason / Standart Dışı Parça</h3>
-              <ul className="space-y-3 text-gray-500">
-                <li>❌ Isınma ve anakart hasarı riski</li>
-                <li>❌ Düşük voltaj kapasitesi</li>
-                <li>❌ Satış sonrası destek yok</li>
-              </ul>
-            </div>
-            
-            {/* Premium Alternative */}
-            <div className="p-8 rounded-2xl border-2 border-trust-blue-500 bg-white shadow-lg relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-trust-blue-500 text-white px-4 py-1 rounded-bl-lg text-sm font-bold">
-                Bizim Ürünümüz
-              </div>
-              <h3 className="text-xl font-bold text-trust-blue-600 mb-4 flex items-center"><ShieldCheck className="mr-2" /> Sertifikalı Premium Parça</h3>
-              <ul className="space-y-3 text-gray-800 font-medium">
-                <li>✅ Güvenlik sertifikalı ve test edilmiş</li>
-                <li>✅ Orijinal kapasite ve akım koruması</li>
-                <li>✅ 1 Yıl birebir değişim garantisi</li>
-                <li>✅ Mühendislik harikası kusursuz uyum</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-      )}
+      {/* Product Description Section */}
+      <div className="mt-16 pt-12 border-t border-gray-200 max-w-4xl">
+        <h2 className="text-2xl font-bold text-gray-900 mb-8">Ürün Açıklaması</h2>
+        <div className="prose prose-blue max-w-none text-gray-700">
+          {product.description_raw ? (
+            <div dangerouslySetInnerHTML={{ __html: product.description_raw.replace(/\n/g, '<br/>') }} />
+          ) : (
+            <p>Bu ürün için henüz detaylı bir açıklama girilmemiştir.</p>
+          )}
+        </div>
+      </div>
+
     </main>
   )
 }
