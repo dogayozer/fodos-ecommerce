@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  /* Temel Renkler (Base Tokens) - İnsan gözünün algısına uygun OKLCH renk uzayı */
+  --color-trust-blue-500: oklch(59.59% 0.24 255); /* Güven, Kalite, Bilişsel Rahatlık */
+  --font-display: "Inter", sans-serif;
+  
+  --color-trust-blue-50: oklch(0.97 0.01 250);
+  --color-trust-blue-100: oklch(0.93 0.02 250);
+  --color-trust-blue-400: oklch(0.65 0.12 250);
+  --color-trust-blue-500: oklch(0.55 0.14 250);
+  --color-trust-blue-600: oklch(0.45 0.12 250);
+
+  --color-action-orange-500: oklch(0.65 0.2 45);
+  --color-action-orange-600: oklch(0.55 0.18 45);
+
+  --color-risk-red-500: oklch(0.6 0.2 25);
+  --color-desaturated-gray-300: oklch(85% 0.01 250); /* Kalitesiz ürün karşılaştırma sütunu arka planı */
+  
+  /* Neuromarketing Functional Tokens */
+  --color-price-strikethrough: var(--color-risk-red-500);
+  --color-price-active: var(--color-trust-blue-600);
+  
+  /* Semantik Atamalar (Semantic Tokens) */
+  --color-bg-primary: var(--color-gray-50);
+  --color-text-primary: var(--color-gray-900);
+  --color-cta-background: var(--color-action-orange-500);
+  --color-cta-hover: var(--color-action-orange-600);
+  --color-badge-certified: var(--color-trust-blue-500);
+  --color-badge-compatible: oklch(0.7 0.15 140);
+  --color-bg-subnominal-warning: var(--color-desaturated-gray-300);
+  --color-subnominal-warning: oklch(0.95 0.05 90);
+
+  /* Spacing Scale - Bilginin nefes alması ve hiyerarşi algısı için */
+  --spacing-macro: 4rem; /* Ürün bölümleri, matrix tabloları arası rahatlama */
+  --spacing-element: 1.5rem; /* Resim ile açıklama metni arası anlamsal bağlantı */
+  --spacing-micro: 0.5rem; /* İkon, rozet ve metin arası */
+  
+  /* Tipografi - Güven Veren, Net ve Kurumsal */
+  --font-display: "Inter", sans-serif;
+  --text-heading-xl: 2.5rem; /* Ana değer önerisi ve Kayıp Çerçeveleme başlıkları */
+  --text-body-base: 1rem;
+  --text-trust-micro: 0.75rem; /* Teknik Rozetler (UL 1642, IEC 62133) ve sertifika detayları */
+  
+  /* Süre ve Easing (İvmelenme) Eğrileri */
+  --duration-fast: 150ms; /* Buton hover durumları, hızlı geri bildirim */
+  --duration-normal: 250ms; /* Sepete ekleme, B2B Matris satır etkileşimleri */
+  --ease-smooth-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.4, 0, 0.2, 1.2); /* Ödül, Başarı ve Dopaminerjik geri bildirim pop-up'ları */
+
+  --animate-marquee-infinite: marquee 25s linear infinite;
+
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+}
+
+@layer base {
+  body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-family: var(--font-display);
+  }
+}

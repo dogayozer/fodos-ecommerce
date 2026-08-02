@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Category {
+  id           String    @id @default(cuid())
+  name         String
+  slug         String    @unique
+  risk_profile String?   // Estetik, Fiziksel Güvenlik vs.
+  template_type String   // case, keypad, charger, cable, battery, protector, generic
+  products     Product[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Product {
+  id                  String           @id @default(cuid())
+  barcode             String           @unique // sku_barcode, main matching key
+  model_code          String?          // internal_model_code
+  brand               String?
+  categoryId          String?
+  category            Category?        @relation(fields: [categoryId], references: [id])
+  title               String
+  slug                String           @unique
+  description_raw     String?          // from Excel
+  description_html    String?          // SEO optimized
+  reference_price     Float?           // Piyasa Satış Fiyatı
+  sale_price          Float            // Trendyol'da Satılacak Fiyat
+  stock_qty           Int              @default(0)
+  status              String           @default("inactive") // active, inactive, out_of_stock
+  trendyol_url        String?
+  compatible_models   String?          // JSON array stored as string or comma separated
+  images              ProductImage[]
+  variants            ProductVariant[]
+  priceHistory        PriceHistory[]
+  orderItems          OrderItem[]
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  last_synced_at      DateTime?
+}
+
+model ProductVariant {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  color       String?  // variant_color
+  stock_qty   Int      @default(0)
+}
+
+model ProductImage {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url         String   // Local CDN or optimized URL
+  originalUrl String?  // Trendyol CDN URL
+  order       Int      @default(0)
+}
+
+model Customer {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String?
+  phone       String?
+  orders      Order[]
+  createdAt   DateTime @default(now())
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  orderNumber   String      @unique
+  customerId    String?
+  customer      Customer?   @relation(fields: [customerId], references: [id])
+  totalAmount   Float
+  status        String      @default("pending") // pending, paid, shipped, cancelled
+  items         OrderItem[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  quantity    Int
+  price       Float
+}
+
+model PriceHistory {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  oldPrice    Float
+  newPrice    Float
+  changedAt   DateTime @default(now())
+}
+
+model TrendyolSyncLog {
+  id            String   @id @default(cuid())
+  filename      String
+  status        String   // processing, success, failed
+  summary       String?  // e.g. "100 created, 20 updated"
+  startedAt     DateTime @default(now())
+  completedAt   DateTime?
+}
