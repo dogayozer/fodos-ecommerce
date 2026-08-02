@@ -75,12 +75,15 @@ export default async function CategoryPage({
 
 function ProductCard({ product }: { product: any }) {
   const hasDiscount = product.reference_price && product.reference_price > product.sale_price
+  const discountPercent = hasDiscount 
+    ? Math.round(((product.reference_price - product.sale_price) / product.reference_price) * 100)
+    : 0
   
   return (
     <Link href={`/urun/${product.slug}`} className="group bg-white rounded-xl sm:rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-normal overflow-hidden flex flex-col h-full relative">
       {hasDiscount && (
         <div className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-action-orange-500 text-white text-[9px] sm:text-xs font-bold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded z-10 shadow-sm whitespace-nowrap">
-          Web %40 İndirim
+          Web %{discountPercent} İndirim
         </div>
       )}
       <div className="aspect-square bg-gray-50 flex items-center justify-center p-2 sm:p-4 relative overflow-hidden">

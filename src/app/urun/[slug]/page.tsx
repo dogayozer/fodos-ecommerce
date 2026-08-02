@@ -70,7 +70,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                   {Number(product.reference_price).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL
                 </span>
                 <span className="px-2 py-1 bg-trust-blue-100 text-trust-blue-600 rounded text-xs font-bold uppercase tracking-wider">
-                  Web'e Özel %40 İndirim
+                  Web'e Özel %{discountPercent} İndirim
                 </span>
               </div>
             )}
