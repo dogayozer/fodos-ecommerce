@@ -22,8 +22,9 @@ function parseStatus(status: any): string {
 }
 
 export async function POST(req: Request) {
-  const cookieStore = await cookies()
-  const session = cookieStore.get('admin_session')
+  const cookieStore: any = cookies()
+  const store = cookieStore instanceof Promise ? await cookieStore : cookieStore
+  const session = store.get('admin_session')
   if (session?.value !== 'authenticated') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
