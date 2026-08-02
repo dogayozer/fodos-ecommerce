@@ -7,7 +7,7 @@ export async function login(formData: FormData) {
   const password = formData.get('password')
 
   if (username === 'Admin' && password === 'Pds135596') {
-    const cookieStore = await cookies()
+    const cookieStore = cookies()
     cookieStore.set('admin_session', 'authenticated', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -21,6 +21,6 @@ export async function login(formData: FormData) {
 }
 
 export async function logout() {
-  const cookieStore = await cookies()
+  const cookieStore = cookies()
   cookieStore.delete('admin_session')
 }

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPage() {
-  const cookieStore = await cookies()
+  const cookieStore = cookies()
   const session = cookieStore.get('admin_session')
 
   if (session?.value === 'authenticated') {
