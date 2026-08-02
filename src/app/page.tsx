@@ -73,13 +73,14 @@ export default async function HomePage() {
             display: flex;
             width: max-content;
             animation: text-slide 25s linear infinite;
+            white-space: nowrap;
           }
         `}} />
         <div className="text-marquee-inner">
-          <span className="text-xs font-bold px-4 tracking-wide">
+          <span className="text-xs font-bold px-4 tracking-wide whitespace-nowrap flex items-center">
             Istanbul- Sirkeci'deyiz • Stoktan Teslim Aynı Gün Kargo • Toptan Fiyatlar • Kaliteli Ürünler • Web Sitemizde Olmayan Ürünler İçin Arayınız • Telefon Tamircilerine Özel Fiyatlar
           </span>
-          <span className="text-xs font-bold px-4 tracking-wide">
+          <span className="text-xs font-bold px-4 tracking-wide whitespace-nowrap flex items-center">
             Istanbul- Sirkeci'deyiz • Stoktan Teslim Aynı Gün Kargo • Toptan Fiyatlar • Kaliteli Ürünler • Web Sitemizde Olmayan Ürünler İçin Arayınız • Telefon Tamircilerine Özel Fiyatlar
           </span>
         </div>
