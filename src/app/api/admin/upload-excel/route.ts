@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import { revalidatePath } from 'next/cache'
 import * as xlsx from 'xlsx'
 import { prisma } from '@/lib/prisma'
 
@@ -148,6 +149,9 @@ export async function POST(req: Request) {
         completedAt: new Date()
       }
     })
+
+    // Sitenin önbelleğini temizle, yeni ürünler anında görünsün
+    revalidatePath('/', 'layout')
 
     return NextResponse.json({ 
       success: true, 
