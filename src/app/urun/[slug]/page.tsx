@@ -87,8 +87,19 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <ProductGallery images={product.images} alt={product.title} />
           
           {/* Mobile Marquee (Only on mobile) */}
-          <div className="md:hidden mt-4 overflow-hidden bg-gradient-to-r from-trust-blue-500 to-trust-blue-600 text-white rounded-lg shadow-sm py-2 relative flex items-center">
-            <div className="whitespace-nowrap animate-marquee-infinite flex w-[200%]">
+          <div className="md:hidden mt-4 overflow-hidden bg-gradient-to-r from-trust-blue-500 to-trust-blue-600 text-white rounded-lg shadow-sm py-2 relative flex items-center h-10">
+            <style dangerouslySetInnerHTML={{__html: `
+              @keyframes slide {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-50%); }
+              }
+              .marquee-inner {
+                display: flex;
+                width: max-content;
+                animation: slide 25s linear infinite;
+              }
+            `}} />
+            <div className="marquee-inner">
               <span className="text-xs font-bold px-4 tracking-wide">
                 Istanbul- Sirkeci'deyiz • Stoktan Teslim Aynı Gün Kargo • Toptan Fiyatlar • Kaliteli Ürünler • Web Sitemizde Olmayan Ürünler İçin Arayınız • Telefon Tamircilerine Özel Fiyatlar
               </span>
@@ -131,7 +142,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                 <Star size={16} fill="currentColor" />
                 <Star size={16} fill="currentColor" />
                 <Star size={16} fill="currentColor" />
-                <span className="ml-2 text-sm text-gray-500 font-medium">{product.slug.length * 13 % 250 + 15} Değerlendirme</span>
+                <span className="ml-2 text-sm text-gray-500 font-medium">
+                  {Math.abs(product.slug.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)) % 250 + 15} Değerlendirme
+                </span>
               </div>
               <span className="text-gray-300">|</span>
               <span className="text-sm text-gray-500">Stok Kodu: <span className="font-bold text-gray-700">{product.barcode}</span></span>

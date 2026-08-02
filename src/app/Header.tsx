@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { Search, ShoppingCart, Menu, X, Smartphone } from 'lucide-react'
 
@@ -114,7 +114,9 @@ export function Header({ tree }: { tree: any[] }) {
             </form>
             
             <div className="bg-gray-50 rounded-xl overflow-hidden">
-              <SidebarNav tree={tree} onNavigate={() => setMobileMenuOpen(false)} />
+              <Suspense fallback={<div className="p-4 text-center text-sm text-gray-500">Yükleniyor...</div>}>
+                <SidebarNav tree={tree} onNavigate={() => setMobileMenuOpen(false)} />
+              </Suspense>
             </div>
             
             <div className="pt-4 flex flex-col items-center bg-gray-50 rounded-xl p-4">
