@@ -67,15 +67,15 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             {hasDiscount && (
               <div className="flex items-center space-x-2 mb-1">
                 <span className="text-lg text-price-strikethrough line-through">
-                  {product.reference_price!.toLocaleString('tr-TR')} TL
+                  {Number(product.reference_price).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL
                 </span>
                 <span className="px-2 py-1 bg-trust-blue-100 text-trust-blue-600 rounded text-xs font-bold uppercase tracking-wider">
-                  %{discountPercent} İndirim
+                  Web'e Özel %40 İndirim
                 </span>
               </div>
             )}
             <div className="text-4xl font-extrabold text-action-orange-600">
-              {product.sale_price.toLocaleString('tr-TR')} TL
+              {Number(product.sale_price).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL
             </div>
             <div className="text-xs text-gray-400 mt-2">KDV Dahildir</div>
           </div>

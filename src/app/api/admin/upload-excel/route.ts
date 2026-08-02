@@ -87,8 +87,8 @@ export async function POST(req: Request) {
           const salePriceStr = String(row["Trendyol'da Satılacak Fiyat"] || row["Satış Fiyatı"] || row["Trendyol'da Satılacak Fiyat (KDV Dahil)"] || row["Satış Fiyatı (KDV Dahil)"] || row["Fiyat"] || '0')
           const salePrice = parseFloat(salePriceStr.replace(',', '.')) || 0
           
-          const refPriceStr = String(row["Piyasa Satış Fiyatı (KDV Dahil)"] || row["Piyasa Satış Fiyatı"] || row["PSF"] || '0')
-          const refPrice = parseFloat(refPriceStr.replace(',', '.')) || salePrice
+          // Müşteri İsteği: "Trendyol fiyatını %40 yükseltip üstünü çizeceğiz"
+          const refPrice = salePrice * 1.40
 
           const stockQtyStr = String(row['Ürün Stok Adedi'] || row['Stok'] || row['Stok Adedi'] || '0')
           const stockQty = parseInt(stockQtyStr) || 0

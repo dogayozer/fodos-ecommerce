@@ -172,8 +172,8 @@ function ProductCard({ product }: { product: any }) {
   return (
     <Link href={`/urun/${product.slug}`} className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-normal overflow-hidden flex flex-col h-full relative">
       {hasDiscount && (
-        <div className="absolute top-3 left-3 bg-action-orange-500 text-white text-xs font-bold px-2 py-1 rounded-md z-10">
-          İndirim
+        <div className="absolute top-3 left-3 bg-action-orange-500 text-white text-xs font-bold px-2 py-1 rounded-md z-10 shadow-sm">
+          Web'e Özel %40 İndirim
         </div>
       )}
       <div className="aspect-square bg-gray-50 flex items-center justify-center p-4 relative overflow-hidden">
@@ -191,11 +191,11 @@ function ProductCard({ product }: { product: any }) {
           <div>
             {hasDiscount ? (
               <div className="flex flex-col">
-                <span className="text-xs text-gray-400 line-through">{product.reference_price} TL</span>
-                <span className="text-lg font-bold text-action-orange-600">{product.sale_price} TL</span>
+                <span className="text-xs text-gray-400 line-through">{Number(product.reference_price).toFixed(2)} TL</span>
+                <span className="text-lg font-bold text-action-orange-600">{Number(product.sale_price).toFixed(2)} TL</span>
               </div>
             ) : (
-              <span className="text-lg font-bold text-gray-900">{product.sale_price} TL</span>
+              <span className="text-lg font-bold text-gray-900">{Number(product.sale_price).toFixed(2)} TL</span>
             )}
           </div>
           <button className="w-10 h-10 rounded-full bg-trust-blue-50 text-trust-blue-600 flex items-center justify-center group-hover:bg-trust-blue-600 group-hover:text-white transition-colors">
