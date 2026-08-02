@@ -17,8 +17,8 @@ function mapCategoryToTemplateType(categoryName: string): string {
 
 function parseStatus(status: any): string {
   const s = String(status).toLowerCase().trim()
-  if (s === '1' || s === '1001') return 'active'
-  return 'inactive'
+  if (s === 'pasif' || s === '0' || s === 'false' || s === 'inactive') return 'inactive'
+  return 'active'
 }
 
 export async function POST(req: Request) {

@@ -32,7 +32,7 @@ export default async function CategoryPage({
   // Build the filter
   const whereClause: any = {
     categoryId: category.id,
-    status: 'active'
+    status: { not: 'inactive' }
   }
 
   if (brand) whereClause.brand = brand

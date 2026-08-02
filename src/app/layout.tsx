@@ -14,6 +14,8 @@ export const metadata: Metadata = {
   description: "Fodos ve Piaks markalı telefon kasası, tuş takımı, şarj aleti ve batarya gibi telefon aksesuarları ve yedek parçalar.",
 };
 
+export const revalidate = 60; // 60 saniyede bir önbelleği otomatik yenile
+
 export default function RootLayout({
   children,
 }: Readonly<{
