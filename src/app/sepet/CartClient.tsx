@@ -126,7 +126,24 @@ export function CartClient({ targetTimeMs, message }: { targetTimeMs: number, me
             className={`w-full py-3 sm:py-4 rounded-xl font-bold flex justify-center items-center transition-all duration-normal shadow-md
               ${cartTotal === 0 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-cta-background hover:bg-cta-hover text-white hover:shadow-lg'}
             `}
-            onClick={() => { if(cartTotal > 0) window.location.href = '/odeme' }}
+            onClick={() => { 
+              if(cartTotal > 0) {
+                alert("Sayın Müşterimiz ;\nPos güncellememizden dolayı siparişiniz manuel olarak alınacaktır.");
+                
+                let message = "Merhaba, sipariş vermek istiyorum:\n\n";
+                cart.forEach(item => {
+                  message += `- ${item.qty} adet ${item.title} (${Number(item.price).toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL)\n`;
+                });
+                
+                const finalTotal = cartTotal + (neededForFreeShipping > 0 ? 49.9 : 0);
+                message += `\nKargo: ${neededForFreeShipping > 0 ? '49.90 TL' : 'Ücretsiz'}`;
+                message += `\nToplam: ${finalTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL\n\n`;
+                message += `Siparişimi onaylamak ve ödeme adımlarını tamamlamak istiyorum.`;
+                
+                const encodedMsg = encodeURIComponent(message);
+                window.location.href = `https://wa.me/905322324499?text=${encodedMsg}`;
+              } 
+            }}
           >
             Ödemeye Geç <ArrowRight size={18} className="ml-2" />
           </button>
