@@ -62,6 +62,29 @@ export default async function HomePage() {
         </div>
       )}
 
+      {/* Mobile Text Marquee (Only on mobile) */}
+      <div className="md:hidden overflow-hidden bg-gradient-to-r from-trust-blue-500 to-trust-blue-600 text-white shadow-sm py-2 relative flex items-center h-10 border-b border-trust-blue-600">
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes text-slide {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .text-marquee-inner {
+            display: flex;
+            width: max-content;
+            animation: text-slide 25s linear infinite;
+          }
+        `}} />
+        <div className="text-marquee-inner">
+          <span className="text-xs font-bold px-4 tracking-wide">
+            Istanbul- Sirkeci'deyiz • Stoktan Teslim Aynı Gün Kargo • Toptan Fiyatlar • Kaliteli Ürünler • Web Sitemizde Olmayan Ürünler İçin Arayınız • Telefon Tamircilerine Özel Fiyatlar
+          </span>
+          <span className="text-xs font-bold px-4 tracking-wide">
+            Istanbul- Sirkeci'deyiz • Stoktan Teslim Aynı Gün Kargo • Toptan Fiyatlar • Kaliteli Ürünler • Web Sitemizde Olmayan Ürünler İçin Arayınız • Telefon Tamircilerine Özel Fiyatlar
+          </span>
+        </div>
+      </div>
+
       {/* Hero Section - Z-Pattern */}
       <section className="bg-trust-blue-500 text-white py-12 md:py-16 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>

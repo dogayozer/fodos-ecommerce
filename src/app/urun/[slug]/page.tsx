@@ -86,29 +86,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <div className="w-full lg:w-1/2 flex flex-col">
           <ProductGallery images={product.images} alt={product.title} />
           
-          {/* Mobile Marquee (Only on mobile) */}
-          <div className="md:hidden mt-4 overflow-hidden bg-gradient-to-r from-trust-blue-500 to-trust-blue-600 text-white rounded-lg shadow-sm py-2 relative flex items-center h-10">
-            <style dangerouslySetInnerHTML={{__html: `
-              @keyframes slide {
-                0% { transform: translateX(0); }
-                100% { transform: translateX(-50%); }
-              }
-              .marquee-inner {
-                display: flex;
-                width: max-content;
-                animation: slide 25s linear infinite;
-              }
-            `}} />
-            <div className="marquee-inner">
-              <span className="text-xs font-bold px-4 tracking-wide">
-                Istanbul- Sirkeci'deyiz • Stoktan Teslim Aynı Gün Kargo • Toptan Fiyatlar • Kaliteli Ürünler • Web Sitemizde Olmayan Ürünler İçin Arayınız • Telefon Tamircilerine Özel Fiyatlar
-              </span>
-              <span className="text-xs font-bold px-4 tracking-wide">
-                Istanbul- Sirkeci'deyiz • Stoktan Teslim Aynı Gün Kargo • Toptan Fiyatlar • Kaliteli Ürünler • Web Sitemizde Olmayan Ürünler İçin Arayınız • Telefon Tamircilerine Özel Fiyatlar
-              </span>
-            </div>
-          </div>
-          
           {/* Trust Indicators (Moved below images) */}
           <div className="mt-6 flex flex-col sm:flex-row flex-wrap gap-4 text-sm sm:text-base font-bold text-gray-700 bg-gray-50 p-4 sm:p-6 rounded-2xl border border-gray-100 shadow-sm">
             <div className="flex items-center flex-1">
