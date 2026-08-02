@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Search, ShoppingCart, Menu, X, Smartphone } from 'lucide-react'
 
@@ -9,6 +9,24 @@ import { SidebarNav } from './SidebarNav'
 export function Header({ tree }: { tree: any[] }) {
   const [query, setQuery] = useState('')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [cartCount, setCartCount] = useState(0)
+
+  useEffect(() => {
+    const updateCartCount = () => {
+      const existingCartStr = localStorage.getItem('cart')
+      if (existingCartStr) {
+        const cart = JSON.parse(existingCartStr)
+        const count = cart.reduce((acc: number, item: any) => acc + (item.qty || 1), 0)
+        setCartCount(count)
+      } else {
+        setCartCount(0)
+      }
+    }
+    
+    updateCartCount()
+    window.addEventListener('cartUpdated', updateCartCount)
+    return () => window.removeEventListener('cartUpdated', updateCartCount)
+  }, [])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,7 +72,9 @@ export function Header({ tree }: { tree: any[] }) {
             
             <Link href="/sepet" className="relative text-gray-700 hover:text-trust-blue-600 transition-colors">
               <ShoppingCart size={24} />
-              <span className="absolute -top-2 -right-2 bg-action-orange-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-action-orange-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">{cartCount}</span>
+              )}
             </Link>
           </div>
 
@@ -62,7 +82,9 @@ export function Header({ tree }: { tree: any[] }) {
           <div className="flex items-center md:hidden space-x-4">
             <Link href="/sepet" className="relative text-gray-700">
               <ShoppingCart size={24} />
-              <span className="absolute -top-2 -right-2 bg-action-orange-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-action-orange-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">{cartCount}</span>
+              )}
             </Link>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
