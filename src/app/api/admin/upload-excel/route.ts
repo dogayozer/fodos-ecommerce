@@ -41,11 +41,6 @@ export async function POST(req: Request) {
     const sheetName = workbook.SheetNames[0]
     const sheet = workbook.Sheets[sheetName]
     
-    // Get headers to find Column L (11th index)
-    const rawRows = xlsx.utils.sheet_to_json(sheet, { header: 1 })
-    const headers = (rawRows[0] as string[]) || []
-    const columnLHeader = headers.length > 11 ? headers[11] : null
-
     const rows = xlsx.utils.sheet_to_json(sheet) as any[]
 
     if (rows.length === 0) {
@@ -104,8 +99,8 @@ export async function POST(req: Request) {
 
           const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + barcode
 
-          let rawBrand = columnLHeader ? String(row[columnLHeader] || '') : ''
-          let firstWordBrand = rawBrand.trim().split(' ')[0]
+          // MÜŞTERİ İSTEĞİ: "Marka (I) sütunu yerine, Ürün Adı (L) sütunundaki ilk kelimeyi Marka yap"
+          let firstWordBrand = title.trim().split(' ')[0]
           if (!firstWordBrand) firstWordBrand = String(row['Marka'] || '')
 
           const productData = {
