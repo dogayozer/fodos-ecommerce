@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
+import { WhatsAppButton } from "./WhatsAppButton";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -34,6 +35,7 @@ export default function RootLayout({
             {children}
           </div>
         </div>
+        <WhatsAppButton />
       </body>
     </html>
   );
