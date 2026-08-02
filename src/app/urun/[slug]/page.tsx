@@ -101,7 +101,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           {/* Trust Indicators */}
           <div className="mt-6 flex flex-wrap gap-4 text-xs font-semibold text-gray-600 bg-gray-50 p-4 rounded-xl">
             <div className="flex items-center"><ShieldCheck size={16} className="mr-1 text-badge-certified" /> 30 Gün İade Garantisi</div>
-            <div className="flex items-center"><Zap size={16} className="mr-1 text-action-orange-500" /> Bugün 15:00'e kadar Aynı Gün Kargo</div>
+            <div className="flex items-center"><Zap size={16} className="mr-1 text-action-orange-500" /> Aynı Gün Kargo - Hızlı Teslimat</div>
           </div>
           
           {/* Trendyol Bridge */}
