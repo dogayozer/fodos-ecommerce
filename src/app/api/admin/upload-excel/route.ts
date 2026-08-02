@@ -84,12 +84,17 @@ export async function POST(req: Request) {
             })
           }
 
-          const salePrice = parseFloat(String(row["Trendyol'da Satılacak Fiyat"]).replace(',', '.')) || 0
-          const refPrice = parseFloat(String(row["Piyasa Satış Fiyatı (KDV Dahil)"]).replace(',', '.')) || salePrice
-          const stockQty = parseInt(String(row['Ürün Stok Adedi'])) || 0
+          const salePriceStr = String(row["Trendyol'da Satılacak Fiyat"] || row["Satış Fiyatı"] || row["Trendyol'da Satılacak Fiyat (KDV Dahil)"] || row["Satış Fiyatı (KDV Dahil)"] || row["Fiyat"] || '0')
+          const salePrice = parseFloat(salePriceStr.replace(',', '.')) || 0
+          
+          const refPriceStr = String(row["Piyasa Satış Fiyatı (KDV Dahil)"] || row["Piyasa Satış Fiyatı"] || row["PSF"] || '0')
+          const refPrice = parseFloat(refPriceStr.replace(',', '.')) || salePrice
+
+          const stockQtyStr = String(row['Ürün Stok Adedi'] || row['Stok'] || row['Stok Adedi'] || '0')
+          const stockQty = parseInt(stockQtyStr) || 0
           
           // Determine status
-          let status = parseStatus(row['Durum'])
+          let status = parseStatus(row['Durum'] || 'Aktif')
           if (stockQty <= 0) status = 'out_of_stock'
 
           const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + barcode
@@ -109,23 +114,43 @@ export async function POST(req: Request) {
             last_synced_at: new Date(),
           }
 
+          let currentProductId = ''
           if (existingBarcodeMap.has(barcode)) {
-            await tx.product.update({
+            const updatedProd = await tx.product.update({
               where: { barcode },
               data: productData,
             })
+            currentProductId = updatedProd.id
             updated++
           } else {
-            await tx.product.create({
+            const createdProd = await tx.product.create({
               data: {
                 barcode,
                 ...productData
               },
             })
+            currentProductId = createdProd.id
             created++
           }
 
-          // In a production app, we would download images from 'Görsel 1'...'Görsel 8' and save to local CDN here.
+          if (currentProductId) {
+            await tx.productImage.deleteMany({ where: { productId: currentProductId } })
+            const imagesToCreate = []
+            for (let idx = 1; idx <= 8; idx++) {
+              const imgUrl = String(row[`Görsel ${idx}`] || row[`Gorsel ${idx}`] || '').trim()
+              if (imgUrl && imgUrl.startsWith('http')) {
+                imagesToCreate.push({
+                  productId: currentProductId,
+                  url: imgUrl,
+                  originalUrl: imgUrl,
+                  order: idx - 1
+                })
+              }
+            }
+            if (imagesToCreate.length > 0) {
+              await tx.productImage.createMany({ data: imagesToCreate })
+            }
+          }
         }
       })
     }
