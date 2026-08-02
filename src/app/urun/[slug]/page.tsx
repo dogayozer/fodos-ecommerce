@@ -40,8 +40,22 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
         {/* Left Side: Images Gallery */}
-        <div className="w-full lg:w-1/2">
+        <div className="w-full lg:w-1/2 flex flex-col">
           <ProductGallery images={product.images} alt={product.title} />
+          
+          {/* Trust Indicators (Moved below images) */}
+          <div className="mt-6 flex flex-col sm:flex-row flex-wrap gap-4 text-sm sm:text-base font-bold text-gray-700 bg-gray-50 p-4 sm:p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <div className="flex items-center flex-1">
+              <ShieldCheck size={24} className="mr-2 text-badge-certified flex-shrink-0" /> 
+              15 Gün İade Garantisi
+            </div>
+            <div className="flex items-center flex-1">
+              <Zap size={24} className="mr-2 text-action-orange-500 flex-shrink-0" /> 
+              <span>
+                Aynı Gün Kargo - <span className="animate-pulse text-action-orange-600">Hızlı Teslimat</span>
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Right Side: Product Info */}
@@ -98,12 +112,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           {/* Add To Cart Component */}
           <AddToCart product={product} />
 
-          {/* Trust Indicators */}
-          <div className="mt-6 flex flex-wrap gap-4 text-xs font-semibold text-gray-600 bg-gray-50 p-4 rounded-xl">
-            <div className="flex items-center"><ShieldCheck size={16} className="mr-1 text-badge-certified" /> 30 Gün İade Garantisi</div>
-            <div className="flex items-center"><Zap size={16} className="mr-1 text-action-orange-500" /> Aynı Gün Kargo - Hızlı Teslimat</div>
-          </div>
-          
+
           {/* Trendyol Bridge */}
           {product.trendyol_url && (
             <div className="mt-6 pt-4 text-center">
