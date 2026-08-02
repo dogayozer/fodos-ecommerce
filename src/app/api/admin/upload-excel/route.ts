@@ -39,9 +39,14 @@ export async function POST(req: Request) {
     const buffer = await file.arrayBuffer()
     const workbook = xlsx.read(buffer, { type: 'buffer' })
     const sheetName = workbook.SheetNames[0]
-    const worksheet = workbook.Sheets[sheetName]
+    const sheet = workbook.Sheets[sheetName]
     
-    const rows = xlsx.utils.sheet_to_json(worksheet) as any[]
+    // Get headers to find Column L (11th index)
+    const rawRows = xlsx.utils.sheet_to_json(sheet, { header: 1 })
+    const headers = (rawRows[0] as string[]) || []
+    const columnLHeader = headers.length > 11 ? headers[11] : null
+
+    const rows = xlsx.utils.sheet_to_json(sheet) as any[]
 
     if (rows.length === 0) {
       return NextResponse.json({ error: 'Excel file is empty' }, { status: 400 })
@@ -99,9 +104,13 @@ export async function POST(req: Request) {
 
           const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + barcode
 
+          let rawBrand = columnLHeader ? String(row[columnLHeader] || '') : ''
+          let firstWordBrand = rawBrand.trim().split(' ')[0]
+          if (!firstWordBrand) firstWordBrand = String(row['Marka'] || '')
+
           const productData = {
             model_code: String(row['Model Kodu'] || ''),
-            brand: String(row['Marka'] || ''),
+            brand: firstWordBrand,
             categoryId: category.id,
             title: title,
             slug: slug,
