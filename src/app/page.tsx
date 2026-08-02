@@ -7,7 +7,6 @@ export const revalidate = 60; // 60 saniyede bir sayfayı yenile
 export default async function HomePage() {
   // Fetch New Arrivals (Yeni Gelenler)
   const newArrivals = await prisma.product.findMany({
-    where: { status: { not: 'inactive' } },
     orderBy: { createdAt: 'desc' },
     take: 4,
     include: { images: true }
@@ -15,7 +14,6 @@ export default async function HomePage() {
 
   // Mock Best Sellers (Çok Satanlar)
   const bestSellers = await prisma.product.findMany({
-    where: { status: { not: 'inactive' } },
     orderBy: { stock_qty: 'desc' }, 
     take: 4,
     include: { images: true }
@@ -24,7 +22,6 @@ export default async function HomePage() {
   // Fetch products to display random images at the top
   const randomProducts = await prisma.product.findMany({
     where: { 
-      status: { not: 'inactive' },
       images: { some: {} }
     },
     include: { images: true },

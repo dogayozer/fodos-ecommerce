@@ -13,7 +13,6 @@ export async function Sidebar() {
     include: {
       products: {
         select: { brand: true, model_code: true },
-        where: { status: { not: 'inactive' } },
       }
     }
   })

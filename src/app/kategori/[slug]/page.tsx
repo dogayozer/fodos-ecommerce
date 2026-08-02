@@ -31,8 +31,7 @@ export default async function CategoryPage({
 
   // Build the filter
   const whereClause: any = {
-    categoryId: category.id,
-    status: { not: 'inactive' }
+    categoryId: category.id
   }
 
   if (brand) whereClause.brand = brand
