@@ -49,10 +49,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               <ShieldCheck size={24} className="mr-2 text-badge-certified flex-shrink-0" /> 
               15 Gün İade Garantisi
             </div>
-            <div className="flex items-center flex-1 bg-red-600 text-white p-3 rounded-xl shadow-md">
-              <Zap size={24} className="mr-2 text-yellow-300 flex-shrink-0" /> 
+            <div className="flex items-center flex-1">
+              <Zap size={24} className="mr-2 text-action-orange-500 flex-shrink-0" /> 
               <span>
-                Aynı Gün Kargo - <span className="animate-pulse text-white font-extrabold drop-shadow-md">Hızlı Teslimat</span>
+                Aynı Gün Kargo - <span className="animate-pulse text-action-orange-600">Hızlı Teslimat</span>
               </span>
             </div>
           </div>
