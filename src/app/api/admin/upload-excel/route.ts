@@ -204,6 +204,7 @@ export async function POST(req: Request) {
     
     // Also revalidate the specific tag we added for the database call
     const { revalidateTag } = await import('next/cache')
+    // @ts-ignore - Next.js beta types issue
     revalidateTag('category-tree')
 
     return NextResponse.json({ 
