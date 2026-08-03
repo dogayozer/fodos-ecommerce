@@ -201,6 +201,10 @@ export async function POST(req: Request) {
 
     // Sitenin önbelleğini temizle, yeni ürünler anında görünsün
     revalidatePath('/', 'layout')
+    
+    // Also revalidate the specific tag we added for the database call
+    const { revalidateTag } = await import('next/cache')
+    revalidateTag('category-tree')
 
     return NextResponse.json({ 
       success: true, 

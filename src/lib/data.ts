@@ -1,32 +1,37 @@
 import { prisma } from '@/lib/prisma'
+import { unstable_cache } from 'next/cache'
 
-export async function getCategoryTree() {
-  const categories = await prisma.category.findMany({
-    include: {
-      products: {
-        select: { brand: true, model_code: true },
-      }
-    }
-  })
-
-  // Build a nested structure
-  const tree = categories.map(cat => {
-    const brandsMap = new Map<string, Set<string>>()
-    
-    cat.products.forEach(p => {
-      if (p.brand) {
-        if (!brandsMap.has(p.brand)) brandsMap.set(p.brand, new Set())
-        if (p.model_code) brandsMap.get(p.brand)!.add(p.model_code)
+export const getCategoryTree = unstable_cache(
+  async () => {
+    const categories = await prisma.category.findMany({
+      include: {
+        products: {
+          select: { brand: true, model_code: true },
+        }
       }
     })
 
-    const brands = Array.from(brandsMap.entries()).map(([brandName, modelsSet]) => ({
-      name: brandName,
-      models: Array.from(modelsSet).slice(0, 5) // Limit models to prevent huge UI
-    }))
+    // Build a nested structure
+    const tree = categories.map(cat => {
+      const brandsMap = new Map<string, Set<string>>()
+      
+      cat.products.forEach(p => {
+        if (p.brand) {
+          if (!brandsMap.has(p.brand)) brandsMap.set(p.brand, new Set())
+          if (p.model_code) brandsMap.get(p.brand)!.add(p.model_code)
+        }
+      })
 
-    return { ...cat, brands }
-  })
+      const brands = Array.from(brandsMap.entries()).map(([brandName, modelsSet]) => ({
+        name: brandName,
+        models: Array.from(modelsSet).slice(0, 5) // Limit models to prevent huge UI
+      }))
 
-  return tree
-}
+      return { ...cat, brands }
+    })
+
+    return tree
+  },
+  ['category-tree'],
+  { tags: ['category-tree'], revalidate: 3600 } // Cache for 1 hour or until manual revalidation
+)
