@@ -6,7 +6,7 @@ export const getCategoryTree = unstable_cache(
     const categories = await prisma.category.findMany({
       include: {
         products: {
-          select: { brand: true, model_code: true },
+          select: { brand: true, title: true },
         }
       }
     })
@@ -18,7 +18,7 @@ export const getCategoryTree = unstable_cache(
       cat.products.forEach(p => {
         if (p.brand) {
           if (!brandsMap.has(p.brand)) brandsMap.set(p.brand, new Set())
-          if (p.model_code) brandsMap.get(p.brand)!.add(p.model_code)
+          if (p.title) brandsMap.get(p.brand)!.add(p.title)
         }
       })
 
