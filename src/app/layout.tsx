@@ -39,6 +39,13 @@ export default async function RootLayout({
             {children}
           </div>
         </div>
+        <footer className="w-full bg-white border-t border-gray-200 py-6 mt-8">
+          <div className="max-w-7xl mx-auto px-4 text-center">
+            <p className="text-sm text-gray-500 font-medium">
+              www.KobiKlik Teknoloji ile Tasarlanmıştır
+            </p>
+          </div>
+        </footer>
         <WhatsAppButton />
       </body>
     </html>
