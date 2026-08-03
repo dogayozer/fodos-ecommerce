@@ -22,7 +22,8 @@ export default async function SearchPage({
             { title: { contains: term, mode: 'insensitive' } },
             { brand: { contains: term, mode: 'insensitive' } },
             { model_code: { contains: term, mode: 'insensitive' } },
-            { barcode: { contains: term, mode: 'insensitive' } }
+            { barcode: { contains: term, mode: 'insensitive' } },
+            { description_raw: { contains: term, mode: 'insensitive' } }
           ]
         }))
       },

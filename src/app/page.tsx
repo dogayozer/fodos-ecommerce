@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ShieldCheck, Zap, Wrench, ArrowRight } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { ProductCard } from '@/components/ProductCard'
+import { HomeSearchForm } from '@/components/HomeSearchForm'
 
 export const revalidate = 60; // 60 saniyede bir sayfayı yenile
 
@@ -107,14 +108,8 @@ export default async function HomePage() {
               Sertifikalı parçalarla cihazınızın ömrünü uzatın.
             </p>
             
-            <div className="pt-4 flex flex-col sm:flex-row gap-4">
-              <Link 
-                href="/kategori/telefon-kasasi"
-                className="inline-flex justify-center items-center px-8 py-4 bg-cta-background hover:bg-cta-hover text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all duration-fast"
-              >
-                Uyumlu Parçaları Bul
-                <ArrowRight className="ml-2" size={20} />
-              </Link>
+            <div className="pt-4 w-full">
+              <HomeSearchForm />
             </div>
           </div>
 
