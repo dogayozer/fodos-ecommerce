@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { logout } from './actions'
+import * as xlsx from 'xlsx'
 
 export function Dashboard() {
   const [file, setFile] = useState<File | null>(null)
@@ -17,6 +18,8 @@ export function Dashboard() {
     }
   }
 
+  const [uploadProgress, setUploadProgress] = useState<{current: number, total: number} | null>(null)
+
   const handleUpload = async () => {
     if (!file) {
       setError('Lütfen bir Excel dosyası seçin.')
@@ -26,28 +29,86 @@ export function Dashboard() {
     setUploading(true)
     setError('')
     setResult(null)
-
-    const formData = new FormData()
-    formData.append('file', file)
-    if (priceIncreasePercent) formData.append('priceIncreasePercent', priceIncreasePercent)
-    if (discountPercent) formData.append('discountPercent', discountPercent)
+    setUploadProgress(null)
 
     try {
-      const res = await fetch('/api/admin/upload-excel', {
-        method: 'POST',
-        body: formData,
-      })
+      // 1. Dosyayı tarayıcıda oku
+      const buffer = await file.arrayBuffer()
+      const workbook = xlsx.read(buffer, { type: 'buffer' })
+      const sheetName = workbook.SheetNames[0]
+      const sheet = workbook.Sheets[sheetName]
+      const rows = xlsx.utils.sheet_to_json(sheet) as any[]
 
-      const data = await res.json()
-      if (res.ok) {
-        setResult(data)
-      } else {
-        setError(data.error || 'Yükleme sırasında bir hata oluştu.')
+      if (rows.length === 0) {
+        throw new Error('Excel dosyası boş.')
       }
-    } catch (err) {
-      setError('Bağlantı hatası.')
+
+      // Tüm barkodları topla (son pakette pasife çekme işlemi için)
+      const allProcessedBarcodes = rows
+        .map(r => String(r['Barkod'] || '').trim())
+        .filter(b => b.length > 0)
+
+      // 2. Satırları 100'erli paketlere böl
+      const CHUNK_SIZE = 100
+      const chunks = []
+      for (let i = 0; i < rows.length; i += CHUNK_SIZE) {
+        chunks.push(rows.slice(i, i + CHUNK_SIZE))
+      }
+
+      setUploadProgress({ current: 0, total: chunks.length })
+
+      let totalCreated = 0
+      let totalUpdated = 0
+      let totalDeactivated = 0
+
+      // 3. Paketleri sırayla sunucuya gönder
+      for (let i = 0; i < chunks.length; i++) {
+        const chunk = chunks[i]
+        const isFinalBatch = (i === chunks.length - 1)
+
+        const payload = {
+          chunk,
+          priceIncreasePercent: parseFloat(priceIncreasePercent) || 0,
+          discountPercent: parseFloat(discountPercent) || 0,
+          filename: file.name,
+          isFinalBatch,
+          allProcessedBarcodes: isFinalBatch ? allProcessedBarcodes : undefined
+        }
+
+        const res = await fetch('/api/admin/upload-excel-batch', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload),
+        })
+
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.error || `Paket ${i+1} yüklenirken hata oluştu.`)
+        }
+
+        totalCreated += (data.summary?.created || 0)
+        totalUpdated += (data.summary?.updated || 0)
+        totalDeactivated += (data.summary?.deactivated || 0)
+
+        setUploadProgress({ current: i + 1, total: chunks.length })
+      }
+
+      setResult({
+        summary: {
+          total: rows.length,
+          created: totalCreated,
+          updated: totalUpdated,
+          deactivated: totalDeactivated
+        }
+      })
+      
+    } catch (err: any) {
+      setError(err.message || 'Bağlantı hatası veya okuma hatası.')
     } finally {
       setUploading(false)
+      setUploadProgress(null)
     }
   }
 
@@ -111,7 +172,9 @@ export function Dashboard() {
             disabled={!file || uploading}
             className="mt-4 w-full py-3 bg-trust-blue-600 hover:bg-trust-blue-700 disabled:opacity-50 text-white rounded-lg font-medium transition-colors"
           >
-            {uploading ? 'İşleniyor, lütfen bekleyin (Bu işlem uzun sürebilir)...' : 'Yükle ve Senkronize Et'}
+            {uploading ? (
+              uploadProgress ? `İşleniyor: Paket ${uploadProgress.current} / ${uploadProgress.total} yükleniyor...` : 'İşleniyor, lütfen bekleyin...'
+            ) : 'Yükle ve Senkronize Et'}
           </button>
 
           {error && (
