@@ -35,7 +35,7 @@ export default async function CategoryPage({
   }
 
   if (brand) whereClause.brand = brand
-  if (model) whereClause.title = model
+  if (model) whereClause.model_code = model
 
   // Fetch products
   const products = await prisma.product.findMany({
