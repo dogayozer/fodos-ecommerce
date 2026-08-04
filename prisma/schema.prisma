@@ -109,3 +109,17 @@ model TrendyolSyncLog {
   startedAt     DateTime @default(now())
   completedAt   DateTime?
 }
+
+model StoreSettings {
+  id                    String   @id @default("default")
+  companyName           String?
+  address               String?
+  phone                 String?
+  aboutUs               String?
+  mesafeliSatisHtml     String?
+  gizlilikGuvenlikHtml  String?
+  iptalIadeHtml         String?
+  kargoTakipHtml        String?
+  kisiselVerilerHtml    String?
+  updatedAt             DateTime @updatedAt
+}

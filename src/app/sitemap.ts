@@ -10,6 +10,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/kvkk',
     '/mesafeli-satis-sozlesmesi',
     '/iade-ve-garanti',
+    '/hakkimizda',
+    '/gizlilik-ve-guvenlik',
+    '/kargo-takibi',
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),

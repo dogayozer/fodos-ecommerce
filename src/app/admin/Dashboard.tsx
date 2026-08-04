@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { logout } from './actions'
 import * as xlsx from 'xlsx'
+import { SettingsForm } from './SettingsForm'
 
 export function Dashboard() {
   const [file, setFile] = useState<File | null>(null)
@@ -205,6 +206,11 @@ export function Dashboard() {
             <li><strong>GÜNCELLEME:</strong> Excel aktarımında sütun eşleştirmeleri (kategori_ismi, urun_markasi, urun_modeli) revize edildi.</li>
           </ul>
         </div>
+      </div>
+      
+      {/* Settings Form */}
+      <div className="max-w-4xl mx-auto mt-8">
+        <SettingsForm />
       </div>
     </div>
   )
