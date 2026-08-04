@@ -1,11 +1,18 @@
 import { prisma } from '@/lib/prisma'
 import { unstable_cache } from 'next/cache'
+import { toTitleCase } from './utils'
 
 export const getCategoryTree = unstable_cache(
   async () => {
     const categories = await prisma.category.findMany({
+      where: {
+        products: {
+          some: { status: 'active' }
+        }
+      },
       include: {
         products: {
+          where: { status: 'active' },
           select: { brand: true },
         }
       }
@@ -22,10 +29,10 @@ export const getCategoryTree = unstable_cache(
       })
 
       const brands = Array.from(brandsSet).map(brandName => ({
-        name: brandName
+        name: toTitleCase(brandName)
       }))
 
-      return { ...cat, brands }
+      return { ...cat, name: toTitleCase(cat.name), brands }
     })
 
     return tree

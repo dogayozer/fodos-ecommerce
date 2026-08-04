@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { ProductCard } from '@/components/ProductCard'
 import { ModelFilter } from '@/components/ModelFilter'
+import { toTitleCase } from '@/lib/utils'
 
 export const revalidate = 60; // ISR cache
 
@@ -61,11 +62,11 @@ export default async function CategoryPage({
     <div className="p-4 sm:p-6 lg:p-8 w-full">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          {category.name}
+          {toTitleCase(category.name)}
         </h1>
         {brand && (
           <p className="text-gray-500">
-            {brand} {model ? `> ${model}` : ''}
+            {toTitleCase(brand)} {model ? `> ${model}` : ''}
           </p>
         )}
         <p className="text-sm text-gray-400 mt-1">{products.length} ürün bulundu.</p>
