@@ -81,7 +81,7 @@ export async function POST(req: Request) {
           const templateType = mapCategoryToTemplateType(categoryName)
           const title = String(row['Ürün Adı'] || '').trim()
           
-          let category = categoryCache.get(categoryName)
+          let category: any = categoryCache.get(categoryName)
           if (!category) {
             category = await tx.category.findUnique({ where: { slug: categoryName } })
             if (!category) {

@@ -195,6 +195,16 @@ export function Dashboard() {
             </div>
           )}
         </div>
+
+        {/* Sürüm Notları */}
+        <div className="mt-8 bg-blue-50 border border-blue-100 rounded-lg p-5">
+          <h3 className="text-sm font-bold text-trust-blue-700 mb-2">Vercel Güncelleme Notları (v1.2)</h3>
+          <ul className="list-disc pl-5 text-xs text-trust-blue-600 space-y-1">
+            <li><strong>YENİ:</strong> Toplu Gönderim (Batching) sistemi aktif edildi. Vercel timeout sorunu çözüldü.</li>
+            <li><strong>YENİ:</strong> Menülerde Model Kodu yerine Ürün Adı gösterme ayarı yapıldı.</li>
+            <li><strong>GÜNCELLEME:</strong> Canlı ilerleme sayacı eklendi (Örn: Paket 1 / 35).</li>
+          </ul>
+        </div>
       </div>
     </div>
   )
