@@ -198,11 +198,11 @@ export function Dashboard() {
 
         {/* Sürüm Notları */}
         <div className="mt-8 bg-blue-50 border border-blue-100 rounded-lg p-5">
-          <h3 className="text-sm font-bold text-trust-blue-700 mb-2">Vercel Güncelleme Notları (v1.2)</h3>
+          <h3 className="text-sm font-bold text-trust-blue-700 mb-2">Sistem Güncelleme Notları (v1.3 - 5 Ağustos 2026, 00:38)</h3>
           <ul className="list-disc pl-5 text-xs text-trust-blue-600 space-y-1">
-            <li><strong>YENİ:</strong> Toplu Gönderim (Batching) sistemi aktif edildi. Vercel timeout sorunu çözüldü.</li>
-            <li><strong>YENİ:</strong> Menülerde Model Kodu yerine Ürün Adı gösterme ayarı yapıldı.</li>
-            <li><strong>GÜNCELLEME:</strong> Canlı ilerleme sayacı eklendi (Örn: Paket 1 / 35).</li>
+            <li><strong>YENİ:</strong> Yan menü 2 kademeli (Kategori &gt; Marka) olarak tamamen sadeleştirildi.</li>
+            <li><strong>YENİ:</strong> Kategori sayfasına anlık model arama ve filtreleme sistemi (ModelFilter) eklendi.</li>
+            <li><strong>GÜNCELLEME:</strong> Excel aktarımında sütun eşleştirmeleri (kategori_ismi, urun_markasi, urun_modeli) revize edildi.</li>
           </ul>
         </div>
       </div>
