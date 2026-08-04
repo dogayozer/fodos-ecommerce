@@ -54,7 +54,7 @@ export async function POST(req: Request) {
         const barcode = String(row['Barkod'] || '').trim()
         if (!barcode) continue
 
-        const categoryName = String(row['Kategori İsmi'] || 'Diğer').trim()
+        const categoryName = String(row['kategori_ismi'] || row['Kategori İsmi'] || 'Diğer').trim()
         const templateType = mapCategoryToTemplateType(categoryName)
         const title = String(row['Ürün Adı'] || '').trim()
         
@@ -105,12 +105,11 @@ export async function POST(req: Request) {
 
         const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + barcode
 
-        let firstWordBrand = title.trim().split(' ')[0]
-        if (!firstWordBrand) firstWordBrand = String(row['Marka'] || '')
+        const brandName = String(row['urun_markasi'] || row['Marka'] || '').trim()
 
         const productData = {
-          model_code: String(row['Model Kodu'] || ''),
-          brand: firstWordBrand,
+          model_code: String(row['urun_modeli'] || row['Model Kodu'] || ''),
+          brand: brandName,
           categoryId: category.id,
           title: title,
           slug: slug,

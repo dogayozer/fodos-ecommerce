@@ -6,25 +6,23 @@ export const getCategoryTree = unstable_cache(
     const categories = await prisma.category.findMany({
       include: {
         products: {
-          select: { brand: true, model_code: true },
+          select: { brand: true },
         }
       }
     })
 
     // Build a nested structure
     const tree = categories.map(cat => {
-      const brandsMap = new Map<string, Set<string>>()
+      const brandsSet = new Set<string>()
       
       cat.products.forEach(p => {
         if (p.brand) {
-          if (!brandsMap.has(p.brand)) brandsMap.set(p.brand, new Set())
-          if (p.model_code) brandsMap.get(p.brand)!.add(p.model_code)
+          brandsSet.add(p.brand)
         }
       })
 
-      const brands = Array.from(brandsMap.entries()).map(([brandName, modelsSet]) => ({
-        name: brandName,
-        models: Array.from(modelsSet) // Tüm modelleri göster
+      const brands = Array.from(brandsSet).map(brandName => ({
+        name: brandName
       }))
 
       return { ...cat, brands }

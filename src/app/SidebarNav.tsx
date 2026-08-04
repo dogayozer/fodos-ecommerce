@@ -90,35 +90,7 @@ export function SidebarNav({ tree, onNavigate }: { tree: any[], onNavigate?: () 
                       >
                         {brand.name}
                       </Link>
-                      {brand.models.length > 0 && (
-                        <button 
-                          onClick={() => toggleBrand(brand.name)}
-                          className="text-gray-400 hover:text-trust-blue-600 p-1"
-                        >
-                          {openBrand === brand.name ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                        </button>
-                      )}
                     </div>
-                    
-                    {openBrand === brand.name && brand.models.length > 0 && (
-                      <ul className="pl-5 mt-1 space-y-1 mb-2">
-                        {brand.models.map((model: string) => {
-                          const isModelActive = pathname === `/kategori/${cat.slug}` && activeBrand === brand.name && activeModel === model
-                          return (
-                          <li key={model}>
-                            <Link 
-                              href={`/kategori/${cat.slug}?brand=${brand.name}&model=${model}`} 
-                              className={`truncate block w-full py-0.5 transition-colors ${isModelActive ? 'font-bold text-trust-blue-600 text-xs' : 'text-xs text-gray-500 hover:text-trust-blue-600'}`}
-                              onClick={() => {
-                                if (onNavigate) onNavigate()
-                              }}
-                            >
-                              {model}
-                            </Link>
-                          </li>
-                        )})}
-                      </ul>
-                    )}
                   </li>
                 )})}
               </ul>
