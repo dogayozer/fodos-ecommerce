@@ -24,7 +24,7 @@ export const getCategoryTree = unstable_cache(
 
       const brands = Array.from(brandsMap.entries()).map(([brandName, modelsSet]) => ({
         name: brandName,
-        models: Array.from(modelsSet).slice(0, 5) // Limit models to prevent huge UI
+        models: Array.from(modelsSet) // Tüm modelleri göster
       }))
 
       return { ...cat, brands }
