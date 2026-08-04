@@ -4,6 +4,8 @@ import { revalidatePath } from 'next/cache'
 import * as xlsx from 'xlsx'
 import { prisma } from '@/lib/prisma'
 
+export const maxDuration = 60; // Vercel Free Plan max timeout limitine çıkar (60 saniye)
+
 function mapCategoryToTemplateType(categoryName: string): string {
   const cat = categoryName.toLowerCase()
   if (cat.includes('kasa') || cat.includes('kılıf') || cat.includes('kapak')) return 'case'
@@ -59,6 +61,10 @@ export async function POST(req: Request) {
     const existingBarcodeMap = new Map(existingProducts.map(p => [p.barcode, p.status]))
     const processedBarcodes = new Set<string>()
 
+    // Cache categories to save thousands of DB queries
+    const existingCategories = await prisma.category.findMany()
+    const categoryCache = new Map(existingCategories.map(c => [c.slug, c]))
+
     // Chunk size for sqlite
     const CHUNK_SIZE = 100
     for (let i = 0; i < rows.length; i += CHUNK_SIZE) {
@@ -75,16 +81,20 @@ export async function POST(req: Request) {
           const templateType = mapCategoryToTemplateType(categoryName)
           const title = String(row['Ürün Adı'] || '').trim()
           
-          let category = await tx.category.findUnique({ where: { slug: categoryName } })
+          let category = categoryCache.get(categoryName)
           if (!category) {
-            category = await tx.category.create({
-              data: {
-                name: categoryName,
-                slug: categoryName,
-                template_type: templateType,
-                risk_profile: templateType === 'battery' ? 'Yüksek Risk' : 'Normal',
-              }
-            })
+            category = await tx.category.findUnique({ where: { slug: categoryName } })
+            if (!category) {
+              category = await tx.category.create({
+                data: {
+                  name: categoryName,
+                  slug: categoryName,
+                  template_type: templateType,
+                  risk_profile: templateType === 'battery' ? 'Yüksek Risk' : 'Normal',
+                }
+              })
+            }
+            categoryCache.set(categoryName, category)
           }
 
           const trendyolPriceStr = String(row["Trendyol'da Satılacak Fiyat"] || row["Satış Fiyatı"] || row["Trendyol'da Satılacak Fiyat (KDV Dahil)"] || row["Satış Fiyatı (KDV Dahil)"] || row["Fiyat"] || '0')
