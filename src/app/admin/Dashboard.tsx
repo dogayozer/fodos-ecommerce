@@ -13,6 +13,14 @@ export function Dashboard() {
   const [priceIncreasePercent, setPriceIncreasePercent] = useState<string>('')
   const [discountPercent, setDiscountPercent] = useState<string>('')
 
+  // Bulk Update States
+  const [oldUsd, setOldUsd] = useState<string>('')
+  const [newUsd, setNewUsd] = useState<string>('')
+  const [shippingCost, setShippingCost] = useState<string>('110')
+  const [bulkUpdating, setBulkUpdating] = useState(false)
+  const [bulkResult, setBulkResult] = useState<any>(null)
+  const [bulkError, setBulkError] = useState('')
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0])
@@ -113,6 +121,40 @@ export function Dashboard() {
     }
   }
 
+  const handleBulkUpdate = async () => {
+    if (!oldUsd || !newUsd || !shippingCost) {
+      setBulkError('Lütfen tüm alanları doldurun.')
+      return
+    }
+
+    setBulkUpdating(true)
+    setBulkError('')
+    setBulkResult(null)
+
+    try {
+      const res = await fetch('/api/admin/bulk-price-update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          oldUsd: parseFloat(oldUsd),
+          newUsd: parseFloat(newUsd),
+          shippingCost: parseFloat(shippingCost)
+        }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.error || 'Toplu güncelleme sırasında hata oluştu.')
+      }
+
+      setBulkResult(data.summary)
+    } catch (err: any) {
+      setBulkError(err.message || 'Bağlantı hatası.')
+    } finally {
+      setBulkUpdating(false)
+    }
+  }
+
   const handleLogout = async () => {
     await logout()
     window.location.reload()
@@ -193,6 +235,65 @@ export function Dashboard() {
                 <li>Pasife Çekilen (Excel'de olmayan): {result.summary.deactivated}</li>
                 <li>Toplam İşlenen: {result.summary.total}</li>
               </ul>
+            </div>
+          )}
+        </div>
+
+        {/* Bulk Update Section */}
+        <div className="mb-8 p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
+          <h2 className="text-lg font-semibold mb-4 text-gray-800">Toplu Fiyat Güncelleme (Excel'siz)</h2>
+          <p className="text-sm text-gray-600 mb-6">Bu bölüm, kur dalgalanmalarında veya kargo ücreti değişimlerinde tüm aktif ürünlerin fiyatlarını Excel yüklemeye gerek kalmadan otomatik olarak güncellemenizi sağlar.</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Mevcut USD Kuru</label>
+              <input 
+                type="number" step="0.01"
+                placeholder="Örn: 33.50" 
+                value={oldUsd}
+                onChange={(e) => setOldUsd(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Yeni USD Kuru</label>
+              <input 
+                type="number" step="0.01"
+                placeholder="Örn: 35.00" 
+                value={newUsd}
+                onChange={(e) => setNewUsd(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Yeni Kargo Ücreti (TL)</label>
+              <input 
+                type="number" 
+                value={shippingCost}
+                onChange={(e) => setShippingCost(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
+              />
+            </div>
+          </div>
+          
+          <button
+            onClick={handleBulkUpdate}
+            disabled={bulkUpdating || !oldUsd || !newUsd || !shippingCost}
+            className="w-full py-3 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white rounded-lg font-medium transition-colors"
+          >
+            {bulkUpdating ? 'Fiyatlar Güncelleniyor...' : 'Tüm Ürünlerin Fiyatını Güncelle'}
+          </button>
+
+          {bulkError && (
+            <div className="mt-4 p-4 bg-red-50 text-risk-red-500 rounded-md border border-red-100">
+              {bulkError}
+            </div>
+          )}
+
+          {bulkResult && (
+            <div className="mt-4 p-4 bg-green-50 text-green-800 rounded-md border border-green-100">
+              <h3 className="font-bold mb-2">Güncelleme Başarılı</h3>
+              <p className="text-sm">Başarıyla güncellenen ürün sayısı: <strong>{bulkResult.updatedCount}</strong></p>
             </div>
           )}
         </div>

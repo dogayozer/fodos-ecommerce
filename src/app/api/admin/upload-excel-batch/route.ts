@@ -94,19 +94,15 @@ export async function POST(req: Request) {
         let refPrice = trendyolPrice
 
         if (trendyolPrice > 0) {
-          let netPrice = trendyolPrice
-          if (trendyolPrice <= 199.99) {
-            netPrice = trendyolPrice - 41
-          } else if (trendyolPrice <= 349.99) {
-            netPrice = trendyolPrice - 79
-          } else {
-            netPrice = trendyolPrice - 93
-          }
+          // Yeni Kural: Sabit 110 TL kargo kesintisi
+          const SHIPPING_FEE = 110;
+          let netPrice = trendyolPrice - SHIPPING_FEE;
           
           salePrice = netPrice * 0.80 // %20 iskonto
           refPrice = trendyolPrice // Eski fiyat olarak Trendyol fiyatını göster
 
-          if (salePrice < 0) salePrice = 0
+          // Alt Limit 99 TL
+          if (salePrice < 99) salePrice = 99
           if (refPrice < 0) refPrice = 0
         }
 
