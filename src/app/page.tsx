@@ -3,6 +3,7 @@ import { ShieldCheck, Zap, Wrench, ArrowRight } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { ProductCard } from '@/components/ProductCard'
 import { HomeSearchForm } from '@/components/HomeSearchForm'
+import { RotatingHeroText } from '@/components/RotatingHeroText'
 
 export const revalidate = 60; // 60 saniyede bir sayfayı yenile
 
@@ -93,22 +94,14 @@ export default async function HomePage() {
         <div className="px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center">
           
           <div className="md:w-1/2 space-y-6">
-            <div className="inline-flex items-center space-x-2 bg-trust-blue-600 px-3 py-1 rounded-full text-xs font-semibold tracking-wider">
+            <div className="inline-flex items-center space-x-2 bg-trust-blue-600 px-3 py-1 rounded-full text-xs font-semibold tracking-wider mb-2">
               <Wrench size={14} />
               <span>ONARIM HAKKINIZI DESTEKLİYORUZ</span>
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-              Cihazınızı Çöpe Atmayın.
-              <span className="block text-trust-blue-100 mt-2">Güvenle Yenileyin.</span>
-            </h1>
+            <RotatingHeroText />
             
-            <p className="text-lg md:text-xl text-trust-blue-50 max-w-lg leading-relaxed">
-              Yan sanayi parçaların neden olduğu termal kaçak ve anakart hasarı risklerinden korunun. 
-              Sertifikalı parçalarla cihazınızın ömrünü uzatın.
-            </p>
-            
-            <div className="pt-4 w-full">
+            <div className="pt-2 w-full">
               <HomeSearchForm />
             </div>
           </div>
