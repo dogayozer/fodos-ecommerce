@@ -22,12 +22,32 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }
   }
 
+  const brand = product.brand || ''
+  const model = product.model_code || ''
+  const categoryName = product.category?.name || 'telefon parçası'
+
+  const keywords = [
+    product.title,
+    'sirkeci telefon parçası',
+    'sirkeci toptan telefon parçası',
+    brand ? `${brand} telefon parçası` : '',
+    brand && categoryName ? `${brand} ${categoryName.toLowerCase()}` : '',
+    model ? `${model} telefon parçası` : '',
+    model && categoryName ? `${model} ${categoryName.toLowerCase()}` : '',
+    'uyumlu yedek parça',
+    'telefon yedek parça',
+    'kaliteli telefon parçası'
+  ].filter(Boolean)
+
+  const defaultDescription = `${product.title} modeli için uyumlu ve kaliteli ${categoryName.toLowerCase()}. Sirkeci toptan telefon parçası güvencesiyle en uygun fiyatlarla Fodos'ta. Aynı gün kargo ve stoktan teslim!`
+
   return {
-    title: `${product.title} | Fodos`,
-    description: product.description_raw ? product.description_raw.substring(0, 160) : `${product.title} - En uygun fiyatlarla Fodos'ta. Aynı gün kargo ve stoktan teslim!`,
+    title: `${product.title} | Fodos Sirkeci Telefon Parçası`,
+    description: product.description_raw ? product.description_raw.substring(0, 150) + '... ' + defaultDescription : defaultDescription,
+    keywords: keywords,
     openGraph: {
       title: `${product.title} | Fodos`,
-      description: `${product.title} uygun fiyatla stoktan teslim.`,
+      description: defaultDescription,
       images: product.images.length > 0 ? [product.images[0].url] : [],
     },
     alternates: {
