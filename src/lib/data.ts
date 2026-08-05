@@ -59,6 +59,19 @@ export const getCachedCategoryData = unstable_cache(
       orderBy: { createdAt: 'desc' }
     })
 
+    // Ürünleri sıralama: En az 2 görseli olanlar (daha iyi çalışılmış ürünler) önce gelsin
+    products.sort((a, b) => {
+      const aHasGoodImages = a.images.length >= 2 ? 1 : 0;
+      const bHasGoodImages = b.images.length >= 2 ? 1 : 0;
+      
+      if (aHasGoodImages !== bHasGoodImages) {
+        return bHasGoodImages - aHasGoodImages; // 1 olanlar önce
+      }
+      
+      // Kendi içlerinde eklenme tarihine göre yeniden eskiye
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    })
+
     let availableModels: string[] = []
     if (brand) {
       const modelsResult = await prisma.product.findMany({
