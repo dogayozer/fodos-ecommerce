@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { ProductCard } from '@/components/ProductCard'
 import { ModelFilter } from '@/components/ModelFilter'
+import { getCachedCategoryData } from '@/lib/data'
 import { toTitleCase } from '@/lib/utils'
 
 export const revalidate = 60; // ISR cache
@@ -23,40 +24,13 @@ export default async function CategoryPage({
   const brand = typeof resolvedSearchParams.brand === 'string' ? resolvedSearchParams.brand : undefined
   const model = typeof resolvedSearchParams.model === 'string' ? resolvedSearchParams.model : undefined
 
-  // Find the category
-  const category = await prisma.category.findUnique({
-    where: { slug }
-  })
+  const data = await getCachedCategoryData(slug, brand, model)
 
-  if (!category) {
+  if (!data) {
     return notFound()
   }
 
-  // Build the filter
-  const whereClause: any = {
-    categoryId: category.id
-  }
-
-  if (brand) whereClause.brand = brand
-  if (model) whereClause.model_code = model
-
-  // Fetch products
-  const products = await prisma.product.findMany({
-    where: whereClause,
-    include: { images: true },
-    orderBy: { createdAt: 'desc' }
-  })
-
-  // Fetch available models if brand is selected
-  let availableModels: string[] = []
-  if (brand) {
-    const modelsResult = await prisma.product.findMany({
-      where: { categoryId: category.id, brand: brand },
-      select: { model_code: true },
-      distinct: ['model_code']
-    })
-    availableModels = modelsResult.map(p => p.model_code).filter(Boolean) as string[]
-  }
+  const { category, products, availableModels } = data
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 w-full">

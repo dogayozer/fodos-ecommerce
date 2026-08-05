@@ -16,6 +16,18 @@ function mapCategoryToTemplateType(categoryName: string): string {
   return 'generic'
 }
 
+function generateSlug(text: string) {
+  const trMap: any = {
+    'ç': 'c', 'ğ': 'g', 'ı': 'i', 'i': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u',
+    'Ç': 'c', 'Ğ': 'g', 'I': 'i', 'İ': 'i', 'Ö': 'o', 'Ş': 's', 'Ü': 'u'
+  }
+  let slug = text.replace(/[çğıiöşüÇĞIİÖŞÜ]/g, match => trMap[match])
+  return slug
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
 function parseStatus(status: any): string {
   const s = String(status).toLowerCase().trim()
   if (s === 'pasif' || s === '0' || s === 'false' || s === 'inactive') return 'inactive'
@@ -60,12 +72,13 @@ export async function POST(req: Request) {
         
         let category: any = categoryCache.get(categoryName)
         if (!category) {
-          category = await tx.category.findUnique({ where: { slug: categoryName } })
+          const catSlug = generateSlug(categoryName)
+          category = await tx.category.findUnique({ where: { slug: catSlug } })
           if (!category) {
             category = await tx.category.create({
               data: {
                 name: categoryName,
-                slug: categoryName,
+                slug: catSlug,
                 template_type: templateType,
                 risk_profile: templateType === 'battery' ? 'Yüksek Risk' : 'Normal',
               }
@@ -189,6 +202,8 @@ export async function POST(req: Request) {
       const { revalidateTag } = await import('next/cache')
       // @ts-ignore
       revalidateTag('category-tree')
+      // @ts-ignore
+      revalidateTag('products-data')
     }
 
     return NextResponse.json({ 
