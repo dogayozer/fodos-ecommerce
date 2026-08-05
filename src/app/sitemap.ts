@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
+import { getAllFaqs } from '@/lib/markdown'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://fodos.com.tr'
@@ -34,5 +35,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
 
-  return [...routes, ...productRoutes]
+  // Dynamic FAQs (Knowledge Base)
+  const faqs = await getAllFaqs()
+  const faqRoutes = faqs.map((faq) => ({
+    url: `${baseUrl}/bilgi-bankasi/${faq.slug}`,
+    lastModified: new Date(faq.date || new Date()),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }))
+
+  return [...routes, ...productRoutes, ...faqRoutes]
 }

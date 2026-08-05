@@ -54,6 +54,7 @@ export default async function RootLayout({
               <h3 className="font-bold text-gray-900 mb-4 text-lg">Kurumsal</h3>
               <ul className="space-y-2">
                 <li><Link href="/hakkimizda" className="text-gray-600 hover:text-trust-blue-600 transition-colors">Hakkımızda</Link></li>
+                <li><Link href="/bilgi-bankasi" className="text-gray-600 hover:text-trust-blue-600 transition-colors">Bilgi Bankası</Link></li>
                 <li><Link href="/kargo-takibi" className="text-gray-600 hover:text-trust-blue-600 transition-colors">Kargo Takibi</Link></li>
                 <li><Link href="/iletisim" className="text-gray-600 hover:text-trust-blue-600 transition-colors">Bize Ulaşın</Link></li>
               </ul>
