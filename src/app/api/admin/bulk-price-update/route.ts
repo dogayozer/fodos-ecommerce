@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
-import { revalidateTag } from 'next/cache'
 
 export async function POST(req: Request) {
   const cookieStore: any = cookies()
@@ -66,7 +65,10 @@ export async function POST(req: Request) {
     })
 
     // Cache temizliği
+    const { revalidateTag } = await import('next/cache')
+    // @ts-ignore
     revalidateTag('products-data')
+    // @ts-ignore
     revalidateTag('category-tree')
 
     return NextResponse.json({
