@@ -318,11 +318,11 @@ export function Dashboard() {
 
         {/* Sürüm Notları */}
         <div className="mt-8 bg-blue-50 border border-blue-100 rounded-lg p-5">
-          <h3 className="text-sm font-bold text-trust-blue-700 mb-2">Sistem Güncelleme Notları (v1.4 - 5 Ağustos 2026, 01:20)</h3>
+          <h3 className="text-sm font-bold text-trust-blue-700 mb-2">Sistem Güncelleme Notları (v1.5 - 12 Ağustos 2026, 02:49)</h3>
           <ul className="list-disc pl-5 text-xs text-trust-blue-600 space-y-1">
-            <li><strong>YENİ:</strong> İndirim Kuponu Yönetimi (Sepette otomatik hesaplama eklendi).</li>
-            <li><strong>YENİ:</strong> Dinamik Kategori Yönetimi ve Toplu Kategori Taşıma Modülü.</li>
-            <li><strong>GÜNCELLEME:</strong> Fiyat güncellemeleri, kargo mantığı ve dinamik mağaza ayarları eklendi.</li>
+            <li><strong>YENİ:</strong> Türkçe karakter (ö,ş,ü vb.) ve büyük/küçük harf bağımsız gelişmiş akıllı arama motoru (Unaccent).</li>
+            <li><strong>YENİ:</strong> Ana sayfa görsel tasarımı güncellendi, yeni vizyon banner'ı eklendi.</li>
+            <li><strong>GÜNCELLEME:</strong> Arama kapsamına ürün açıklaması, marka, model kodu ve barkod eklendi.</li>
           </ul>
         </div>
       </div>
