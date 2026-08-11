@@ -11,8 +11,22 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://fodos.com.tr'),
   title: "Fodos ve Piaks | Orijinal Cep Telefonu Yedek Parçaları",
-  description: "Fodos ve Piaks markalı telefon kasası, tuş takımı, şarj aleti ve batarya gibi telefon aksesuarları ve yedek parçalar.",
+  description: "Fodos ve Piaks markalı telefon kasası, tuş takımı, şarj aleti ve batarya gibi telefon aksesuarları ve yedek parçalar. Türkiye'nin lider tedarikçisi.",
+  keywords: ["telefon yedek parça", "sirkeci telefon parçası", "toptan telefon parçası", "fodos", "piaks", "orijinal batarya", "telefon ekranı", "cep telefonu tamir parçaları"],
+  openGraph: {
+    title: "Fodos ve Piaks | Orijinal Cep Telefonu Yedek Parçaları",
+    description: "Türkiye'nin Cep Telefonu Parça Tedarikçisi. Binlerce Tamir Merkezi, Onbinlerce Memnun Müşteri.",
+    url: 'https://fodos.com.tr',
+    siteName: 'Fodos',
+    locale: 'tr_TR',
+    type: 'website',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export const revalidate = 60; // 60 saniyede bir önbelleği otomatik yenile
