@@ -89,6 +89,9 @@ export async function POST(req: Request) {
 
         const trendyolPriceStr = String(row["Trendyol'da Satılacak Fiyat"] || row["Satış Fiyatı"] || row["Trendyol'da Satılacak Fiyat (KDV Dahil)"] || row["Satış Fiyatı (KDV Dahil)"] || row["Fiyat"] || '0')
         const trendyolPrice = parseFloat(trendyolPriceStr.replace(',', '.')) || 0
+
+        const originalExcelPriceStr = String(row["Piyasa Satış Fiyatı (KDV Dahil)"] || row["Piyasa Satış Fiyatı"] || '0')
+        const originalExcelPrice = parseFloat(originalExcelPriceStr.replace(',', '.')) || 0
         
         let salePrice = trendyolPrice
         let refPrice = trendyolPrice
@@ -115,16 +118,20 @@ export async function POST(req: Request) {
         const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + barcode
 
         const brandName = String(row['urun_markasi'] || row['Marka'] || '').trim()
+        const modelCode = String(row['urun_modeli'] || row['Model Kodu'] || '').trim()
+        const compatibleModels = String(row['varyantlar'] || '').trim()
 
         const productData = {
-          model_code: String(row['urun_modeli'] || row['Model Kodu'] || ''),
+          model_code: modelCode,
           brand: brandName,
+          compatible_models: compatibleModels,
           categoryId: category.id,
           title: title,
           slug: slug,
           description_raw: String(row['Ürün Açıklaması'] || ''),
           reference_price: refPrice,
           sale_price: salePrice,
+          original_excel_price: originalExcelPrice,
           stock_qty: stockQty,
           status: status,
           trendyol_url: String(row['Trendyol.com Linki'] || ''),

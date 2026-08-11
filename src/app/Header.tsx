@@ -2,14 +2,29 @@
 
 import React, { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
-import { Search, ShoppingCart, Menu, X, Smartphone } from 'lucide-react'
+import { Search, ShoppingCart, Menu, X, Smartphone, User, LogOut } from 'lucide-react'
 
 import { SidebarNav } from './SidebarNav'
 
 export function Header({ tree }: { tree: any[] }) {
   const [query, setQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [cartCount, setCartCount] = useState(0)
+  const [user, setUser] = useState<any>(null)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me')
+        const data = await res.json()
+        if (data.user) {
+          setUser(data.user)
+        }
+      } catch (e) {}
+    }
+    fetchUser()
+  }, [])
 
   useEffect(() => {
     const updateCartCount = () => {
@@ -31,8 +46,18 @@ export function Header({ tree }: { tree: any[] }) {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (query.trim()) {
-      window.location.href = `/arama?q=${encodeURIComponent(query)}`
+      let searchUrl = `/arama?q=${encodeURIComponent(query)}`
+      if (selectedCategory) {
+        searchUrl += `&category=${encodeURIComponent(selectedCategory)}`
+      }
+      window.location.href = searchUrl
     }
+  }
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' })
+    setUser(null)
+    window.location.reload()
   }
 
   return (
@@ -49,15 +74,25 @@ export function Header({ tree }: { tree: any[] }) {
 
           {/* Desktop Search */}
           <div className="hidden md:flex flex-1 max-w-2xl mx-8">
-            <form onSubmit={handleSearch} className="w-full relative">
+            <form onSubmit={handleSearch} className="w-full relative flex items-center shadow-sm rounded-full border border-gray-300 bg-white focus-within:ring-2 focus-within:ring-trust-blue-500 overflow-hidden">
+              <select 
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="bg-gray-100 text-gray-700 h-full py-2 pl-4 pr-8 border-none focus:ring-0 text-sm font-medium border-r border-gray-200 cursor-pointer"
+              >
+                <option value="">Tüm Kategoriler</option>
+                {tree.map(cat => (
+                  <option key={cat.slug} value={cat.slug}>{cat.name}</option>
+                ))}
+              </select>
               <input 
                 type="text" 
-                placeholder="Telefon kılıfı, batarya veya model arayın (Örn: iPhone 14 Pro Max)" 
+                placeholder="Telefon kılıfı, batarya veya model arayın..." 
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="w-full pl-4 pr-10 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-trust-blue-500 focus:border-transparent transition-shadow"
+                className="flex-1 px-4 py-2 border-none focus:ring-0 outline-none w-full"
               />
-              <button type="submit" className="absolute right-3 top-2.5 text-gray-400 hover:text-trust-blue-600">
+              <button type="submit" className="px-4 text-gray-400 hover:text-trust-blue-600">
                 <Search size={20} />
               </button>
             </form>
@@ -65,12 +100,29 @@ export function Header({ tree }: { tree: any[] }) {
 
           {/* Right Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <div className="flex flex-col items-end">
+            <div className="flex flex-col items-end mr-2">
               <span className="text-xs text-gray-500 font-medium">WhatsApp Sipariş</span>
               <a href="tel:05322324499" className="text-sm font-bold text-gray-900">0532 232 44 99</a>
             </div>
+
+            {user ? (
+              <div className="flex items-center space-x-4">
+                <div className="flex flex-col text-right">
+                  <span className="text-xs text-gray-500">Hoş geldin,</span>
+                  <span className="text-sm font-bold text-gray-900">{user.name?.split(' ')[0]}</span>
+                </div>
+                <button onClick={handleLogout} className="text-gray-500 hover:text-red-600 transition-colors" title="Çıkış Yap">
+                  <LogOut size={20} />
+                </button>
+              </div>
+            ) : (
+              <Link href="/giris" className="flex items-center text-gray-700 hover:text-trust-blue-600 transition-colors font-medium text-sm">
+                <User size={20} className="mr-1.5" />
+                Giriş / Üye Ol
+              </Link>
+            )}
             
-            <Link href="/sepet" className="relative text-gray-700 hover:text-trust-blue-600 transition-colors">
+            <Link href="/sepet" className="relative text-gray-700 hover:text-trust-blue-600 transition-colors ml-4">
               <ShoppingCart size={24} />
               {cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-action-orange-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">{cartCount}</span>
@@ -117,6 +169,23 @@ export function Header({ tree }: { tree: any[] }) {
               <Suspense fallback={<div className="p-4 text-center text-sm text-gray-500">Yükleniyor...</div>}>
                 <SidebarNav tree={tree} onNavigate={() => setMobileMenuOpen(false)} />
               </Suspense>
+            </div>
+
+            <div className="pt-2 border-t border-gray-200">
+              {user ? (
+                <div className="flex justify-between items-center py-2 px-2">
+                  <div className="flex items-center">
+                    <User size={20} className="text-gray-500 mr-2" />
+                    <span className="font-semibold">{user.name}</span>
+                  </div>
+                  <button onClick={handleLogout} className="text-red-600 text-sm font-medium px-3 py-1 bg-red-50 rounded-lg">Çıkış Yap</button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  <Link href="/giris" className="text-center py-2 bg-gray-100 rounded-lg font-medium text-sm text-gray-800">Giriş Yap</Link>
+                  <Link href="/kayit-ol" className="text-center py-2 bg-trust-blue-600 text-white rounded-lg font-medium text-sm">Üye Ol</Link>
+                </div>
+              )}
             </div>
             
             <div className="pt-4 flex flex-col items-center bg-gray-50 rounded-xl p-4">

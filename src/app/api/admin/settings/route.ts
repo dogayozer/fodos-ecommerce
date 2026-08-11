@@ -28,7 +28,8 @@ export async function POST(req: Request) {
     const {
       companyName, address, phone, aboutUs,
       mesafeliSatisHtml, gizlilikGuvenlikHtml, iptalIadeHtml,
-      kargoTakipHtml, kisiselVerilerHtml
+      kargoTakipHtml, kisiselVerilerHtml,
+      shippingThreshold, shippingFee, sameDayShippingTime
     } = body
 
     const settings = await prisma.storeSettings.upsert({
@@ -36,13 +37,19 @@ export async function POST(req: Request) {
       update: {
         companyName, address, phone, aboutUs,
         mesafeliSatisHtml, gizlilikGuvenlikHtml, iptalIadeHtml,
-        kargoTakipHtml, kisiselVerilerHtml
+        kargoTakipHtml, kisiselVerilerHtml,
+        shippingThreshold: parseFloat(shippingThreshold) || 500,
+        shippingFee: parseFloat(shippingFee) || 110,
+        sameDayShippingTime: sameDayShippingTime || "16:00"
       },
       create: {
         id: 'default',
         companyName, address, phone, aboutUs,
         mesafeliSatisHtml, gizlilikGuvenlikHtml, iptalIadeHtml,
-        kargoTakipHtml, kisiselVerilerHtml
+        kargoTakipHtml, kisiselVerilerHtml,
+        shippingThreshold: parseFloat(shippingThreshold) || 500,
+        shippingFee: parseFloat(shippingFee) || 110,
+        sameDayShippingTime: sameDayShippingTime || "16:00"
       }
     })
 

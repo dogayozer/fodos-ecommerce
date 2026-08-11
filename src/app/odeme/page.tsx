@@ -1,116 +1,169 @@
-import { ShieldCheck, Lock, CreditCard, CheckCircle2 } from 'lucide-react'
-import { Metadata } from 'next'
+'use client'
 
-export const metadata: Metadata = {
-  title: "Güvenli Ödeme | Fodos",
-  robots: { index: false, follow: false },
-};
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function CheckoutPage() {
-  return (
-    <div className="min-h-screen bg-gray-50 py-8 relative z-50">
-      {/* Absolute overlay to hide standard layout headers if they exist, to ensure frictionless checkout. 
-          In a real app, you might use a separate Next.js layout group for checkout. */}
+  const [cart, setCart] = useState<any[]>([])
+  const [user, setUser] = useState<any>(null)
+  const [mounted, setMounted] = useState(false)
+  
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    city: '',
+    district: '',
+    address: ''
+  })
+  
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const router = useRouter()
+
+  useEffect(() => {
+    setMounted(true)
+    const existingCartStr = localStorage.getItem('cart')
+    if (existingCartStr) {
+      setCart(JSON.parse(existingCartStr))
+    }
+
+    fetch('/api/auth/me')
+      .then(res => res.json())
+      .then(data => {
+        if (data.user) {
+          setUser(data.user)
+          setFormData({
+            name: data.user.name || '',
+            email: data.user.email || '',
+            phone: data.user.phone || '',
+            city: data.user.city || '',
+            district: data.user.district || '',
+            address: data.user.address || ''
+          })
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
+
+  const handleCheckout = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+
+    try {
+      const couponStr = localStorage.getItem('appliedCoupon')
+      const coupon = couponStr ? JSON.parse(couponStr) : null
+
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerInfo: formData,
+          cart,
+          couponCode: coupon?.code
+        })
+      })
+
+      const data = await res.json()
       
-      <div className="max-w-4xl mx-auto px-4">
-        {/* Simple Checkout Header */}
-        <div className="flex justify-between items-center mb-8 border-b border-gray-200 pb-4">
-          <h1 className="text-2xl font-black text-trust-blue-600 tracking-tight">FODOS</h1>
-          <div className="flex items-center text-sm font-semibold text-gray-500">
-            <Lock size={16} className="mr-1 text-badge-certified" />
-            256-bit Güvenli Ödeme
+      if (!res.ok) {
+        throw new Error(data.error || 'Sipariş oluşturulamadı')
+      }
+
+      // Clear cart
+      localStorage.removeItem('cart')
+      localStorage.removeItem('appliedCoupon')
+      window.dispatchEvent(new Event('cartUpdated'))
+
+      // Redirect to WhatsApp
+      window.location.href = data.whatsappUrl
+
+    } catch (err: any) {
+      setError(err.message)
+      setLoading(false)
+    }
+  }
+
+  if (!mounted) return <div className="py-20 text-center">Yükleniyor...</div>
+  if (cart.length === 0) return (
+    <div className="py-20 text-center max-w-xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4">Sepetiniz boş</h2>
+      <Link href="/" className="text-trust-blue-600 hover:underline">Alışverişe devam et</Link>
+    </div>
+  )
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-12 flex-1 w-full">
+      <h1 className="text-3xl font-bold mb-8 text-gray-900">Ödeme & Teslimat</h1>
+      
+      {!user && (
+        <div className="mb-8 p-4 bg-blue-50 border border-blue-100 rounded-xl flex justify-between items-center">
+          <div>
+            <h3 className="font-semibold text-blue-900">Hesabınız var mı?</h3>
+            <p className="text-sm text-blue-700">Daha hızlı işlem yapmak ve %5 daimi müşteri indiriminden faydalanmak için giriş yapın. Kayıt olmadan da devam edebilirsiniz.</p>
           </div>
+          <Link href="/giris" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+            Giriş Yap
+          </Link>
         </div>
+      )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-6">
-            
-            {/* Guest Checkout Info */}
-            <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-              <h2 className="text-lg font-bold mb-4 flex items-center">
-                <span className="w-6 h-6 rounded-full bg-trust-blue-100 text-trust-blue-600 flex items-center justify-center text-sm mr-2">1</span>
-                İletişim & Teslimat
-              </h2>
-              <div className="grid grid-cols-2 gap-4">
-                <input type="text" placeholder="Ad" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-trust-blue-500" />
-                <input type="text" placeholder="Soyad" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-trust-blue-500" />
-                <input type="email" placeholder="E-posta" className="col-span-2 w-full p-3 border border-gray-300 rounded-lg focus:ring-trust-blue-500" />
-                <textarea placeholder="Açık Adres" rows={3} className="col-span-2 w-full p-3 border border-gray-300 rounded-lg focus:ring-trust-blue-500"></textarea>
-              </div>
-            </section>
-
-            {/* Paynet Payment Form */}
-            <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm relative">
-              <h2 className="text-lg font-bold mb-4 flex items-center">
-                <span className="w-6 h-6 rounded-full bg-trust-blue-100 text-trust-blue-600 flex items-center justify-center text-sm mr-2">2</span>
-                Ödeme Bilgileri
-              </h2>
-              
-              <div className="space-y-4">
-                <div className="relative">
-                  <input type="text" placeholder="Kart Numarası" className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-trust-blue-500" />
-                  <CreditCard className="absolute left-3 top-3.5 text-gray-400" size={20} />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <input type="text" placeholder="AA / YY" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-trust-blue-500" />
-                  <input type="text" placeholder="CVV" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-trust-blue-500" />
-                </div>
-              </div>
-
-              {/* Neuro-UX: Micro Trust Badges directly below the payment form */}
-              <div className="mt-6 p-4 bg-blue-50/50 rounded-lg flex flex-wrap gap-x-6 gap-y-2 text-trust-micro text-gray-700 font-medium">
-                <div className="flex items-center"><ShieldCheck size={16} className="mr-1 text-badge-certified" /> 30 Gün Sorgusuz İade</div>
-                <div className="flex items-center"><CheckCircle2 size={16} className="mr-1 text-badge-certified" /> 1 Yıl Birebir Değişim Garantisi</div>
-                <div className="flex items-center"><Lock size={16} className="mr-1 text-gray-400" /> Paynet Altyapısı ile Korunmaktadır</div>
-              </div>
-            </section>
-
+      <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+        <h2 className="text-xl font-bold mb-6 border-b pb-2">Teslimat Bilgileri</h2>
+        
+        {error && (
+          <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 border border-red-100">
+            {error}
           </div>
+        )}
 
-          {/* Sidebar Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm sticky top-6">
-              <h3 className="font-bold mb-4">Sipariş Özeti</h3>
-              
-              {/* Mock Items */}
-              <div className="space-y-3 mb-4">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 truncate mr-2">1x iPhone 14 Pro Max Kılıf...</span>
-                  <span className="font-medium">450 TL</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 truncate mr-2">1x 20W Hızlı Şarj Adaptörü...</span>
-                  <span className="font-medium">300 TL</span>
-                </div>
-              </div>
-
-              <hr className="border-gray-200 mb-4" />
-              
-              <div className="flex justify-between mb-2 text-sm text-gray-600">
-                <span>Ara Toplam</span>
-                <span>750 TL</span>
-              </div>
-              <div className="flex justify-between mb-4 text-sm text-gray-600">
-                <span>Kargo</span>
-                <span>49.90 TL</span>
-              </div>
-              
-              <div className="flex justify-between mb-6 text-xl font-bold text-gray-900">
-                <span>Toplam</span>
-                <span>799.90 TL</span>
-              </div>
-
-              <button className="w-full py-4 bg-cta-background hover:bg-cta-hover text-white rounded-xl font-bold transition-colors shadow-md hover:shadow-lg flex items-center justify-center">
-                <Lock size={18} className="mr-2" />
-                Siparişi Tamamla
-              </button>
-
-              <p className="text-xs text-gray-400 mt-4 text-center">
-                Siparişi tamamlayarak Mesafeli Satış Sözleşmesi'ni kabul etmiş olursunuz.
-              </p>
+        <form onSubmit={handleCheckout} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Ad Soyad *</label>
+              <input type="text" name="name" required value={formData.name} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">E-posta Adresi *</label>
+              <input type="email" name="email" required value={formData.email} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Telefon Numarası *</label>
+              <input type="tel" name="phone" required value={formData.phone} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="05XX XXX XX XX" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">İl *</label>
+              <input type="text" name="city" required value={formData.city} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">İlçe *</label>
+              <input type="text" name="district" required value={formData.district} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Açık Adres *</label>
+              <textarea name="address" required rows={3} value={formData.address} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" />
             </div>
           </div>
-        </div>
+
+          <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-8">
+            <h3 className="font-bold mb-2">Ödeme Bilgilendirmesi</h3>
+            <p className="text-sm text-gray-600">POS sistemi güncellemelerimiz nedeniyle sipariş ödemeleri manuel olarak WhatsApp üzerinden alınmaktadır. Siparişi tamamla butonuna bastığınızda, siparişiniz sistemimize kaydedilecek ve ödeme yönergeleri için WhatsApp hattımıza yönlendirileceksiniz.</p>
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="w-full py-4 bg-cta-background hover:bg-cta-hover text-white rounded-xl font-bold transition-all shadow-md text-lg disabled:opacity-50"
+          >
+            {loading ? 'İşleniyor...' : 'Siparişi Tamamla (WhatsApp\'a Yönlendirilir)'}
+          </button>
+        </form>
       </div>
     </div>
   )

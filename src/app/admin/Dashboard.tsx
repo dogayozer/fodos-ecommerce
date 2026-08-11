@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { logout } from './actions'
 import * as xlsx from 'xlsx'
 import { SettingsForm } from './SettingsForm'
+import { CouponManager } from './CouponManager'
+import { CategoryManager } from './CategoryManager'
 
 export function Dashboard() {
   const [file, setFile] = useState<File | null>(null)
@@ -14,9 +16,9 @@ export function Dashboard() {
   const [discountPercent, setDiscountPercent] = useState<string>('')
 
   // Bulk Update States
-  const [oldUsd, setOldUsd] = useState<string>('')
-  const [newUsd, setNewUsd] = useState<string>('')
-  const [shippingCost, setShippingCost] = useState<string>('110')
+  const [bulkIncrease, setBulkIncrease] = useState<string>('')
+  const [bulkDiscount, setBulkDiscount] = useState<string>('')
+  const [modelFilter, setModelFilter] = useState<string>('')
   const [bulkUpdating, setBulkUpdating] = useState(false)
   const [bulkResult, setBulkResult] = useState<any>(null)
   const [bulkError, setBulkError] = useState('')
@@ -121,9 +123,9 @@ export function Dashboard() {
     }
   }
 
-  const handleBulkUpdate = async () => {
-    if (!oldUsd || !newUsd || !shippingCost) {
-      setBulkError('Lütfen tüm alanları doldurun.')
+  const handleBulkUpdate = async (resetToOriginal: boolean = false) => {
+    if (!resetToOriginal && !bulkIncrease && !bulkDiscount) {
+      setBulkError('Lütfen zam veya indirim oranı girin, ya da Orijinale Dön butonunu kullanın.')
       return
     }
 
@@ -136,9 +138,10 @@ export function Dashboard() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          oldUsd: parseFloat(oldUsd),
-          newUsd: parseFloat(newUsd),
-          shippingCost: parseFloat(shippingCost)
+          increasePercent: parseFloat(bulkIncrease) || 0,
+          discountPercent: parseFloat(bulkDiscount) || 0,
+          modelFilter: modelFilter.trim(),
+          resetToOriginal
         }),
       })
 
@@ -241,48 +244,63 @@ export function Dashboard() {
 
         {/* Bulk Update Section */}
         <div className="mb-8 p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
-          <h2 className="text-lg font-semibold mb-4 text-gray-800">Toplu Fiyat Güncelleme (Excel'siz)</h2>
-          <p className="text-sm text-gray-600 mb-6">Bu bölüm, kur dalgalanmalarında veya kargo ücreti değişimlerinde tüm aktif ürünlerin fiyatlarını Excel yüklemeye gerek kalmadan otomatik olarak güncellemenizi sağlar.</p>
+          <h2 className="text-lg font-semibold mb-4 text-gray-800">Toplu Fiyat Güncelleme</h2>
+          <p className="text-sm text-gray-600 mb-6">Excel'de kayıtlı orijinal piyasa fiyatları (`original_excel_price`) üzerinden tüm sisteme zam/indirim uygulayın.</p>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Mevcut USD Kuru</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Model Kodu ile Filtrele</label>
               <input 
-                type="number" step="0.01"
-                placeholder="Örn: 33.50" 
-                value={oldUsd}
-                onChange={(e) => setOldUsd(e.target.value)}
+                type="text"
+                placeholder="Örn: iPhone 14 Pro" 
+                value={modelFilter}
+                onChange={(e) => setModelFilter(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
+              />
+              <p className="text-xs text-gray-400 mt-1">Sadece bu kelimeyi içeren modeller güncellenir. Boş bırakırsanız hepsi güncellenir.</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Zam Oranı (%)</label>
+              <input 
+                type="number"
+                placeholder="Örn: 20" 
+                value={bulkIncrease}
+                onChange={(e) => setBulkIncrease(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Yeni USD Kuru</label>
-              <input 
-                type="number" step="0.01"
-                placeholder="Örn: 35.00" 
-                value={newUsd}
-                onChange={(e) => setNewUsd(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Yeni Kargo Ücreti (TL)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">İndirim Oranı (%)</label>
               <input 
                 type="number" 
-                value={shippingCost}
-                onChange={(e) => setShippingCost(e.target.value)}
+                placeholder="Örn: 10"
+                value={bulkDiscount}
+                onChange={(e) => setBulkDiscount(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
               />
             </div>
           </div>
           
-          <button
-            onClick={handleBulkUpdate}
-            disabled={bulkUpdating || !oldUsd || !newUsd || !shippingCost}
-            className="w-full py-3 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white rounded-lg font-medium transition-colors"
-          >
-            {bulkUpdating ? 'Fiyatlar Güncelleniyor...' : 'Tüm Ürünlerin Fiyatını Güncelle'}
-          </button>
+          <div className="flex gap-4">
+            <button
+              onClick={() => handleBulkUpdate(false)}
+              disabled={bulkUpdating || (!bulkIncrease && !bulkDiscount)}
+              className="flex-1 py-3 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white rounded-lg font-medium transition-colors"
+            >
+              {bulkUpdating ? 'Fiyatlar Güncelleniyor...' : 'Fiyatları Güncelle'}
+            </button>
+            <button
+              onClick={() => {
+                if (window.confirm('Tüm fiyatlar Excel\'deki orijinal piyasa satış fiyatlarına dönecek. Emin misiniz?')) {
+                  handleBulkUpdate(true)
+                }
+              }}
+              disabled={bulkUpdating}
+              className="flex-1 py-3 bg-gray-500 hover:bg-gray-600 disabled:opacity-50 text-white rounded-lg font-medium transition-colors"
+            >
+              Excel Fiyatlarına Geri Dön
+            </button>
+          </div>
 
           {bulkError && (
             <div className="mt-4 p-4 bg-red-50 text-risk-red-500 rounded-md border border-red-100">
@@ -300,15 +318,25 @@ export function Dashboard() {
 
         {/* Sürüm Notları */}
         <div className="mt-8 bg-blue-50 border border-blue-100 rounded-lg p-5">
-          <h3 className="text-sm font-bold text-trust-blue-700 mb-2">Sistem Güncelleme Notları (v1.3 - 5 Ağustos 2026, 00:38)</h3>
+          <h3 className="text-sm font-bold text-trust-blue-700 mb-2">Sistem Güncelleme Notları (v1.4 - 5 Ağustos 2026, 01:20)</h3>
           <ul className="list-disc pl-5 text-xs text-trust-blue-600 space-y-1">
-            <li><strong>YENİ:</strong> Yan menü 2 kademeli (Kategori &gt; Marka) olarak tamamen sadeleştirildi.</li>
-            <li><strong>YENİ:</strong> Kategori sayfasına anlık model arama ve filtreleme sistemi (ModelFilter) eklendi.</li>
-            <li><strong>GÜNCELLEME:</strong> Excel aktarımında sütun eşleştirmeleri (kategori_ismi, urun_markasi, urun_modeli) revize edildi.</li>
+            <li><strong>YENİ:</strong> İndirim Kuponu Yönetimi (Sepette otomatik hesaplama eklendi).</li>
+            <li><strong>YENİ:</strong> Dinamik Kategori Yönetimi ve Toplu Kategori Taşıma Modülü.</li>
+            <li><strong>GÜNCELLEME:</strong> Fiyat güncellemeleri, kargo mantığı ve dinamik mağaza ayarları eklendi.</li>
           </ul>
         </div>
       </div>
       
+      {/* Category Manager */}
+      <div className="max-w-4xl mx-auto mt-8">
+        <CategoryManager />
+      </div>
+
+      {/* Coupon Manager */}
+      <div className="max-w-4xl mx-auto mt-8">
+        <CouponManager />
+      </div>
+
       {/* Settings Form */}
       <div className="max-w-4xl mx-auto mt-8">
         <SettingsForm />

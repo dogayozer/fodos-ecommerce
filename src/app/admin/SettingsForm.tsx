@@ -16,7 +16,10 @@ export function SettingsForm() {
     gizlilikGuvenlikHtml: '',
     iptalIadeHtml: '',
     kargoTakipHtml: '',
-    kisiselVerilerHtml: ''
+    kisiselVerilerHtml: '',
+    shippingThreshold: 500,
+    shippingFee: 110,
+    sameDayShippingTime: '16:00'
   })
 
   useEffect(() => {
@@ -33,7 +36,10 @@ export function SettingsForm() {
             gizlilikGuvenlikHtml: data.settings.gizlilikGuvenlikHtml || '',
             iptalIadeHtml: data.settings.iptalIadeHtml || '',
             kargoTakipHtml: data.settings.kargoTakipHtml || '',
-            kisiselVerilerHtml: data.settings.kisiselVerilerHtml || ''
+            kisiselVerilerHtml: data.settings.kisiselVerilerHtml || '',
+            shippingThreshold: data.settings.shippingThreshold || 0,
+            shippingFee: data.settings.shippingFee || 0,
+            sameDayShippingTime: data.settings.sameDayShippingTime || '16:00'
           })
         }
         setLoading(false)
@@ -92,6 +98,22 @@ export function SettingsForm() {
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">Hakkımızda (Kısa Tanıtım)</label>
           <textarea name="aboutUs" value={formData.aboutUs} onChange={handleChange} rows={4} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="Hakkımızda sayfasına yazılacak metin..." />
+        </div>
+      </div>
+
+      <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Kargo Ayarları</h3>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Sabit Kargo Ücreti (TL)</label>
+          <input type="number" name="shippingFee" value={formData.shippingFee} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="Örn: 110" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Ücretsiz Kargo Baremi (TL)</label>
+          <input type="number" name="shippingThreshold" value={formData.shippingThreshold} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="Örn: 500" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Aynı Gün Kargo Saati</label>
+          <input type="time" name="sameDayShippingTime" value={formData.sameDayShippingTime} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" />
         </div>
       </div>
 

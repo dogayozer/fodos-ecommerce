@@ -10,23 +10,41 @@ export default async function SearchPage({
 }) {
   const resolvedSearchParams = await searchParams
   const query = typeof resolvedSearchParams.q === 'string' ? resolvedSearchParams.q : ''
+  const categorySlug = typeof resolvedSearchParams.category === 'string' ? resolvedSearchParams.category : null
   const searchTerms = query.toLowerCase().split(' ').filter(Boolean)
 
   let products: any[] = []
+  let categoryName = ''
+
+  if (categorySlug) {
+    const category = await prisma.category.findUnique({
+      where: { slug: categorySlug }
+    })
+    if (category) categoryName = category.name
+  }
 
   if (searchTerms.length > 0) {
+    const whereClause: any = {
+      AND: searchTerms.map(term => ({
+        OR: [
+          { title: { contains: term, mode: 'insensitive' } },
+          { brand: { contains: term, mode: 'insensitive' } },
+          { model_code: { contains: term, mode: 'insensitive' } },
+          { compatible_models: { contains: term, mode: 'insensitive' } },
+          { barcode: { contains: term, mode: 'insensitive' } },
+          { description_raw: { contains: term, mode: 'insensitive' } }
+        ]
+      }))
+    }
+    
+    if (categorySlug) {
+      whereClause.category = {
+        slug: categorySlug
+      }
+    }
+
     products = await prisma.product.findMany({
-      where: {
-        AND: searchTerms.map(term => ({
-          OR: [
-            { title: { contains: term, mode: 'insensitive' } },
-            { brand: { contains: term, mode: 'insensitive' } },
-            { model_code: { contains: term, mode: 'insensitive' } },
-            { barcode: { contains: term, mode: 'insensitive' } },
-            { description_raw: { contains: term, mode: 'insensitive' } }
-          ]
-        }))
-      },
+      where: whereClause,
       include: { images: true },
       orderBy: { createdAt: 'desc' }
     })
@@ -40,6 +58,7 @@ export default async function SearchPage({
         </h1>
         {query ? (
           <p className="text-gray-500">
+            {categoryName && <span className="font-semibold text-gray-900 mr-1">{categoryName} kategorisinde</span>}
             <span className="font-semibold text-trust-blue-600">"{query}"</span> için {products.length} ürün bulundu.
           </p>
         ) : (

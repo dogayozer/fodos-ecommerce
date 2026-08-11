@@ -12,56 +12,59 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { oldUsd, newUsd, shippingCost } = await req.json()
-
-    if (!oldUsd || !newUsd || oldUsd <= 0 || newUsd <= 0 || shippingCost === undefined) {
-      return NextResponse.json({ error: 'Geçersiz kur veya kargo değeri' }, { status: 400 })
-    }
-
-    const multiplier = newUsd / oldUsd
-
-    // Tüm aktif ürünleri getir
-    const products = await prisma.product.findMany({
-      where: { status: 'active' },
-      select: { id: true, reference_price: true }
-    })
+    const { increasePercent, discountPercent, modelFilter, resetToOriginal } = await req.json()
 
     let updatedCount = 0
 
-    // Prisma işlemlerini transaction veya batch halinde yapmak daha performanslı olur ama
-    // matematiksel işlemler olduğu için memory'de hesaplayıp update edeceğiz.
-    // Chunklara bölerek update yapalım (sqlite/postgres transaction limitlerine takılmamak için)
-    
+    const whereClause: any = { status: 'active' }
+    if (modelFilter) {
+      whereClause.model_code = { contains: modelFilter, mode: 'insensitive' }
+    }
+
+    const products = await prisma.product.findMany({
+      where: whereClause,
+      select: { id: true, original_excel_price: true }
+    })
+
     await prisma.$transaction(async (tx) => {
       for (const product of products) {
-        if (!product.reference_price) continue;
+        if (!product.original_excel_price) continue; // Original price yoksa atla
 
-        // Eski üstü çizili fiyatı kura göre artır
-        const newRefPrice = product.reference_price * multiplier
-        
-        // Net fiyatı kargo düşülerek bul
-        let netPrice = newRefPrice - shippingCost
-        
-        // %20 iskonto (standart)
-        let salePrice = netPrice * 0.80
+        let newRefPrice = null;
+        let newSalePrice = product.original_excel_price;
 
-        // Minimum 99 TL kuralı
-        if (salePrice < 99) {
-          salePrice = 99
+        if (!resetToOriginal) {
+          // Zam (reference) hesapla
+          if (increasePercent > 0) {
+            newRefPrice = product.original_excel_price * (1 + (increasePercent / 100))
+          } else {
+            newRefPrice = product.original_excel_price // Zam yoksa kendisi çizili fiyat
+          }
+
+          // İndirim (sale) hesapla
+          if (discountPercent > 0) {
+            newSalePrice = newRefPrice * (1 - (discountPercent / 100))
+          } else {
+            newSalePrice = newRefPrice
+          }
+
+          // Yuvarlama
+          if (newRefPrice) newRefPrice = Math.round(newRefPrice * 100) / 100
+          newSalePrice = Math.round(newSalePrice * 100) / 100
         }
 
         await tx.product.update({
           where: { id: product.id },
           data: {
             reference_price: newRefPrice,
-            sale_price: salePrice
+            sale_price: newSalePrice
           }
         })
 
         updatedCount++
       }
     }, {
-      timeout: 60000 // Uzun sürebilir diye timeout'u artırıyoruz
+      timeout: 120000 // 2 dakika
     })
 
     // Cache temizliği
