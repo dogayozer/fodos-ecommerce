@@ -44,5 +44,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  return [...routes, ...productRoutes, ...faqRoutes]
+  // Dynamic Categories
+  const categories = await prisma.category.findMany({
+    select: { slug: true }
+  })
+  
+  const categoryRoutes = categories.map((category) => ({
+    url: `${baseUrl}/kategori/${category.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily' as const,
+    priority: 0.9,
+  }))
+
+  return [...routes, ...categoryRoutes, ...productRoutes, ...faqRoutes]
 }
