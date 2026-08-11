@@ -24,30 +24,47 @@ export default async function SearchPage({
   }
 
   if (searchTerms.length > 0) {
-    const whereClause: any = {
-      AND: searchTerms.map(term => ({
-        OR: [
-          { title: { contains: term, mode: 'insensitive' } },
-          { brand: { contains: term, mode: 'insensitive' } },
-          { model_code: { contains: term, mode: 'insensitive' } },
-          { compatible_models: { contains: term, mode: 'insensitive' } },
-          { barcode: { contains: term, mode: 'insensitive' } },
-          { description_raw: { contains: term, mode: 'insensitive' } }
-        ]
-      }))
-    }
-    
-    if (categorySlug) {
-      whereClause.category = {
-        slug: categorySlug
-      }
+    // PostgreSQL unaccent extension ile Türkçe karakter duyarsız arama
+    let conditions = []
+    let parameters: any[] = []
+    let paramIndex = 1
+
+    for (const term of searchTerms) {
+      conditions.push(`(
+        unaccent(lower(COALESCE(title, ''))) LIKE unaccent(lower($${paramIndex})) OR 
+        unaccent(lower(COALESCE(description_raw, ''))) LIKE unaccent(lower($${paramIndex})) OR
+        unaccent(lower(COALESCE(brand, ''))) LIKE unaccent(lower($${paramIndex})) OR
+        unaccent(lower(COALESCE(model_code, ''))) LIKE unaccent(lower($${paramIndex})) OR
+        unaccent(lower(COALESCE(compatible_models, ''))) LIKE unaccent(lower($${paramIndex})) OR
+        unaccent(lower(COALESCE(barcode, ''))) LIKE unaccent(lower($${paramIndex}))
+      )`)
+      parameters.push(`%${term}%`)
+      paramIndex++
     }
 
-    products = await prisma.product.findMany({
-      where: whereClause,
-      include: { images: true },
-      orderBy: { createdAt: 'desc' }
-    })
+    const whereStr = conditions.join(' AND ')
+    const rawSql = `SELECT id FROM "Product" WHERE ${whereStr}`
+    
+    const matchedProductsRaw: { id: string }[] = await prisma.$queryRawUnsafe(rawSql, ...parameters)
+    const matchedIds = matchedProductsRaw.map(r => r.id)
+
+    if (matchedIds.length > 0) {
+      const whereClause: any = {
+        id: { in: matchedIds }
+      }
+      
+      if (categorySlug) {
+        whereClause.category = {
+          slug: categorySlug
+        }
+      }
+
+      products = await prisma.product.findMany({
+        where: whereClause,
+        include: { images: true },
+        orderBy: { createdAt: 'desc' }
+      })
+    }
   }
 
   return (
