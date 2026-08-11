@@ -129,6 +129,29 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Supplier Banner Section */}
+      <section className="relative py-20 md:py-28 bg-gray-900 border-b border-gray-800 overflow-hidden">
+        <div className="absolute inset-0">
+          <img 
+            src="/supplier_banner.jpg" 
+            alt="Türkiye'nin Cep Telefonu Parça Tedarikçisi" 
+            className="w-full h-full object-cover opacity-40"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/80 to-transparent"></div>
+        </div>
+        <div className="px-4 sm:px-6 lg:px-8 relative z-10 max-w-7xl mx-auto flex items-center">
+          <div className="max-w-3xl">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white leading-tight mb-4">
+              Türkiye'nin Cep Telefonu <br />
+              <span className="text-trust-blue-400">Parça Tedarikçisi</span>
+            </h2>
+            <p className="text-lg md:text-xl text-gray-300 font-medium border-l-4 border-action-orange-500 pl-4 py-1">
+              Binlerce Tamir Merkezi, Onbinlerce Memnun Müşteri
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Brand Logos - Niche Section */}
       <section className="py-12 bg-white border-b border-gray-100">
         <div className="px-4 sm:px-6 lg:px-8 text-center">
