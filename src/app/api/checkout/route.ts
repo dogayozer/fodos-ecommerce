@@ -161,10 +161,11 @@ export async function POST(req: Request) {
     const user_basket = Buffer.from(JSON.stringify(basketArray)).toString('base64')
 
     // Gerçek IP adresi veya fallback
-    const user_ip = req.headers.get('x-forwarded-for')?.split(',')[0] || '85.105.0.0'
+    const forwardedFor = req.headers.get('x-forwarded-for')
+    const user_ip = forwardedFor ? forwardedFor.split(',')[0].trim() : '85.105.0.0'
     const timeout_limit = "30"
     const debug_on = "1"
-    const test_mode = "0" 
+    const test_mode = "1" // PayTR test modunu açalım
     const no_installment = "0"
     const max_installment = "12"
     const currency = "TL"
@@ -172,6 +173,8 @@ export async function POST(req: Request) {
     // Hash oluşturma
     const hash_str = merchant_id + user_ip + merchant_oid + email + payment_amount + user_basket + no_installment + max_installment + currency + test_mode
     const paytr_token = crypto.createHmac('sha256', merchant_key).update(hash_str + merchant_salt).digest('base64')
+
+    console.log('PAYTR DEBUG:', { merchant_id, user_ip, merchant_oid, email, payment_amount, test_mode })
 
     const formData = new URLSearchParams()
     formData.append('merchant_id', merchant_id)
