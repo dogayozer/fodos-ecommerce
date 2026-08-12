@@ -62,7 +62,10 @@ export default async function SearchPage({
       products = await prisma.product.findMany({
         where: whereClause,
         include: { images: true },
-        orderBy: { createdAt: 'desc' }
+        orderBy: [
+          { images: { _count: 'desc' } },
+          { createdAt: 'desc' }
+        ]
       })
     }
   }

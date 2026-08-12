@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ShieldCheck, Zap, Wrench, ArrowRight } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { ProductCard } from '@/components/ProductCard'
@@ -10,14 +11,20 @@ export const revalidate = 60; // 60 saniyede bir sayfayı yenile
 export default async function HomePage() {
   // Fetch New Arrivals (Yeni Gelenler)
   const newArrivals = await prisma.product.findMany({
-    orderBy: { createdAt: 'desc' },
+    orderBy: [
+      { images: { _count: 'desc' } },
+      { createdAt: 'desc' }
+    ],
     take: 4,
     include: { images: true }
   })
 
   // Mock Best Sellers (Çok Satanlar)
   const bestSellers = await prisma.product.findMany({
-    orderBy: { stock_qty: 'desc' }, 
+    orderBy: [
+      { images: { _count: 'desc' } },
+      { stock_qty: 'desc' }
+    ], 
     take: 4,
     include: { images: true }
   })
@@ -53,11 +60,15 @@ export default async function HomePage() {
                 className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex-shrink-0 bg-gray-50 rounded-xl border border-gray-100 p-2 block hover:border-trust-blue-500 transition-colors"
                 title={img.title}
               >
-                <img 
-                  src={img.url} 
-                  alt={img.title} 
-                  className="w-full h-full object-contain mix-blend-multiply" 
-                />
+                <div className="relative w-full h-full">
+                  <Image 
+                    src={img.url} 
+                    alt={img.title} 
+                    fill
+                    sizes="120px"
+                    className="object-contain mix-blend-multiply" 
+                  />
+                </div>
               </Link>
             ))}
           </div>
@@ -109,10 +120,13 @@ export default async function HomePage() {
           <div className="md:w-1/2 mt-12 md:mt-0 relative hidden sm:block">
             <div className="aspect-video max-w-md mx-auto relative">
               <div className="absolute inset-0 rounded-3xl shadow-2xl overflow-hidden border-4 border-trust-blue-400/30 flex items-center justify-center bg-gray-100">
-                <img 
+                <Image 
                   src="/hero_gaze_cueing.jpg" 
                   alt="Güvenilir Telefon Tamiri" 
-                  className="w-full h-full object-cover"
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
                 />
               </div>
               
@@ -132,10 +146,12 @@ export default async function HomePage() {
       {/* Supplier Banner Section */}
       <section className="relative py-20 md:py-28 bg-gray-900 border-b border-gray-800 overflow-hidden">
         <div className="absolute inset-0">
-          <img 
+          <Image 
             src="/supplier_banner.jpg" 
             alt="Türkiye'nin Cep Telefonu Parça Tedarikçisi" 
-            className="w-full h-full object-cover opacity-40"
+            fill
+            sizes="100vw"
+            className="object-cover opacity-40"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/80 to-transparent"></div>
         </div>
@@ -156,11 +172,13 @@ export default async function HomePage() {
       <section className="py-12 bg-white border-b border-gray-100">
         <div className="px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Yetkili Satış Noktası</p>
-          <div className="max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-sm border border-gray-100 aspect-[4/1]">
-            <img 
+          <div className="max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-sm border border-gray-100 aspect-[4/1] relative">
+            <Image 
               src="/brands_banner.jpg" 
               alt="Fodos ve Piaks Markaları" 
-              className="w-full h-full object-cover"
+              fill
+              sizes="(max-width: 1024px) 100vw, 1024px"
+              className="object-cover"
             />
           </div>
         </div>

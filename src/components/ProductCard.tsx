@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ShoppingCart } from 'lucide-react'
 
 export function ProductCard({ product }: { product: any }) {
@@ -16,7 +17,13 @@ export function ProductCard({ product }: { product: any }) {
       )}
       <div className="aspect-square bg-gray-50 flex items-center justify-center p-2 sm:p-4 relative overflow-hidden">
         {product.images && product.images.length > 0 ? (
-          <img src={product.images[0].url} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-normal mix-blend-multiply" />
+          <Image 
+            src={product.images[0].url} 
+            alt={product.title} 
+            fill
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-normal mix-blend-multiply" 
+          />
         ) : (
           <span className="text-gray-300 text-xs sm:text-sm">Görsel Yok</span>
         )}
