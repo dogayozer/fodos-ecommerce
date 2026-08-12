@@ -42,7 +42,9 @@ export default function CheckoutPage() {
             phone: data.user.phone || '',
             city: data.user.city || '',
             district: data.user.district || '',
-            address: data.user.address || ''
+            address: data.user.address || '',
+            acceptTerms: false,
+            acceptKvkk: false
           })
         }
       })
