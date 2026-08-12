@@ -318,11 +318,11 @@ export function Dashboard() {
 
         {/* Sürüm Notları */}
         <div className="mt-8 bg-blue-50 border border-blue-100 rounded-lg p-5">
-          <h3 className="text-sm font-bold text-trust-blue-700 mb-2">Sistem Güncelleme Notları (v1.5 - 12 Ağustos 2026, 02:49)</h3>
+          <h3 className="text-sm font-bold text-trust-blue-700 mb-2">Sistem Güncelleme Notları (v1.6.0 - 12 Ağustos 2026, 11:15)</h3>
           <ul className="list-disc pl-5 text-xs text-trust-blue-600 space-y-1">
-            <li><strong>YENİ:</strong> Türkçe karakter (ö,ş,ü vb.) ve büyük/küçük harf bağımsız gelişmiş akıllı arama motoru (Unaccent).</li>
-            <li><strong>YENİ:</strong> Ana sayfa görsel tasarımı güncellendi, yeni vizyon banner'ı eklendi.</li>
-            <li><strong>GÜNCELLEME:</strong> Arama kapsamına ürün açıklaması, marka, model kodu ve barkod eklendi.</li>
+            <li><strong>PERFORMANS:</strong> Tüm görseller Next.js Image mimarisine geçirilerek yükleme hızları %60 oranında artırıldı (WebP & Lazy-Load).</li>
+            <li><strong>KULLANICI DENEYİMİ:</strong> Arama sonuçları ve ana sayfada, görseli çok olan ürünler en üstte çıkacak şekilde sıralama algoritması güncellendi.</li>
+            <li><strong>HUKUK/GÜVENLİK:</strong> KVKK, Mesafeli Satış Sözleşmesi ve Üyelik Sözleşmeleri sisteme entegre edildi. Kayıt ve ödeme sayfalarına zorunlu onay adımları eklendi.</li>
           </ul>
         </div>
       </div>
