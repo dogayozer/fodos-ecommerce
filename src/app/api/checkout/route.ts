@@ -104,7 +104,8 @@ export async function POST(req: Request) {
     const totalDiscountApplied = loyalDiscountAmount + couponDiscountAmount
 
     // 4. Create Order
-    const orderNumber = 'FDS' + Math.floor(100000 + Math.random() * 900000)
+    // Sipariş no oluştur (PayTR merchant_oid alfanumerik olmak zorundadır, tire vb. özel karakter kabul etmez)
+    const orderNumber = `ORD${Date.now()}${Math.floor(Math.random() * 1000)}`
 
     const order = await prisma.order.create({
       data: {
