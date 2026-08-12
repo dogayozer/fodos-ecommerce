@@ -130,9 +130,9 @@ export async function POST(req: Request) {
     })
 
     // 5. PayTR Integration
-    const merchant_id = process.env.PAYTR_MERCHANT_ID || ''
-    const merchant_key = process.env.PAYTR_MERCHANT_KEY || ''
-    const merchant_salt = process.env.PAYTR_MERCHANT_SALT || ''
+    const merchant_id = (process.env.PAYTR_MERCHANT_ID || '').trim()
+    const merchant_key = (process.env.PAYTR_MERCHANT_KEY || '').trim()
+    const merchant_salt = (process.env.PAYTR_MERCHANT_SALT || '').trim()
 
     const email = customerInfo.email || `guest_${Date.now()}@fodos.com`
     const payment_amount = Math.round(finalTotal * 100) // Kuruş cinsinden
@@ -158,7 +158,7 @@ export async function POST(req: Request) {
       // Eger toplam tutar degisiyorsa paytr bunu onemsemez, payment_amount neyse onu ceker.
     }
 
-    const user_basket = Buffer.from(JSON.stringify(basketArray)).toString('base64')
+    const user_basket = Buffer.from(JSON.stringify(basketArray), 'utf8').toString('base64')
 
     // Gerçek IP adresi veya fallback
     const forwardedFor = req.headers.get('x-forwarded-for')
