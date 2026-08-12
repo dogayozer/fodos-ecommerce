@@ -34,6 +34,7 @@ export const revalidate = 60; // 60 saniyede bir önbelleği otomatik yenile
 import { getCategoryTree } from "@/lib/data";
 import { prisma } from "@/lib/prisma";
 import Link from 'next/link';
+import SplashIntro from "@/components/SplashIntro";
 
 export default async function RootLayout({
   children,
@@ -49,6 +50,7 @@ export default async function RootLayout({
       className={`${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-gray-50 text-gray-900 font-display">
+        <SplashIntro />
         <Header tree={tree} />
         <div className="flex flex-1 max-w-7xl mx-auto w-full">
           <Sidebar tree={tree} />
