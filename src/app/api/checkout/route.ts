@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
 import { jwtVerify } from 'jose'
+import crypto from 'crypto'
 
 const SECRET_KEY = new TextEncoder().encode('fodos-super-secret-customer-key')
 
@@ -169,7 +170,6 @@ export async function POST(req: Request) {
 
     // Hash oluşturma
     const hash_str = merchant_id + user_ip + merchant_oid + email + payment_amount + user_basket + no_installment + max_installment + currency + test_mode
-    const crypto = require('crypto')
     const paytr_token = crypto.createHmac('sha256', merchant_key).update(hash_str + merchant_salt).digest('base64')
 
     const formData = new URLSearchParams()

@@ -60,8 +60,8 @@ export default function CheckoutPage() {
       script.src = 'https://www.paytr.com/js/iframeResizer.min.js'
       script.async = true
       script.onload = () => {
-        if (window.iFrameResize) {
-          window.iFrameResize({}, '#paytriframe')
+        if ((window as any).iFrameResize) {
+          (window as any).iFrameResize({}, '#paytriframe')
         }
       }
       document.body.appendChild(script)
