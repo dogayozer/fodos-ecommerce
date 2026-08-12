@@ -130,9 +130,9 @@ export async function POST(req: Request) {
     })
 
     // 5. PayTR Integration
-    const merchant_id = (process.env.PAYTR_MERCHANT_ID || '').trim()
-    const merchant_key = (process.env.PAYTR_MERCHANT_KEY || '').trim()
-    const merchant_salt = (process.env.PAYTR_MERCHANT_SALT || '').trim()
+    const merchant_id = (process.env.PAYTR_MERCHANT_ID || '735770').trim()
+    const merchant_key = (process.env.PAYTR_MERCHANT_KEY || '8Znf7RgqbWaar2B5').trim()
+    const merchant_salt = (process.env.PAYTR_MERCHANT_SALT || 'iF9zPQq1UbZ4Xoeo').trim()
 
     const email = customerInfo.email || `guest_${Date.now()}@fodos.com`
     const payment_amount = Math.round(finalTotal * 100) // Kuruş cinsinden
