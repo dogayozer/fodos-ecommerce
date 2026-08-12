@@ -15,7 +15,9 @@ export default function CheckoutPage() {
     phone: '',
     city: '',
     district: '',
-    address: ''
+    address: '',
+    acceptTerms: false,
+    acceptKvkk: false
   })
   
   const [loading, setLoading] = useState(false)
@@ -48,7 +50,13 @@ export default function CheckoutPage() {
   }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+    const { name, value, type } = e.target;
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFormData({ ...formData, [name]: checked });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   }
 
   const handleCheckout = async (e: React.FormEvent) => {
@@ -156,10 +164,39 @@ export default function CheckoutPage() {
             <p className="text-sm text-gray-600">POS sistemi güncellemelerimiz nedeniyle sipariş ödemeleri manuel olarak WhatsApp üzerinden alınmaktadır. Siparişi tamamla butonuna bastığınızda, siparişiniz sistemimize kaydedilecek ve ödeme yönergeleri için WhatsApp hattımıza yönlendirileceksiniz.</p>
           </div>
 
+          <div className="space-y-3 mt-6 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <input 
+                type="checkbox" 
+                name="acceptTerms"
+                required
+                checked={formData.acceptTerms}
+                onChange={handleChange}
+                className="mt-1 w-4 h-4 text-trust-blue-600 rounded border-gray-300 focus:ring-trust-blue-500"
+              />
+              <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
+                <Link href="/mesafeli-satis-sozlesmesi" target="_blank" className="text-trust-blue-600 hover:underline font-semibold">Ön Bilgilendirme Formu</Link>'nu ve <Link href="/mesafeli-satis-sozlesmesi" target="_blank" className="text-trust-blue-600 hover:underline font-semibold">Mesafeli Satış Sözleşmesi</Link>'ni okudum ve onaylıyorum.
+              </span>
+            </label>
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <input 
+                type="checkbox" 
+                name="acceptKvkk"
+                required
+                checked={formData.acceptKvkk}
+                onChange={handleChange}
+                className="mt-1 w-4 h-4 text-trust-blue-600 rounded border-gray-300 focus:ring-trust-blue-500"
+              />
+              <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
+                Kişisel verilerimin işlenmesine ilişkin <Link href="/kvkk" target="_blank" className="text-trust-blue-600 hover:underline font-semibold">KVKK Aydınlatma Metni</Link>'ni okudum.
+              </span>
+            </label>
+          </div>
+
           <button 
             type="submit" 
-            disabled={loading}
-            className="w-full py-4 bg-cta-background hover:bg-cta-hover text-white rounded-xl font-bold transition-all shadow-md text-lg disabled:opacity-50"
+            disabled={loading || !formData.acceptTerms || !formData.acceptKvkk}
+            className="w-full py-4 bg-cta-background hover:bg-cta-hover text-white rounded-xl font-bold transition-all shadow-md text-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'İşleniyor...' : 'Siparişi Tamamla (WhatsApp\'a Yönlendirilir)'}
           </button>
