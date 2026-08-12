@@ -16,8 +16,8 @@ export async function POST(req: Request) {
       return new NextResponse('Bad Request', { status: 400 })
     }
 
-    const merchant_key = process.env.PAYTR_MERCHANT_KEY || ''
-    const merchant_salt = process.env.PAYTR_MERCHANT_SALT || ''
+    const merchant_key = (process.env.PAYTR_MERCHANT_KEY || '8Znf7RgqbWaar2B5').trim()
+    const merchant_salt = (process.env.PAYTR_MERCHANT_SALT || 'iF9zPQq1UbZ4Xoeo').trim()
 
     // Hash doğrulaması (PayTR'dan geldiğini kanıtlamak için)
     const expected_hash_str = merchant_oid + merchant_salt + status + total_amount
