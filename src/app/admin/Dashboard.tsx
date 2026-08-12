@@ -176,6 +176,16 @@ export function Dashboard() {
           </button>
         </div>
 
+        <div className="mb-8 p-6 bg-gradient-to-r from-trust-blue-600 to-trust-blue-800 rounded-xl shadow-md text-white flex justify-between items-center">
+          <div>
+            <h2 className="text-xl font-bold mb-1">Sipariş Yönetimi</h2>
+            <p className="text-sm text-blue-100">Gelen siparişleri görüntüle, kargo numaralarını gir ve durumu güncelle.</p>
+          </div>
+          <a href="/admin/siparisler" className="bg-white text-trust-blue-700 px-6 py-3 rounded-lg font-bold hover:bg-gray-50 transition-colors shadow-sm">
+            Siparişlere Git
+          </a>
+        </div>
+
         <div className="mb-8">
           <h2 className="text-lg font-semibold mb-4 text-gray-800">Trendyol Ürün Senkronizasyonu (Excel)</h2>
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50 mb-4">

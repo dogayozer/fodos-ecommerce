@@ -88,7 +88,9 @@ model Order {
   shippingCity  String?
   shippingDistrict String?
   shippingAddress String?
-  status        String      @default("pending") // pending, paid, shipped, cancelled
+  shippingCompany String?     // Kargo Firması (Örn: Yurtiçi Kargo)
+  trackingNumber  String?     // Kargo Takip No
+  status        String      @default("pending") // pending, processing, shipped, delivered, cancelled
   items         OrderItem[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt

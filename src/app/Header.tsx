@@ -109,7 +109,7 @@ export function Header({ tree }: { tree: any[] }) {
               <div className="flex items-center space-x-4">
                 <div className="flex flex-col text-right">
                   <span className="text-xs text-gray-500">Hoş geldin,</span>
-                  <span className="text-sm font-bold text-gray-900">{user.name?.split(' ')[0]}</span>
+                  <Link href="/hesabim" className="text-sm font-bold text-gray-900 hover:text-trust-blue-600 transition-colors" title="Hesabım">{user.name?.split(' ')[0]}</Link>
                 </div>
                 <button onClick={handleLogout} className="text-gray-500 hover:text-red-600 transition-colors" title="Çıkış Yap">
                   <LogOut size={20} />
@@ -176,7 +176,7 @@ export function Header({ tree }: { tree: any[] }) {
                 <div className="flex justify-between items-center py-2 px-2">
                   <div className="flex items-center">
                     <User size={20} className="text-gray-500 mr-2" />
-                    <span className="font-semibold">{user.name}</span>
+                    <Link href="/hesabim" className="font-semibold text-trust-blue-700">Hesabım ({user.name})</Link>
                   </div>
                   <button onClick={handleLogout} className="text-red-600 text-sm font-medium px-3 py-1 bg-red-50 rounded-lg">Çıkış Yap</button>
                 </div>
