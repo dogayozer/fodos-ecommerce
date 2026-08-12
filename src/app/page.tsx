@@ -143,46 +143,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Supplier Banner Section */}
-      <section className="relative py-20 md:py-28 bg-gray-900 border-b border-gray-800 overflow-hidden">
-        <div className="absolute inset-0">
-          <Image 
-            src="/supplier_banner.jpg" 
-            alt="Türkiye'nin Cep Telefonu Parça Tedarikçisi" 
-            fill
-            sizes="100vw"
-            className="object-cover opacity-40"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/80 to-transparent"></div>
-        </div>
-        <div className="px-4 sm:px-6 lg:px-8 relative z-10 max-w-7xl mx-auto flex items-center">
-          <div className="max-w-3xl">
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white leading-tight mb-4">
-              Türkiye'nin Cep Telefonu <br />
-              <span className="text-trust-blue-400">Parça Tedarikçisi</span>
-            </h2>
-            <p className="text-lg md:text-xl text-gray-300 font-medium border-l-4 border-action-orange-500 pl-4 py-1">
-              Binlerce Tamir Merkezi, Onbinlerce Memnun Müşteri
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Brand Logos - Niche Section */}
-      <section className="py-12 bg-white border-b border-gray-100">
-        <div className="px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Yetkili Satış Noktası</p>
-          <div className="max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-sm border border-gray-100 aspect-[4/1] relative">
-            <Image 
-              src="/brands_banner.jpg" 
-              alt="Fodos ve Piaks Markaları" 
-              fill
-              sizes="(max-width: 1024px) 100vw, 1024px"
-              className="object-cover"
-            />
-          </div>
-        </div>
-      </section>
 
       {/* Best Sellers (Çok Satanlar) */}
       <section className="py-16 bg-gray-50">
