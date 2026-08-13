@@ -7,8 +7,9 @@ import Link from 'next/link'
 
 export function SmartAssistant() {
   const [isOpen, setIsOpen] = useState(false)
+  const [inputValue, setInputValue] = useState('')
   // @ts-ignore - Bypass AI SDK 4.0 type strictness
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+  const { messages, append, isLoading } = useChat({
     api: '/api/chat',
     initialMessages: [
       {
@@ -18,6 +19,15 @@ export function SmartAssistant() {
       }
     ]
   } as any) as any
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!inputValue.trim() || isLoading) return
+    if (append) {
+      append({ role: 'user', content: inputValue })
+    }
+    setInputValue('')
+  }
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Scroll to bottom whenever messages change
@@ -146,17 +156,17 @@ export function SmartAssistant() {
 
           {/* Input Area */}
           <div className="p-4 bg-white border-t border-gray-100">
-            <form onSubmit={handleSubmit} className="relative flex items-center">
+            <form onSubmit={onSubmit} className="relative flex items-center">
               <input
-                value={input || ''}
-                onChange={handleInputChange}
+                value={inputValue}
+                onChange={e => setInputValue(e.target.value)}
                 placeholder="Örn: iPhone 13 ekran var mı?"
                 className="w-full bg-gray-50 border border-gray-200 rounded-full py-3 pl-4 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-trust-blue-500 focus:bg-white transition-colors"
                 disabled={isLoading}
               />
               <button 
                 type="submit" 
-                disabled={isLoading || !(input || '').trim()}
+                disabled={isLoading || !inputValue.trim()}
                 className="absolute right-1 p-2 bg-trust-blue-600 text-white rounded-full hover:bg-trust-blue-700 disabled:opacity-50 transition-colors"
               >
                 <Send size={16} className={isLoading ? 'opacity-50' : ''} />
