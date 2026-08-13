@@ -1,46 +1,64 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { useChat } from '@ai-sdk/react'
 import { MessageCircle, X, Send, Bot, User, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 
 export function SmartAssistant() {
   const [isOpen, setIsOpen] = useState(false)
   const [inputValue, setInputValue] = useState('')
-  const { messages, sendMessage, isLoading, error } = useChat(({
-    api: '/api/chat',
-    initialMessages: [
-      {
-        id: 'welcome-message',
-        role: 'assistant',
-        content: 'Merhaba! Fodos ve Piaks akıllı alışveriş asistanına hoş geldiniz. Size nasıl yardımcı olabilirim?'
-      }
-    ],
-    onError: (err: any) => {
-      console.error("AI Chat Error:", err);
-      alert("Asistan yanıt verirken bir hata oluştu: " + err.message);
+  const [isLoading, setIsLoading] = useState(false)
+  const [messages, setMessages] = useState<any[]>([
+    {
+      id: 'welcome-message',
+      role: 'assistant',
+      content: 'Merhaba! Fodos ve Piaks akıllı alışveriş asistanına hoş geldiniz. Size nasıl yardımcı olabilirim?'
     }
-  }) as any) as any
+  ])
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!inputValue.trim() || isLoading) return
     
-    try {
-      if (sendMessage) {
-        // Try passing it as a string first, if it needs an object we can adjust later
-        sendMessage({ role: 'user', content: inputValue }).catch((err: any) => {
-          console.error("SendMessage Error:", err);
-        });
-      } else {
-        alert("Sistem hatası: sendMessage fonksiyonu yüklenmedi!");
-      }
-    } catch (err: any) {
-      alert("Gönderim sırasında hata: " + err.message);
-    }
-    
+    const userMessage = { id: Date.now().toString(), role: 'user', content: inputValue }
+    const newMessages = [...messages, userMessage]
+    setMessages(newMessages)
     setInputValue('')
+    setIsLoading(true)
+    
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: newMessages })
+      })
+
+      if (!res.ok) {
+        throw new Error("Sunucu hatası: " + res.statusText)
+      }
+
+      const data = await res.json()
+      
+      const aiMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: data.text || '',
+        toolInvocations: (data.toolResults || []).map((tr: any) => ({
+          state: 'result',
+          toolCallId: tr.toolCallId,
+          toolName: tr.toolName,
+          args: tr.input || tr.args,
+          result: tr.output || tr.result
+        }))
+      }
+
+      setMessages([...newMessages, aiMessage])
+    } catch (err: any) {
+      console.error("Chat Error:", err)
+      alert("Asistan yanıt verirken bir hata oluştu: " + err.message)
+    } finally {
+      setIsLoading(false)
+    }
   }
   const messagesEndRef = useRef<HTMLDivElement>(null)
 

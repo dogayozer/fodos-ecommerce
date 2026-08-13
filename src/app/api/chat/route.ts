@@ -1,4 +1,4 @@
-import { streamText, tool } from 'ai'
+import { generateText, tool } from 'ai'
 import { google } from '@ai-sdk/google'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     console.log("API /api/chat received body:", JSON.stringify(body, null, 2))
     const messages = body.messages || []
 
-    const result = streamText({
+    const result = await generateText({
       model: google('gemini-flash-latest'),
       messages,
       system: `Sen Fodos ve Piaks markalarının resmi akıllı alışveriş asistanısın. 
@@ -59,31 +59,13 @@ export async function POST(req: Request) {
       }
     })
 
-    const encoder = new TextEncoder()
-    const dataStream = new ReadableStream({
-      async start(controller) {
-        const reader = result.textStream.getReader()
-        try {
-          while (true) {
-            const { done, value } = await reader.read()
-            if (done) break
-            if (value) {
-              controller.enqueue(encoder.encode(`0:${JSON.stringify(value)}\n`))
-            }
-          }
-        } catch (err) {
-          controller.error(err)
-        } finally {
-          controller.close()
-        }
-      }
-    })
-
-    return new Response(dataStream, {
+    return new Response(JSON.stringify({
+      text: result.text || "",
+      toolCalls: result.toolCalls || [],
+      toolResults: result.toolResults || []
+    }), {
       headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive'
+        'Content-Type': 'application/json',
       }
     })
   } catch (error: any) {
