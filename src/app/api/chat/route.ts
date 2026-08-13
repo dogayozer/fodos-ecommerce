@@ -59,7 +59,7 @@ export async function POST(req: Request) {
       }
     })
 
-    return result.toDataStreamResponse()
+    return result.toUIMessageStreamResponse()
   } catch (error: any) {
     console.error('Chat API Error:', error)
     return new Response(JSON.stringify({ error: error.message }), { status: 500 })
