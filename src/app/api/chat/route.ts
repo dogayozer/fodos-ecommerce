@@ -41,8 +41,8 @@ export async function POST(req: Request) {
               select: {
                 id: true,
                 title: true,
-                price: true,
-                originalPrice: true,
+                sale_price: true,
+                reference_price: true,
                 slug: true
               },
               take: 3
@@ -54,11 +54,10 @@ export async function POST(req: Request) {
             return { success: true, products }
           },
         }),
-      },
-      maxSteps: 2, // Yapay zekanın aracı çalıştırıp tekrar cevap vermesi için gerekli (multi-step)
+      }
     })
 
-    return result.toDataStreamResponse()
+    return result.toTextStreamResponse()
   } catch (error: any) {
     console.error('Chat API Error:', error)
     return new Response(JSON.stringify({ error: error.message }), { status: 500 })
