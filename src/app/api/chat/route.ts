@@ -26,19 +26,27 @@ export async function POST(req: Request) {
       `,
       tools: {
         searchProducts: tool({
-          description: 'Müşteri bir ürün aradığında veya "elinizde X var mı" diye sorduğunda veritabanında arama yapmak için kullanılır.',
+          description: 'Müşteri bir ürün aradığında veritabanında arama yapmak için kullanılır. Müşteri kelimeleri yanlış/eksik yazmış olsa bile (örn: "adaptr" -> "adaptör", "kilif" -> "kılıf") sen bunları DÜZELTEREK ve EN YALIN haline getirerek arama yapmalısın. Sadece anahtar kelimeleri dizi (array) olarak gönder.',
           parameters: z.object({
-            query: z.string().describe('Aranacak anahtar kelime, marka veya model (örn: iPhone 13 batarya, şarj aleti, ekran)'),
+            keywords: z.array(z.string()).describe('Aranacak düzeltilmiş anahtar kelimeler listesi (örn: ["65w", "adaptör"] veya ["iphone", "13", "ekran"])'),
           }),
-          // @ts-ignore - Vercel AI SDK strict type workaround
-          execute: async ({ query }) => {
-            // Veritabanını yormamak için take: 3 kullanıyoruz ve çok basit bir contains sorgusu yapıyoruz
+          // @ts-ignore
+          execute: async ({ keywords }) => {
+            if (!keywords || keywords.length === 0) return { success: false, message: "Anahtar kelime bulunamadı." };
+            
+            // Her bir anahtar kelime için, o kelimenin title veya brand içinde geçme şartını (AND) oluşturuyoruz.
+            // Bu sayede "65w adaptör" aramasında kelimelerin sırası veya aralarındaki kelimeler önemsiz olur.
+            const andConditions = keywords.map((keyword: string) => ({
+              OR: [
+                { title: { contains: keyword, mode: 'insensitive' as any } },
+                { brand: { contains: keyword, mode: 'insensitive' as any } },
+                { compatible_models: { contains: keyword, mode: 'insensitive' as any } }
+              ]
+            }))
+
             const products = await prisma.product.findMany({
               where: {
-                OR: [
-                  { title: { contains: query, mode: 'insensitive' } },
-                  { brand: { contains: query, mode: 'insensitive' } }
-                ]
+                AND: andConditions
               },
               select: {
                 id: true,
