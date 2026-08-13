@@ -8,8 +8,7 @@ import Link from 'next/link'
 export function SmartAssistant() {
   const [isOpen, setIsOpen] = useState(false)
   const [inputValue, setInputValue] = useState('')
-  // @ts-ignore - Bypass AI SDK 4.0 type strictness
-  const { messages, append, isLoading, error } = (useChat({
+  const { messages, append, isLoading, error } = useChat(({
     api: '/api/chat',
     initialMessages: [
       {
@@ -22,7 +21,7 @@ export function SmartAssistant() {
       console.error("AI Chat Error:", err);
       alert("Asistan yanıt verirken bir hata oluştu: " + err.message);
     }
-  }) as any)
+  }) as any) as any
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
