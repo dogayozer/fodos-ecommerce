@@ -9,14 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/google": "^4.0.43",
+    "@ai-sdk/react": "^4.0.67",
     "@prisma/client": "^6.4.0",
+    "ai": "^7.0.64",
     "bcryptjs": "^3.0.3",
     "jose": "^6.2.8",
     "lucide-react": "^1.28.0",
     "next": "16.2.12",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
