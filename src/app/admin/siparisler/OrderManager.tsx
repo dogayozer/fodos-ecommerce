@@ -21,6 +21,7 @@ export function OrderManager() {
   const [editStatus, setEditStatus] = useState('')
   const [editCompany, setEditCompany] = useState('')
   const [editTracking, setEditTracking] = useState('')
+  const [editAdminNote, setEditAdminNote] = useState('')
   const [saving, setSaving] = useState(false)
 
   const fetchOrders = async () => {
@@ -51,7 +52,8 @@ export function OrderManager() {
           id: selectedOrder.id,
           status: editStatus,
           shippingCompany: editCompany,
-          trackingNumber: editTracking
+          trackingNumber: editTracking,
+          adminNote: editAdminNote
         })
       })
       if (res.ok) {
@@ -70,6 +72,106 @@ export function OrderManager() {
     setEditStatus(order.status)
     setEditCompany(order.shippingCompany || '')
     setEditTracking(order.trackingNumber || '')
+    setEditAdminNote(order.adminNote || '')
+  }
+
+  const handlePrint = (order: any) => {
+    const printWindow = window.open('', '_blank')
+    if (!printWindow) return
+
+    const itemsHtml = order.items.map((item: any) => `
+      <tr style="border-bottom: 1px solid #ddd;">
+        <td style="padding: 12px 8px;">${item.product.title}</td>
+        <td style="padding: 12px 8px; text-align: center;">${item.quantity}</td>
+        <td style="padding: 12px 8px; text-align: right;">${item.price.toLocaleString('tr-TR')} TL</td>
+        <td style="padding: 12px 8px; text-align: right;">${(item.quantity * item.price).toLocaleString('tr-TR')} TL</td>
+      </tr>
+    `).join('')
+
+    const html = `
+      <html>
+        <head>
+          <title>Sipariş Fişi - ${order.orderNumber}</title>
+          <style>
+            body { font-family: sans-serif; color: #333; margin: 40px; }
+            .header { display: flex; justify-content: space-between; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
+            .info-block { margin-bottom: 30px; }
+            table { w-full: 100%; border-collapse: collapse; width: 100%; margin-bottom: 30px; }
+            th { text-align: left; padding: 12px 8px; background-color: #f9fafb; border-bottom: 2px solid #ddd; }
+            .totals { width: 100%; display: flex; justify-content: flex-end; }
+            .totals table { width: 300px; }
+            .note { padding: 15px; background: #f9fafb; border-radius: 8px; margin-top: 30px; font-size: 14px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div>
+              <h1 style="margin:0;">FODOS & PİAKS</h1>
+              <p style="margin:5px 0 0 0; color:#666;">Sipariş Fişi</p>
+            </div>
+            <div style="text-align: right;">
+              <h2 style="margin:0;">#${order.orderNumber}</h2>
+              <p style="margin:5px 0 0 0; color:#666;">Tarih: ${new Date(order.createdAt).toLocaleDateString('tr-TR')}</p>
+            </div>
+          </div>
+          
+          <div style="display: flex; justify-content: space-between;" class="info-block">
+            <div style="width: 48%;">
+              <h3 style="margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Müşteri Bilgileri</h3>
+              <p style="margin: 4px 0;"><strong>${order.customer?.name || 'Misafir'}</strong></p>
+              <p style="margin: 4px 0;">${order.customer?.phone || ''}</p>
+              <p style="margin: 4px 0;">${order.customer?.email || ''}</p>
+            </div>
+            <div style="width: 48%;">
+              <h3 style="margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Teslimat Adresi</h3>
+              <p style="margin: 4px 0;">${order.shippingAddress || ''}</p>
+              <p style="margin: 4px 0;">${order.shippingDistrict || ''} / ${order.shippingCity || ''}</p>
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Ürün</th>
+                <th style="text-align: center;">Adet</th>
+                <th style="text-align: right;">Birim Fiyat</th>
+                <th style="text-align: right;">Toplam</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsHtml}
+            </tbody>
+          </table>
+
+          <div class="totals">
+            <table>
+              <tr>
+                <td style="padding: 8px;">Ara Toplam:</td>
+                <td style="padding: 8px; text-align: right;">${order.totalAmount.toLocaleString('tr-TR')} TL</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px;">Kargo:</td>
+                <td style="padding: 8px; text-align: right;">${order.shippingCost.toLocaleString('tr-TR')} TL</td>
+              </tr>
+              <tr style="font-weight: bold; font-size: 18px;">
+                <td style="padding: 8px; border-top: 2px solid #333;">Genel Toplam:</td>
+                <td style="padding: 8px; text-align: right; border-top: 2px solid #333;">${(order.totalAmount + order.shippingCost).toLocaleString('tr-TR')} TL</td>
+              </tr>
+            </table>
+          </div>
+
+          ${order.adminNote ? `<div class="note"><strong>Yönetici Notu:</strong><br/>${order.adminNote.replace(/\n/g, '<br/>')}</div>` : ''}
+          
+          <script>
+            window.onload = () => {
+              window.print();
+            }
+          </script>
+        </body>
+      </html>
+    `
+    printWindow.document.write(html)
+    printWindow.document.close()
   }
 
   const filteredOrders = orders.filter(o => {
@@ -85,6 +187,7 @@ export function OrderManager() {
         <button onClick={() => setActiveTab('pending')} className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${activeTab === 'pending' ? 'bg-yellow-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border'}`}>Bekleyenler</button>
         <button onClick={() => setActiveTab('processing')} className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${activeTab === 'processing' ? 'bg-blue-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border'}`}>İşleme Alınanlar</button>
         <button onClick={() => setActiveTab('shipped')} className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${activeTab === 'shipped' ? 'bg-indigo-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border'}`}>Kargolananlar</button>
+        <button onClick={() => setActiveTab('cancelled')} className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${activeTab === 'cancelled' ? 'bg-red-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border'}`}>İptal Edilenler</button>
       </div>
 
       {/* Orders Table */}
@@ -200,23 +303,54 @@ export function OrderManager() {
                   </div>
                 </>
               )}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Admin Notu (Müşteri Görmez)</label>
+                <textarea 
+                  value={editAdminNote} 
+                  onChange={e => setEditAdminNote(e.target.value)}
+                  className="w-full border rounded-lg p-2"
+                  rows={3}
+                  placeholder="Siparişle ilgili özel notlar..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Sipariş İçeriği</label>
+                <div className="bg-gray-50 border rounded-lg p-3 space-y-2 max-h-48 overflow-y-auto">
+                  {selectedOrder.items?.map((item: any) => (
+                    <div key={item.id} className="flex justify-between items-center text-sm bg-white p-2 border rounded">
+                      <div className="flex-1 truncate mr-2 font-medium">{item.product?.title || 'Ürün'}</div>
+                      <div className="text-gray-500 w-16 text-center">{item.quantity} Adet</div>
+                      <div className="font-bold text-right w-24">{(item.price * item.quantity).toLocaleString('tr-TR')} TL</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <div className="mt-6 flex justify-end space-x-3">
+            <div className="mt-6 flex justify-between items-center">
               <button 
-                onClick={() => setSelectedOrder(null)} 
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                onClick={() => handlePrint(selectedOrder)} 
+                className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 text-sm font-medium"
               >
-                İptal
+                Fiş Yazdır
               </button>
-              <button 
-                onClick={handleUpdate} 
-                disabled={saving}
-                className="px-4 py-2 bg-trust-blue-600 text-white rounded-lg hover:bg-trust-blue-700 disabled:opacity-50"
-              >
-                {saving ? 'Kaydediliyor...' : 'Kaydet'}
-              </button>
-            </div>
+              <div className="flex space-x-3">
+                <button 
+                  onClick={() => setSelectedOrder(null)} 
+                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                >
+                  İptal
+                </button>
+                <button 
+                  onClick={handleUpdate} 
+                  disabled={saving}
+                  className="px-4 py-2 bg-trust-blue-600 text-white rounded-lg hover:bg-trust-blue-700 disabled:opacity-50"
+                >
+                  {saving ? 'Kaydediliyor...' : 'Kaydet'}
+                </button>
+              </div>
           </div>
         </div>
       )}

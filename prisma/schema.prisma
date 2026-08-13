@@ -91,6 +91,7 @@ model Order {
   shippingCompany String?     // Kargo Firması (Örn: Yurtiçi Kargo)
   trackingNumber  String?     // Kargo Takip No
   status        String      @default("pending") // pending, processing, shipped, delivered, cancelled
+  adminNote     String?     // Admin tarafından siparişe eklenen özel not
   items         OrderItem[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt

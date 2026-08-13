@@ -25,7 +25,7 @@ export async function GET() {
 export async function PUT(req: Request) {
   try {
     const body = await req.json()
-    const { id, status, trackingNumber, shippingCompany } = body
+    const { id, status, trackingNumber, shippingCompany, adminNote } = body
 
     if (!id) {
       return NextResponse.json({ error: 'Order ID required' }, { status: 400 })
@@ -36,7 +36,8 @@ export async function PUT(req: Request) {
       data: {
         status,
         trackingNumber,
-        shippingCompany
+        shippingCompany,
+        adminNote
       }
     })
 

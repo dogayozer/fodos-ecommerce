@@ -176,14 +176,26 @@ export function Dashboard() {
           </button>
         </div>
 
-        <div className="mb-8 p-6 bg-gradient-to-r from-trust-blue-600 to-trust-blue-800 rounded-xl shadow-md text-white flex justify-between items-center">
-          <div>
-            <h2 className="text-xl font-bold mb-1">Sipariş Yönetimi</h2>
-            <p className="text-sm text-blue-100">Gelen siparişleri görüntüle, kargo numaralarını gir ve durumu güncelle.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="p-6 bg-gradient-to-r from-trust-blue-600 to-trust-blue-800 rounded-xl shadow-md text-white flex flex-col justify-between">
+            <div>
+              <h2 className="text-xl font-bold mb-1">Sipariş Yönetimi</h2>
+              <p className="text-sm text-blue-100 mb-4">Gelen siparişleri görüntüle, fatura yazdır, kargo numaralarını gir ve sipariş notu ekle.</p>
+            </div>
+            <a href="/admin/siparisler" className="bg-white text-trust-blue-700 px-6 py-3 rounded-lg font-bold hover:bg-gray-50 transition-colors shadow-sm text-center inline-block">
+              Siparişlere Git
+            </a>
           </div>
-          <a href="/admin/siparisler" className="bg-white text-trust-blue-700 px-6 py-3 rounded-lg font-bold hover:bg-gray-50 transition-colors shadow-sm">
-            Siparişlere Git
-          </a>
+
+          <div className="p-6 bg-gradient-to-r from-purple-600 to-purple-800 rounded-xl shadow-md text-white flex flex-col justify-between">
+            <div>
+              <h2 className="text-xl font-bold mb-1">Üyelik Yönetimi</h2>
+              <p className="text-sm text-purple-100 mb-4">Kayıtlı müşterilerinizi, iletişim bilgilerini ve geçmiş alışveriş detaylarını görüntüleyin.</p>
+            </div>
+            <a href="/admin/uyeler" className="bg-white text-purple-700 px-6 py-3 rounded-lg font-bold hover:bg-gray-50 transition-colors shadow-sm text-center inline-block">
+              Üyelere Git
+            </a>
+          </div>
         </div>
 
         <div className="mb-8">
