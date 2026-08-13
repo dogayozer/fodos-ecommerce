@@ -59,7 +59,33 @@ export async function POST(req: Request) {
       }
     })
 
-    return result.toUIMessageStreamResponse()
+    const encoder = new TextEncoder()
+    const dataStream = new ReadableStream({
+      async start(controller) {
+        const reader = result.textStream.getReader()
+        try {
+          while (true) {
+            const { done, value } = await reader.read()
+            if (done) break
+            if (value) {
+              controller.enqueue(encoder.encode(`0:${JSON.stringify(value)}\n`))
+            }
+          }
+        } catch (err) {
+          controller.error(err)
+        } finally {
+          controller.close()
+        }
+      }
+    })
+
+    return new Response(dataStream, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive'
+      }
+    })
   } catch (error: any) {
     console.error('Chat API Error:', error)
     return new Response(JSON.stringify({ error: error.message }), { status: 500 })
