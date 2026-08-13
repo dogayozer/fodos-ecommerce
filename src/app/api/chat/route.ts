@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     const { messages } = await req.json()
 
     const result = streamText({
-      model: google('gemini-1.5-flash'),
+      model: google('gemini-flash-latest'),
       messages,
       system: `Sen Fodos ve Piaks markalarının resmi akıllı alışveriş asistanısın. 
       Müşteriler yedek parça, telefon aksesuarı veya elektronik ürünler hakkında sorular soracak.
