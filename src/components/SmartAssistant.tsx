@@ -68,7 +68,7 @@ export function SmartAssistant() {
 
           {/* Messages Area */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-            {messages.map((m: any) => (
+            {(messages || []).map((m: any) => (
               <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-sm ${
                   m.role === 'user' 
@@ -83,7 +83,7 @@ export function SmartAssistant() {
                   </div>
                   
                   {/* Tool Invocations Display */}
-                  {m.toolInvocations?.map((toolInvocation: any) => {
+                  {(m.toolInvocations || []).map((toolInvocation: any) => {
                     const toolCallId = toolInvocation.toolCallId;
                     
                     if (toolInvocation.state === 'result') {
@@ -95,14 +95,14 @@ export function SmartAssistant() {
                               🔍 Bulunan Ürünler:
                             </p>
                             <div className="space-y-3">
-                              {result.products.map((p: any) => (
+                              {(result.products || []).map((p: any) => (
                                 <Link 
                                   href={`/urun/${p.slug}`} 
                                   key={p.id}
                                   className="block bg-white border border-gray-200 p-2 rounded-lg hover:border-trust-blue-400 transition-colors"
                                 >
                                   <div className="font-semibold text-gray-800 line-clamp-1">{p.title}</div>
-                                  <div className="font-bold text-trust-blue-600 mt-1">{p.sale_price.toLocaleString('tr-TR')} TL</div>
+                                  <div className="font-bold text-trust-blue-600 mt-1">{p.sale_price?.toLocaleString('tr-TR')} TL</div>
                                 </Link>
                               ))}
                             </div>
@@ -148,7 +148,7 @@ export function SmartAssistant() {
           <div className="p-4 bg-white border-t border-gray-100">
             <form onSubmit={handleSubmit} className="relative flex items-center">
               <input
-                value={input}
+                value={input || ''}
                 onChange={handleInputChange}
                 placeholder="Örn: iPhone 13 ekran var mı?"
                 className="w-full bg-gray-50 border border-gray-200 rounded-full py-3 pl-4 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-trust-blue-500 focus:bg-white transition-colors"
@@ -156,7 +156,7 @@ export function SmartAssistant() {
               />
               <button 
                 type="submit" 
-                disabled={isLoading || !input.trim()}
+                disabled={isLoading || !(input || '').trim()}
                 className="absolute right-1 p-2 bg-trust-blue-600 text-white rounded-full hover:bg-trust-blue-700 disabled:opacity-50 transition-colors"
               >
                 <Send size={16} className={isLoading ? 'opacity-50' : ''} />
