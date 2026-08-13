@@ -60,7 +60,21 @@ export function SmartAssistant() {
       setMessages([...newMessages, aiMessage])
     } catch (err: any) {
       console.error("Chat Error:", err)
-      alert("Asistan yanıt verirken bir hata oluştu: " + err.message)
+      const errorMsg = err.message?.toLowerCase() || "";
+      
+      if (errorMsg.includes("quota") || errorMsg.includes("rate") || errorMsg.includes("429")) {
+        setMessages([...newMessages, {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: 'Şu an çok fazla müşteriye cevap veriyorum, yoğunluktan dolayı geçici olarak doluyum. Lütfen 1-2 dakika sonra tekrar deneyiniz. ⏳'
+        }])
+      } else {
+        setMessages([...newMessages, {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: 'Sistemde geçici bir teknik aksaklık oluştu. Lütfen daha sonra tekrar deneyiniz.'
+        }])
+      }
     } finally {
       setIsLoading(false)
     }
