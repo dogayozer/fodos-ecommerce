@@ -8,7 +8,7 @@ import Link from 'next/link'
 export function SmartAssistant() {
   const [isOpen, setIsOpen] = useState(false)
   const [inputValue, setInputValue] = useState('')
-  const { messages, append, isLoading, error } = useChat(({
+  const { messages, sendMessage, isLoading, error } = useChat(({
     api: '/api/chat',
     initialMessages: [
       {
@@ -26,16 +26,15 @@ export function SmartAssistant() {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!inputValue.trim() || isLoading) return
-
-    alert("Mesaj gönderiliyor... Lütfen bekleyin. (Eğer bu mesajdan sonra cevap gelmezse Vercel bağlantıyı kesiyor demektir)");
     
     try {
-      if (append) {
-        append({ role: 'user', content: inputValue }).catch((err: any) => {
-          alert("Append hatası: " + err.message);
+      if (sendMessage) {
+        // Try passing it as a string first, if it needs an object we can adjust later
+        sendMessage({ role: 'user', content: inputValue }).catch((err: any) => {
+          console.error("SendMessage Error:", err);
         });
       } else {
-        alert("Sistem hatası: append fonksiyonu yüklenmedi!");
+        alert("Sistem hatası: sendMessage fonksiyonu yüklenmedi!");
       }
     } catch (err: any) {
       alert("Gönderim sırasında hata: " + err.message);
