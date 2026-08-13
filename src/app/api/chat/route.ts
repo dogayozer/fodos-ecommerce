@@ -32,7 +32,16 @@ export async function POST(req: Request) {
             keywords: z.array(z.string()).describe('Aranacak düzeltilmiş anahtar kelimeler listesi (örn: ["65w", "adaptör"] veya ["iphone", "13", "ekran"])'),
           }),
           // @ts-ignore
-          execute: async ({ keywords }) => {
+          execute: async (args: any) => {
+            let keywords = args.keywords || args.query || args.query_keywords || [];
+            
+            // Eğer Gemini Zod schema key'ini farklı uydurduysa (halüsinasyon), ilk property'i zorla al:
+            if ((!keywords || keywords.length === 0) && Object.keys(args).length > 0) {
+              const val = Object.values(args)[0];
+              if (Array.isArray(val)) keywords = val;
+              else if (typeof val === 'string') keywords = val.split(' ').filter(Boolean);
+            }
+
             if (!keywords || keywords.length === 0) return { success: false, message: "Anahtar kelime bulunamadı." };
             
             // Her bir anahtar kelime için, o kelimenin title veya brand içinde geçme şartını (AND) oluşturuyoruz.
