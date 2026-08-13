@@ -35,7 +35,7 @@ export async function POST(req: Request) {
               where: {
                 OR: [
                   { title: { contains: query, mode: 'insensitive' } },
-                  { category: { contains: query, mode: 'insensitive' } }
+                  { brand: { contains: query, mode: 'insensitive' } }
                 ]
               },
               select: {
