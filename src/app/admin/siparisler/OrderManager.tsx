@@ -351,6 +351,7 @@ export function OrderManager() {
                   {saving ? 'Kaydediliyor...' : 'Kaydet'}
                 </button>
               </div>
+            </div>
           </div>
         </div>
       )}
