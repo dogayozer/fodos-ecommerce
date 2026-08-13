@@ -28,6 +28,7 @@ export async function POST(req: Request) {
           parameters: z.object({
             query: z.string().describe('Aranacak anahtar kelime, marka veya model (örn: iPhone 13 batarya, şarj aleti, ekran)'),
           }),
+          // @ts-ignore - Vercel AI SDK strict type workaround
           execute: async ({ query }) => {
             // Veritabanını yormamak için take: 3 kullanıyoruz ve çok basit bir contains sorgusu yapıyoruz
             const products = await prisma.product.findMany({
