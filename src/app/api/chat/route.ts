@@ -8,7 +8,9 @@ export const maxDuration = 30
 
 export async function POST(req: Request) {
   try {
-    const { messages } = await req.json()
+    const body = await req.json()
+    console.log("API /api/chat received body:", JSON.stringify(body, null, 2))
+    const messages = body.messages || []
 
     const result = streamText({
       model: google('gemini-flash-latest'),
@@ -57,7 +59,7 @@ export async function POST(req: Request) {
       }
     })
 
-    return result.toTextStreamResponse()
+    return result.toDataStreamResponse()
   } catch (error: any) {
     console.error('Chat API Error:', error)
     return new Response(JSON.stringify({ error: error.message }), { status: 500 })
