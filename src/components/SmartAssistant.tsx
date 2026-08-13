@@ -34,7 +34,12 @@ export function SmartAssistant() {
       })
 
       if (!res.ok) {
-        throw new Error("Sunucu hatası: " + res.statusText)
+        let errMsg = res.statusText;
+        try {
+          const errData = await res.json();
+          if (errData.error) errMsg = errData.error;
+        } catch(e) {}
+        throw new Error(errMsg);
       }
 
       const data = await res.json()
