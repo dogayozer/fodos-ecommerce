@@ -27,9 +27,21 @@ export function SmartAssistant() {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!inputValue.trim() || isLoading) return
-    if (append) {
-      append({ role: 'user', content: inputValue })
+
+    alert("Mesaj gönderiliyor... Lütfen bekleyin. (Eğer bu mesajdan sonra cevap gelmezse Vercel bağlantıyı kesiyor demektir)");
+    
+    try {
+      if (append) {
+        append({ role: 'user', content: inputValue }).catch((err: any) => {
+          alert("Append hatası: " + err.message);
+        });
+      } else {
+        alert("Sistem hatası: append fonksiyonu yüklenmedi!");
+      }
+    } catch (err: any) {
+      alert("Gönderim sırasında hata: " + err.message);
     }
+    
     setInputValue('')
   }
   const messagesEndRef = useRef<HTMLDivElement>(null)
