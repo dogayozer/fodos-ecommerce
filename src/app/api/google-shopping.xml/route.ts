@@ -27,21 +27,33 @@ export async function GET() {
       const imageLink = product.images?.[0]?.url || `${siteUrl}/logo.png`
       const availability = product.stock_qty > 0 ? 'in_stock' : 'out_of_stock'
       const brand = product.brand || 'Fodos'
-      const description = product.description_raw ? product.description_raw.substring(0, 4900).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') : product.title
+      
+      // Strip control characters that break XML
+      const stripInvalidXml = (str: string) => {
+        if (!str) return ''
+        return str.replace(/[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]/g, '')
+      }
+
+      const safeTitle = stripInvalidXml(product.title)
+      const rawDesc = product.description_raw ? product.description_raw.substring(0, 4900) : product.title
+      const safeDescription = stripInvalidXml(rawDesc)
+      const safeBrand = stripInvalidXml(brand)
+      const safeBarcode = stripInvalidXml(product.barcode)
+      const categoryName = product.category ? stripInvalidXml(product.category.name) : ''
       
       xml += `
     <item>
-      <g:id>${product.barcode}</g:id>
-      <g:title>${product.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</g:title>
-      <g:description>${description}</g:description>
-      <g:link>${productLink}</g:link>
-      <g:image_link>${imageLink}</g:image_link>
+      <g:id><![CDATA[${safeBarcode}]]></g:id>
+      <g:title><![CDATA[${safeTitle}]]></g:title>
+      <g:description><![CDATA[${safeDescription}]]></g:description>
+      <g:link><![CDATA[${productLink}]]></g:link>
+      <g:image_link><![CDATA[${imageLink}]]></g:image_link>
       <g:condition>new</g:condition>
       <g:availability>${availability}</g:availability>
       <g:price>${product.sale_price.toFixed(2)} TRY</g:price>
-      <g:brand>${brand}</g:brand>
-      <g:gtin>${product.barcode}</g:gtin>
-      ${product.category ? `<g:product_type>${product.category.name}</g:product_type>` : ''}
+      <g:brand><![CDATA[${safeBrand}]]></g:brand>
+      <g:gtin><![CDATA[${safeBarcode}]]></g:gtin>
+      ${categoryName ? `<g:product_type><![CDATA[${categoryName}]]></g:product_type>` : ''}
     </item>`
     })
 
