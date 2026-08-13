@@ -14,6 +14,7 @@ export async function POST(req: Request) {
 
     const result = await generateText({
       model: google('gemini-flash-latest'),
+      maxRetries: 0,
       messages,
       system: `Sen Fodos ve Piaks markalarının resmi akıllı alışveriş asistanısın. 
       Müşteriler yedek parça, telefon aksesuarı veya elektronik ürünler hakkında sorular soracak.
