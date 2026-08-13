@@ -9,16 +9,20 @@ export function SmartAssistant() {
   const [isOpen, setIsOpen] = useState(false)
   const [inputValue, setInputValue] = useState('')
   // @ts-ignore - Bypass AI SDK 4.0 type strictness
-  const { messages, append, isLoading } = useChat({
+  const { messages, append, isLoading, error } = (useChat({
     api: '/api/chat',
     initialMessages: [
       {
-        id: 'welcome',
+        id: 'welcome-message',
         role: 'assistant',
-        content: 'Merhaba! Ben Fodos & Piaks akıllı asistanıyım. Aradığınız bir ürün var mı?'
+        content: 'Merhaba! Fodos ve Piaks akıllı alışveriş asistanına hoş geldiniz. Size nasıl yardımcı olabilirim?'
       }
-    ]
-  } as any) as any
+    ],
+    onError: (err: any) => {
+      console.error("AI Chat Error:", err);
+      alert("Asistan yanıt verirken bir hata oluştu: " + err.message);
+    }
+  }) as any)
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
