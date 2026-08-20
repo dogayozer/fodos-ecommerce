@@ -165,7 +165,7 @@ export async function POST(req: Request) {
     const user_ip = forwardedFor ? forwardedFor.split(',')[0].trim() : '85.105.0.0'
     const timeout_limit = "30"
     const debug_on = "1"
-    const test_mode = "1" // PayTR test modunu açalım
+    const test_mode = "0" // PayTR test modu kapalı (canlı)
     const no_installment = "0"
     const max_installment = "12"
     const currency = "TL"

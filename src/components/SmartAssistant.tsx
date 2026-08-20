@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { MessageCircle, X, Send, Bot, User, Loader2 } from 'lucide-react'
+import { MessageCircle, X, Send, Bot, User, Loader2, BotMessageSquare } from 'lucide-react'
 import Link from 'next/link'
 
 export function SmartAssistant() {
@@ -95,7 +95,7 @@ export function SmartAssistant() {
           className="fixed bottom-6 right-6 p-4 bg-trust-blue-600 text-white rounded-full shadow-2xl hover:bg-trust-blue-700 transition-all hover:scale-110 z-50 flex items-center justify-center group"
           aria-label="Akıllı Asistanı Aç"
         >
-          <MessageCircle size={28} />
+          <BotMessageSquare size={28} />
           <span className="absolute right-16 bg-white text-gray-800 px-3 py-1 rounded shadow-lg text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
             Asistana Sor 🤖
           </span>

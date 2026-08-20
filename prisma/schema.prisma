@@ -154,3 +154,12 @@ model StoreSettings {
   kisiselVerilerHtml    String?
   updatedAt             DateTime @updatedAt
 }
+
+model ChatLog {
+  id        String   @id @default(cuid())
+  sessionId String?  // To group messages from the same chat session
+  message   String   // The user's query
+  response  String?  // The AI's response (or tool output summary)
+  isFound   Boolean  @default(false) // Did the searchProducts tool find anything?
+  createdAt DateTime @default(now())
+}

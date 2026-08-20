@@ -77,6 +77,29 @@ export async function POST(req: Request) {
       }
     })
 
+    try {
+      const lastUserMessage = messages.slice().reverse().find((m: any) => m.role === 'user');
+      const userText = lastUserMessage?.content || "Bilinmiyor";
+      
+      let isFound = false;
+      if (result.toolResults && result.toolResults.length > 0) {
+        const tr = result.toolResults[0] as any;
+        if (tr.result && tr.result.success && tr.result.products && tr.result.products.length > 0) {
+          isFound = true;
+        }
+      }
+
+      await prisma.chatLog.create({
+        data: {
+          message: userText,
+          response: result.text || "",
+          isFound: isFound
+        }
+      });
+    } catch (logErr) {
+      console.error("ChatLog kayit hatasi:", logErr);
+    }
+
     return new Response(JSON.stringify({
       text: result.text || "",
       toolCalls: result.toolCalls || [],

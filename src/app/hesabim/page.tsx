@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
 import { jwtVerify } from 'jose'
+import { ProfileForm } from '@/components/ProfileForm'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,35 +27,7 @@ export default async function HesabimPage() {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
       <h1 className="text-2xl font-bold text-gray-900 mb-6 border-b pb-4">Profil Bilgilerim</h1>
-      
-      <div className="space-y-6 max-w-lg">
-        <div>
-          <label className="block text-sm font-medium text-gray-500 mb-1">Ad Soyad</label>
-          <div className="font-semibold text-gray-900">{customer.name || '-'}</div>
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-500 mb-1">E-Posta Adresi</label>
-          <div className="font-semibold text-gray-900">{customer.email}</div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-500 mb-1">Telefon Numarası</label>
-          <div className="font-semibold text-gray-900">{customer.phone || '-'}</div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-500 mb-1">Kayıtlı Adres</label>
-          <div className="text-gray-900">
-            {customer.address ? (
-              <>
-                {customer.address}<br/>
-                <span className="font-semibold">{customer.district} / {customer.city}</span>
-              </>
-            ) : '-'}
-          </div>
-        </div>
-      </div>
+      <ProfileForm customer={customer} />
     </div>
   )
 }
