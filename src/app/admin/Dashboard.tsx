@@ -190,22 +190,22 @@ export function Dashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="p-6 bg-gradient-to-r from-trust-blue-600 to-trust-blue-800 rounded-xl shadow-md text-white flex flex-col justify-between">
+          <div className="p-6 bg-white border border-trust-blue-100 rounded-xl shadow-sm flex flex-col justify-between">
             <div>
-              <h2 className="text-xl font-bold mb-1">Sipariş Yönetimi</h2>
-              <p className="text-sm text-blue-100 mb-4">Gelen siparişleri görüntüle, fatura yazdır, kargo numaralarını gir ve sipariş notu ekle.</p>
+              <h2 className="text-xl font-bold mb-1 text-trust-blue-700">Sipariş Yönetimi</h2>
+              <p className="text-sm text-gray-500 mb-4">Gelen siparişleri görüntüle, fatura yazdır, kargo numaralarını gir ve sipariş notu ekle.</p>
             </div>
-            <a href="/admin/siparisler" className="bg-white text-trust-blue-700 px-6 py-3 rounded-lg font-bold hover:bg-gray-50 transition-colors shadow-sm text-center inline-block">
+            <a href="/admin/siparisler" className="bg-trust-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-trust-blue-700 transition-colors shadow-sm text-center inline-block">
               Siparişlere Git
             </a>
           </div>
 
-          <div className="p-6 bg-gradient-to-r from-purple-600 to-purple-800 rounded-xl shadow-md text-white flex flex-col justify-between">
+          <div className="p-6 bg-white border border-purple-100 rounded-xl shadow-sm flex flex-col justify-between">
             <div>
-              <h2 className="text-xl font-bold mb-1">Üyelik Yönetimi</h2>
-              <p className="text-sm text-purple-100 mb-4">Kayıtlı müşterilerinizi, iletişim bilgilerini ve geçmiş alışveriş detaylarını görüntüleyin.</p>
+              <h2 className="text-xl font-bold mb-1 text-purple-700">Üyelik Yönetimi</h2>
+              <p className="text-sm text-gray-500 mb-4">Kayıtlı müşterilerinizi, iletişim bilgilerini ve geçmiş alışveriş detaylarını görüntüleyin.</p>
             </div>
-            <a href="/admin/uyeler" className="bg-white text-purple-700 px-6 py-3 rounded-lg font-bold hover:bg-gray-50 transition-colors shadow-sm text-center inline-block">
+            <a href="/admin/uyeler" className="bg-purple-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-purple-700 transition-colors shadow-sm text-center inline-block">
               Üyelere Git
             </a>
           </div>
