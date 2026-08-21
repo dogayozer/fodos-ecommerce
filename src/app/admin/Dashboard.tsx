@@ -6,7 +6,7 @@ import * as xlsx from 'xlsx'
 import { SettingsForm } from './SettingsForm'
 import { CouponManager } from './CouponManager'
 import { CategoryManager } from './CategoryManager'
-import { OrderNotifier } from '@/components/OrderNotifier'
+import { OrderNotifier, playNotificationSound } from '@/components/OrderNotifier'
 
 export function Dashboard() {
   const [file, setFile] = useState<File | null>(null)
@@ -169,13 +169,24 @@ export function Dashboard() {
       <OrderNotifier />
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div className="flex justify-between items-center border-b pb-4 mb-6">
-          <h1 className="text-2xl font-bold text-trust-blue-600">Admin Dashboard</h1>
-          <button 
-            onClick={handleLogout}
-            className="text-sm px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors text-gray-700"
-          >
-            Çıkış Yap
-          </button>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-trust-blue-600">Admin Dashboard</h1>
+            <span className="bg-trust-blue-100 text-trust-blue-800 text-xs font-bold px-2 py-1 rounded">v2.0</span>
+          </div>
+          <div className="flex gap-2">
+            <button 
+              onClick={() => playNotificationSound()}
+              className="text-sm px-4 py-2 bg-green-100 hover:bg-green-200 text-green-700 font-bold rounded-md transition-colors"
+            >
+              🔔 Sesi Test Et
+            </button>
+            <button 
+              onClick={handleLogout}
+              className="text-sm px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors text-gray-700"
+            >
+              Çıkış Yap
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -342,11 +353,11 @@ export function Dashboard() {
 
         {/* Sürüm Notları */}
         <div className="mt-8 bg-blue-50 border border-blue-100 rounded-lg p-5">
-          <h3 className="text-sm font-bold text-trust-blue-700 mb-2">Sistem Güncelleme Notları (v1.6.0 - 12 Ağustos 2026, 11:15)</h3>
+          <h3 className="text-sm font-bold text-trust-blue-700 mb-2">Sistem Güncelleme Notları (v2.0 - Ağustos 2026)</h3>
           <ul className="list-disc pl-5 text-xs text-trust-blue-600 space-y-1">
-            <li><strong>PERFORMANS:</strong> Tüm görseller Next.js Image mimarisine geçirilerek yükleme hızları %60 oranında artırıldı (WebP & Lazy-Load).</li>
-            <li><strong>KULLANICI DENEYİMİ:</strong> Arama sonuçları ve ana sayfada, görseli çok olan ürünler en üstte çıkacak şekilde sıralama algoritması güncellendi.</li>
-            <li><strong>HUKUK/GÜVENLİK:</strong> KVKK, Mesafeli Satış Sözleşmesi ve Üyelik Sözleşmeleri sisteme entegre edildi. Kayıt ve ödeme sayfalarına zorunlu onay adımları eklendi.</li>
+            <li><strong>YENİ - CANLI BİLDİRİMLER:</strong> Sipariş geldiğinde anında pop-up ve sesli uyarı veren canlı bildirim sistemi (OrderNotifier) eklendi. (Test etmek için üstteki butonu kullanabilirsiniz).</li>
+            <li><strong>YENİ - SÜRÜM YÖNETİMİ:</strong> Admin paneli v2.0 sürümüne yükseltildi. Her yeni özellikte buradan güncellemeleri takip edebilirsiniz.</li>
+            <li><strong>ARAYÜZ:</strong> Siparişler sayfasındaki sekme butonlarının renkleri daha okunaklı olacak şekilde düzeltildi (beyaz yazılar kaldırıldı).</li>
           </ul>
         </div>
       </div>

@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { BellRing, X } from 'lucide-react'
 
-function playNotificationSound() {
+export function playNotificationSound() {
   try {
     const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
     

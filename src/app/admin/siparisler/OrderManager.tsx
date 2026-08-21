@@ -184,10 +184,10 @@ export function OrderManager() {
       {/* Tabs */}
       <div className="flex space-x-2 mb-6 overflow-x-auto pb-2">
         <button onClick={() => setActiveTab('all')} className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${activeTab === 'all' ? 'bg-trust-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border'}`}>Tümü</button>
-        <button onClick={() => setActiveTab('pending')} className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${activeTab === 'pending' ? 'bg-yellow-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border'}`}>Bekleyenler</button>
-        <button onClick={() => setActiveTab('processing')} className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${activeTab === 'processing' ? 'bg-blue-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border'}`}>İşleme Alınanlar</button>
-        <button onClick={() => setActiveTab('shipped')} className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${activeTab === 'shipped' ? 'bg-indigo-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border'}`}>Kargolananlar</button>
-        <button onClick={() => setActiveTab('cancelled')} className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${activeTab === 'cancelled' ? 'bg-red-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border'}`}>İptal Edilenler</button>
+        <button onClick={() => setActiveTab('pending')} className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${activeTab === 'pending' ? 'bg-yellow-100 text-yellow-800 ring-2 ring-yellow-400' : 'bg-white text-gray-600 hover:bg-gray-100 border'}`}>Bekleyenler</button>
+        <button onClick={() => setActiveTab('processing')} className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${activeTab === 'processing' ? 'bg-blue-100 text-blue-800 ring-2 ring-blue-400' : 'bg-white text-gray-600 hover:bg-gray-100 border'}`}>İşleme Alınanlar</button>
+        <button onClick={() => setActiveTab('shipped')} className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${activeTab === 'shipped' ? 'bg-indigo-100 text-indigo-800 ring-2 ring-indigo-400' : 'bg-white text-gray-600 hover:bg-gray-100 border'}`}>Kargolananlar</button>
+        <button onClick={() => setActiveTab('cancelled')} className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${activeTab === 'cancelled' ? 'bg-red-100 text-red-800 ring-2 ring-red-400' : 'bg-white text-gray-600 hover:bg-gray-100 border'}`}>İptal Edilenler</button>
       </div>
 
       {/* Orders Table */}
