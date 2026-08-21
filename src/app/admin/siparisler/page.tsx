@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { OrderManager } from './OrderManager'
+import { OrderNotifier } from '@/components/OrderNotifier'
 
 export const metadata: Metadata = {
   title: 'Sipariş Yönetimi | Fodos Admin',
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
 export default function AdminOrdersPage() {
   return (
     <div className="flex-1 p-6 md:p-8 bg-gray-50 min-h-screen">
+      <OrderNotifier />
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Sipariş Yönetimi</h1>
         <p className="text-gray-500 mb-8">Tüm müşteri siparişlerini görüntüleyin, durumlarını güncelleyin ve kargo bilgilerini girin.</p>

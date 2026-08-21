@@ -6,6 +6,7 @@ import * as xlsx from 'xlsx'
 import { SettingsForm } from './SettingsForm'
 import { CouponManager } from './CouponManager'
 import { CategoryManager } from './CategoryManager'
+import { OrderNotifier } from '@/components/OrderNotifier'
 
 export function Dashboard() {
   const [file, setFile] = useState<File | null>(null)
@@ -165,6 +166,7 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
+      <OrderNotifier />
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div className="flex justify-between items-center border-b pb-4 mb-6">
           <h1 className="text-2xl font-bold text-trust-blue-600">Admin Dashboard</h1>
