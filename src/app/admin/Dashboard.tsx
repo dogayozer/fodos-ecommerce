@@ -171,7 +171,7 @@ export function Dashboard() {
         <div className="flex justify-between items-center border-b pb-4 mb-6">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold text-trust-blue-600">Admin Dashboard</h1>
-            <span className="bg-trust-blue-100 text-trust-blue-800 text-xs font-bold px-2 py-1 rounded">v2.0</span>
+            <span className="bg-trust-blue-100 text-trust-blue-800 text-xs font-bold px-2 py-1 rounded">v2.1</span>
           </div>
           <div className="flex gap-2">
             <button 
@@ -353,11 +353,11 @@ export function Dashboard() {
 
         {/* Sürüm Notları */}
         <div className="mt-8 bg-blue-50 border border-blue-100 rounded-lg p-5">
-          <h3 className="text-sm font-bold text-trust-blue-700 mb-2">Sistem Güncelleme Notları (v2.0 - Ağustos 2026)</h3>
+          <h3 className="text-sm font-bold text-trust-blue-700 mb-2">Sistem Güncelleme Notları (v2.1 - BirFatura Entegrasyonu)</h3>
           <ul className="list-disc pl-5 text-xs text-trust-blue-600 space-y-1">
-            <li><strong>YENİ - CANLI BİLDİRİMLER:</strong> Sipariş geldiğinde anında pop-up ve sesli uyarı veren canlı bildirim sistemi (OrderNotifier) eklendi. (Test etmek için üstteki butonu kullanabilirsiniz).</li>
-            <li><strong>YENİ - SÜRÜM YÖNETİMİ:</strong> Admin paneli v2.0 sürümüne yükseltildi. Her yeni özellikte buradan güncellemeleri takip edebilirsiniz.</li>
-            <li><strong>ARAYÜZ:</strong> Siparişler sayfasındaki sekme butonlarının renkleri daha okunaklı olacak şekilde düzeltildi (beyaz yazılar kaldırıldı).</li>
+            <li><strong>YENİ - BİRFATURA ENTEGRASYONU:</strong> Tüm siparişlerinizi tek bir yerden yönetmek ve e-Fatura / e-Arşiv kesmek için BirFatura Özel Entegrasyon altyapısı ve webhook bağlantıları eklendi. Aşağıdaki ayarlardan API anahtarınızı alabilirsiniz.</li>
+            <li><strong>YENİ - SİPARİŞLER & FATURA ROZETLERİ:</strong> Sipariş yönetiminde fatura durumu (Faturalandı / Fatura Bekliyor), hızlı PDF fatura açma ve arama filtreleri eklendi.</li>
+            <li><strong>CANLI BİLDİRİMLER:</strong> Sipariş geldiğinde anında pop-up ve sesli uyarı veren bildirim sistemi devrede.</li>
           </ul>
         </div>
       </div>

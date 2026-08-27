@@ -19,8 +19,12 @@ export function SettingsForm() {
     kisiselVerilerHtml: '',
     shippingThreshold: 500,
     shippingFee: 110,
-    sameDayShippingTime: '16:00'
+    sameDayShippingTime: '16:00',
+    birfaturaApiKey: '',
+    birfaturaKdvRate: 20,
+    birfaturaAutoSync: true
   })
+  const [copiedField, setCopiedField] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/admin/settings')
@@ -39,7 +43,10 @@ export function SettingsForm() {
             kisiselVerilerHtml: data.settings.kisiselVerilerHtml || '',
             shippingThreshold: data.settings.shippingThreshold || 0,
             shippingFee: data.settings.shippingFee || 0,
-            sameDayShippingTime: data.settings.sameDayShippingTime || '16:00'
+            sameDayShippingTime: data.settings.sameDayShippingTime || '16:00',
+            birfaturaApiKey: data.settings.birfaturaApiKey || 'bf_fodos_' + Math.random().toString(36).substring(2, 12) + Date.now().toString(36),
+            birfaturaKdvRate: data.settings.birfaturaKdvRate ?? 20,
+            birfaturaAutoSync: data.settings.birfaturaAutoSync ?? true
           })
         }
         setLoading(false)
@@ -114,6 +121,142 @@ export function SettingsForm() {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Aynı Gün Kargo Saati</label>
           <input type="time" name="sameDayShippingTime" value={formData.sameDayShippingTime} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" />
+        </div>
+      </div>
+
+      {/* BirFatura Entegrasyon Ayarları */}
+      <div className="bg-gradient-to-br from-indigo-50/70 to-blue-50/50 border border-indigo-100 rounded-xl p-6 mb-8">
+        <div className="flex items-center justify-between mb-4 border-b border-indigo-100 pb-3">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🧾</span>
+            <div>
+              <h3 className="text-lg font-bold text-indigo-900">BirFatura Özel Entegrasyon Ayarları</h3>
+              <p className="text-xs text-indigo-700">Fodos siparişlerini BirFatura paneline otomatik bağlamak ve e-Fatura / e-Arşiv kesmek için gereklidir.</p>
+            </div>
+          </div>
+          <span className="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+            Entegrasyon Hazır
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-semibold text-gray-800">BirFatura API Anahtarı (Token)</label>
+              <button
+                type="button"
+                onClick={() => {
+                  const newKey = 'bf_fodos_' + Math.random().toString(36).substring(2, 12) + Date.now().toString(36)
+                  setFormData({ ...formData, birfaturaApiKey: newKey })
+                }}
+                className="text-xs text-indigo-600 hover:text-indigo-800 font-medium underline"
+              >
+                Yeni Anahtar Üret
+              </button>
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                name="birfaturaApiKey"
+                value={formData.birfaturaApiKey}
+                onChange={handleChange}
+                className="w-full px-4 py-2 font-mono text-xs border border-indigo-200 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500"
+                placeholder="API Anahtarı"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(formData.birfaturaApiKey)
+                  setCopiedField('apiKey')
+                  setTimeout(() => setCopiedField(null), 2000)
+                }}
+                className="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg transition-colors whitespace-nowrap"
+              >
+                {copiedField === 'apiKey' ? '✓ Kopyalandı' : 'Kopyala'}
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">BirFatura paneline girilecek gizli erişim anahtarınız.</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-800 mb-1">Varsayılan KDV Oranı (%)</label>
+            <input
+              type="number"
+              name="birfaturaKdvRate"
+              value={formData.birfaturaKdvRate}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-indigo-200 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500"
+              placeholder="Örn: 20"
+            />
+            <p className="text-xs text-gray-500 mt-1">Fatura kalemleri için varsayılan KDV yüzdesi (%20).</p>
+          </div>
+        </div>
+
+        {/* URL Bağlantıları */}
+        <div className="space-y-4 bg-white/80 p-4 rounded-lg border border-indigo-100 mb-6">
+          <div>
+            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+              1. Sipariş Çekme URL'si (BirFatura "Sipariş Listeleme URL" alanına):
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                readOnly
+                value={typeof window !== 'undefined' ? `${window.location.origin}/api/birfatura/orders` : 'https://fodos.com.tr/api/birfatura/orders'}
+                className="w-full px-3 py-1.5 font-mono text-xs bg-gray-50 border border-gray-200 rounded text-gray-700"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const url = typeof window !== 'undefined' ? `${window.location.origin}/api/birfatura/orders` : 'https://fodos.com.tr/api/birfatura/orders'
+                  navigator.clipboard.writeText(url)
+                  setCopiedField('ordersUrl')
+                  setTimeout(() => setCopiedField(null), 2000)
+                }}
+                className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded transition-colors whitespace-nowrap border"
+              >
+                {copiedField === 'ordersUrl' ? '✓ Kopyalandı' : 'Kopyala'}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+              2. Fatura & Kargo Durum Güncelleme URL'si (Webhook):
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                readOnly
+                value={typeof window !== 'undefined' ? `${window.location.origin}/api/birfatura/update-status` : 'https://fodos.com.tr/api/birfatura/update-status'}
+                className="w-full px-3 py-1.5 font-mono text-xs bg-gray-50 border border-gray-200 rounded text-gray-700"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const url = typeof window !== 'undefined' ? `${window.location.origin}/api/birfatura/update-status` : 'https://fodos.com.tr/api/birfatura/update-status'
+                  navigator.clipboard.writeText(url)
+                  setCopiedField('webhookUrl')
+                  setTimeout(() => setCopiedField(null), 2000)
+                }}
+                className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded transition-colors whitespace-nowrap border"
+              >
+                {copiedField === 'webhookUrl' ? '✓ Kopyalandı' : 'Kopyala'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Kurulum Rehberi */}
+        <div className="text-xs text-indigo-900 bg-indigo-100/50 p-4 rounded-lg border border-indigo-200/60">
+          <p className="font-bold mb-1">💡 BirFatura Paneline Nasıl Bağlanır?</p>
+          <ol className="list-decimal list-inside space-y-1 text-indigo-800">
+            <li>BirFatura panelinizde <strong>Ayarlar → Mağaza Ayarları → Yeni Mağaza Ekle → Özel Entegrasyon (veya XML/API Mağaza)</strong> bölümüne gidin.</li>
+            <li>Mağaza Adı olarak <strong>FODOS</strong> girin.</li>
+            <li>Yukarıdaki <strong>Sipariş Çekme URL</strong>'sini ve <strong>API Anahtarı</strong>'nı ilgili alanlara yapıştırıp kaydedin.</li>
+            <li>Siparişleriniz BirFatura'ya otomatik aktarılacak ve fatura kesildiğinde faturanız doğrudan Fodos paneline yansıyacaktır.</li>
+          </ol>
         </div>
       </div>
 

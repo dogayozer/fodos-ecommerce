@@ -92,6 +92,14 @@ model Order {
   trackingNumber  String?     // Kargo Takip No
   status        String      @default("pending") // pending, processing, shipped, delivered, cancelled
   adminNote     String?     // Admin tarafından siparişe eklenen özel not
+  invoiceStatus String      @default("pending") // pending, invoiced, cancelled, failed
+  invoiceFailReason String?   // Fatura Red Sebebi
+  invoiceNumber String?     // E-Fatura / E-Arşiv No
+  invoiceUrl    String?     // BirFatura Fatura PDF URL
+  invoicedAt    DateTime?   // Faturalanma Tarihi
+  taxNumber     String?     // TC Kimlik No veya Vergi No
+  taxOffice     String?     // Vergi Dairesi
+  companyTitle  String?     // Şirket Unvanı
   items         OrderItem[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
@@ -152,6 +160,9 @@ model StoreSettings {
   iptalIadeHtml         String?
   kargoTakipHtml        String?
   kisiselVerilerHtml    String?
+  birfaturaApiKey       String?  // BirFatura Entegrasyon API Anahtarı
+  birfaturaKdvRate      Int?     @default(20) // Varsayılan KDV Oranı
+  birfaturaAutoSync     Boolean? @default(true) // Otomatik Senkronizasyon
   updatedAt             DateTime @updatedAt
 }
 

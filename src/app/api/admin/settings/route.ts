@@ -29,7 +29,8 @@ export async function POST(req: Request) {
       companyName, address, phone, aboutUs,
       mesafeliSatisHtml, gizlilikGuvenlikHtml, iptalIadeHtml,
       kargoTakipHtml, kisiselVerilerHtml,
-      shippingThreshold, shippingFee, sameDayShippingTime
+      shippingThreshold, shippingFee, sameDayShippingTime,
+      birfaturaApiKey, birfaturaKdvRate, birfaturaAutoSync
     } = body
 
     const settings = await prisma.storeSettings.upsert({
@@ -40,7 +41,10 @@ export async function POST(req: Request) {
         kargoTakipHtml, kisiselVerilerHtml,
         shippingThreshold: parseFloat(shippingThreshold) || 500,
         shippingFee: parseFloat(shippingFee) || 110,
-        sameDayShippingTime: sameDayShippingTime || "16:00"
+        sameDayShippingTime: sameDayShippingTime || "16:00",
+        birfaturaApiKey: birfaturaApiKey || undefined,
+        birfaturaKdvRate: birfaturaKdvRate !== undefined ? parseInt(birfaturaKdvRate) : 20,
+        birfaturaAutoSync: birfaturaAutoSync !== undefined ? Boolean(birfaturaAutoSync) : true
       },
       create: {
         id: 'default',
@@ -49,7 +53,10 @@ export async function POST(req: Request) {
         kargoTakipHtml, kisiselVerilerHtml,
         shippingThreshold: parseFloat(shippingThreshold) || 500,
         shippingFee: parseFloat(shippingFee) || 110,
-        sameDayShippingTime: sameDayShippingTime || "16:00"
+        sameDayShippingTime: sameDayShippingTime || "16:00",
+        birfaturaApiKey: birfaturaApiKey || undefined,
+        birfaturaKdvRate: birfaturaKdvRate !== undefined ? parseInt(birfaturaKdvRate) : 20,
+        birfaturaAutoSync: birfaturaAutoSync !== undefined ? Boolean(birfaturaAutoSync) : true
       }
     })
 

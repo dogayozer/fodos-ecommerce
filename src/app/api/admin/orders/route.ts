@@ -25,20 +25,44 @@ export async function GET() {
 export async function PUT(req: Request) {
   try {
     const body = await req.json()
-    const { id, status, trackingNumber, shippingCompany, adminNote } = body
+    const {
+      id,
+      status,
+      trackingNumber,
+      shippingCompany,
+      adminNote,
+      invoiceStatus,
+      invoiceNumber,
+      invoiceUrl,
+      taxNumber,
+      taxOffice,
+      companyTitle
+    } = body
 
     if (!id) {
       return NextResponse.json({ error: 'Order ID required' }, { status: 400 })
     }
 
+    const updateData: any = {
+      status,
+      trackingNumber,
+      shippingCompany,
+      adminNote
+    }
+
+    if (invoiceStatus !== undefined) updateData.invoiceStatus = invoiceStatus
+    if (invoiceNumber !== undefined) updateData.invoiceNumber = invoiceNumber
+    if (invoiceUrl !== undefined) updateData.invoiceUrl = invoiceUrl
+    if (invoiceStatus === 'invoiced' && !invoiceNumber) {
+      updateData.invoicedAt = new Date()
+    }
+    if (taxNumber !== undefined) updateData.taxNumber = taxNumber
+    if (taxOffice !== undefined) updateData.taxOffice = taxOffice
+    if (companyTitle !== undefined) updateData.companyTitle = companyTitle
+
     const updatedOrder = await prisma.order.update({
       where: { id },
-      data: {
-        status,
-        trackingNumber,
-        shippingCompany,
-        adminNote
-      }
+      data: updateData
     })
 
     return NextResponse.json({ success: true, order: updatedOrder })
