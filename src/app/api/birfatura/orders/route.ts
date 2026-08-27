@@ -48,7 +48,7 @@ async function handleGetOrders(req: Request) {
     if (!isAuth) {
       return NextResponse.json(
         { status: false, error: 'Unauthorized. Geçersiz veya eksik API Anahtarı.' },
-        { status: 401 }
+        { status: 200 }
       )
     }
 
@@ -234,7 +234,7 @@ async function handleGetOrders(req: Request) {
     })
   } catch (error: any) {
     console.error('BirFatura orders fetch error:', error)
-    return NextResponse.json({ status: false, error: error.message }, { status: 500 })
+    return NextResponse.json({ status: false, error: error.message }, { status: 200 })
   }
 }
 

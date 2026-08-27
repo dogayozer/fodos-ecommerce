@@ -47,7 +47,7 @@ export async function POST(req: Request) {
     if (!isAuth) {
       return NextResponse.json(
         { status: false, error: 'Unauthorized. Geçersiz veya eksik API Anahtarı.' },
-        { status: 401 }
+        { status: 200 }
       )
     }
 
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
     if (!orderId && !orderNumber) {
       return NextResponse.json(
         { status: false, error: 'order_id veya order_number parametresi zorunludur.' },
-        { status: 400 }
+        { status: 200 }
       )
     }
 
@@ -83,7 +83,7 @@ export async function POST(req: Request) {
     if (!existingOrder) {
       return NextResponse.json(
         { status: false, error: 'Belirtilen sipariş bulunamadı.' },
-        { status: 404 }
+        { status: 200 }
       )
     }
 
@@ -162,6 +162,6 @@ export async function POST(req: Request) {
     })
   } catch (error: any) {
     console.error('BirFatura status update error:', error)
-    return NextResponse.json({ status: false, error: error.message }, { status: 500 })
+    return NextResponse.json({ status: false, error: error.message }, { status: 200 })
   }
 }
