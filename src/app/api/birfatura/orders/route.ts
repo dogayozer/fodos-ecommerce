@@ -119,118 +119,86 @@ async function handleGetOrders(req: Request) {
       const itemsTotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
       const birfaturaItems: any[] = order.items.map((item) => ({
-        item_id: item.id,
-        product_id: item.productId,
-        sku: item.product?.barcode || item.product?.model_code || `PRD-${item.productId}`,
-        barcode: item.product?.barcode || '',
-        name: item.product?.title || 'Ürün',
-        model_code: item.product?.model_code || '',
-        brand: item.product?.brand || 'FODOS',
-        quantity: item.quantity,
-        unit_price: item.price,
-        total_price: item.price * item.quantity,
-        vat_rate: defaultVatRate
+        ProductId: item.productId,
+        ProductCode: item.product?.barcode || item.product?.model_code || `PRD-${item.productId}`,
+        Barcode: item.product?.barcode || '',
+        ProductBrand: item.product?.brand || 'FODOS',
+        ProductName: item.product?.title || 'Ürün',
+        ProductQuantityType: "Adet",
+        ProductQuantity: item.quantity,
+        VatRate: defaultVatRate,
+        ProductUnitPriceTaxExcluding: item.price,
+        ProductUnitPriceTaxIncluding: item.price,
       }))
 
       if (order.shippingCost && order.shippingCost > 0) {
         birfaturaItems.push({
-          item_id: "shipping",
-          product_id: "shipping",
-          sku: "KARGO",
-          barcode: "",
-          name: "Kargo Ücreti",
-          model_code: "",
-          brand: "KARGO",
-          quantity: 1,
-          unit_price: order.shippingCost,
-          total_price: order.shippingCost,
-          vat_rate: defaultVatRate
+          ProductId: "shipping",
+          ProductCode: "KARGO",
+          Barcode: "",
+          ProductBrand: "KARGO",
+          ProductName: "Kargo Ücreti",
+          ProductQuantityType: "Adet",
+          ProductQuantity: 1,
+          VatRate: defaultVatRate,
+          ProductUnitPriceTaxExcluding: order.shippingCost,
+          ProductUnitPriceTaxIncluding: order.shippingCost,
         })
       }
 
       if (order.discountApplied && order.discountApplied > 0) {
         birfaturaItems.push({
-          item_id: "discount",
-          product_id: "discount",
-          sku: "INDIRIM",
-          barcode: "",
-          name: order.couponCode ? `İndirim (${order.couponCode})` : "İndirim",
-          model_code: "",
-          brand: "",
-          quantity: 1,
-          unit_price: -order.discountApplied,
-          total_price: -order.discountApplied,
-          vat_rate: defaultVatRate
+          ProductId: "discount",
+          ProductCode: "INDIRIM",
+          Barcode: "",
+          ProductBrand: "INDIRIM",
+          ProductName: order.couponCode ? `İndirim (${order.couponCode})` : "İndirim",
+          ProductQuantityType: "Adet",
+          ProductQuantity: 1,
+          VatRate: defaultVatRate,
+          ProductUnitPriceTaxExcluding: -order.discountApplied,
+          ProductUnitPriceTaxIncluding: -order.discountApplied,
         })
       }
 
       return {
-        order_id: order.id,
-        order_number: order.orderNumber,
-        order_date: order.createdAt.toISOString(),
-        order_date_formatted: new Date(order.createdAt).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }),
-        status: order.status,
-        payment_type: 'Kredi Kartı / PayTR',
-        payment_status: 'processing',
-        currency: 'TRY',
-        total_amount: order.totalAmount,
-        subtotal: itemsTotal,
-        discount_amount: order.discountApplied || 0,
-        coupon_code: order.couponCode || null,
-        shipping_amount: order.shippingCost || 0,
-        customer: {
-          id: order.customer?.id || null,
-          name: customerName,
-          first_name: firstName,
-          last_name: lastName,
-          email: order.customer?.email || '',
-          phone: order.customer?.phone || '',
-          tax_number: order.taxNumber || '11111111111', // Bireysel için standart TCKN
-          tax_office: order.taxOffice || '',
-          company_name: order.companyTitle || ''
-        },
-        shipping_address: {
-          recipient_name: customerName,
-          address: order.shippingAddress || '',
-          district: order.shippingDistrict || '',
-          city: order.shippingCity || '',
-          country: 'Türkiye',
-          postal_code: '',
-          phone: order.customer?.phone || ''
-        },
-        billing_address: {
-          billing_name: order.companyTitle || customerName,
-          company_name: order.companyTitle || '',
-          tax_number: order.taxNumber || '11111111111',
-          tax_office: order.taxOffice || '',
-          address: order.shippingAddress || '',
-          district: order.shippingDistrict || '',
-          city: order.shippingCity || '',
-          country: 'Türkiye',
-          phone: order.customer?.phone || ''
-        },
-        items: birfaturaItems,
-        cargo: {
-          company: order.shippingCompany || '',
-          tracking_number: order.trackingNumber || ''
-        },
-        invoice: {
-          status: order.invoiceStatus || 'pending',
-          invoice_number: order.invoiceNumber || null,
-          invoice_url: order.invoiceUrl || null,
-          invoiced_at: order.invoicedAt ? order.invoicedAt.toISOString() : null
-        },
-        admin_note: order.adminNote || ''
+        OrderId: order.id,
+        OrderCode: order.orderNumber,
+        OrderDate: new Date(order.createdAt).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }),
+        InvoiceTypeId: 4,
+        InvoiceExplanation: order.adminNote || '',
+        CustomerId: order.customer?.id || order.id,
+        BillingName: order.companyTitle || customerName,
+        BillingAddress: order.shippingAddress || '',
+        BillingTown: order.shippingDistrict || '',
+        BillingCity: order.shippingCity || '',
+        BillingMobilePhone: order.customer?.phone || '',
+        TaxOffice: order.taxOffice || '',
+        TaxNo: order.taxNumber || '',
+        Email: order.customer?.email || '',
+        ShippingId: order.customer?.id || order.id,
+        ShippingName: customerName,
+        ShippingAddress: order.shippingAddress || '',
+        ShippingTown: order.shippingDistrict || '',
+        ShippingCity: order.shippingCity || '',
+        ShippingCountry: 'Türkiye',
+        ShippingZipCode: '',
+        ShippingPhone: order.customer?.phone || '',
+        ShipCompany: order.shippingCompany || '',
+        PaymentTypeId: 3,
+        PaymentType: 'Kredi Kartı',
+        Currency: 'TRY',
+        CurrencyRate: 1,
+        TotalPaidTaxExcluding: order.totalAmount,
+        TotalPaidTaxIncluding: order.totalAmount,
+        ProductsTotalTaxExcluding: itemsTotal,
+        ProductsTotalTaxIncluding: itemsTotal,
+        OrderDetails: birfaturaItems
       }
     })
 
     return NextResponse.json({
-      status: true,
-      total,
-      page,
-      limit,
-      orders: formattedOrders,
-      data: formattedOrders // Alternatif BirFatura standardı için
+      Orders: formattedOrders
     })
   } catch (error: any) {
     console.error('BirFatura orders fetch error:', error)
