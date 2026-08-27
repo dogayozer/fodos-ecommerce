@@ -171,7 +171,7 @@ async function handleGetOrders(req: Request) {
         order_date_formatted: new Date(order.createdAt).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }),
         status: order.status,
         payment_type: 'Kredi Kartı / PayTR',
-        payment_status: 'paid',
+        payment_status: 'processing',
         currency: 'TRY',
         total_amount: order.totalAmount,
         subtotal: itemsTotal,

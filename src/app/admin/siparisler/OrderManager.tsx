@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react'
 import { Package, Truck, CheckCircle, Clock, XCircle, Search, FileText, ExternalLink, Printer, ShieldCheck } from 'lucide-react'
 
 const statusMap: any = {
-  pending: { label: 'Bekliyor', color: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
-  processing: { label: 'İşleniyor', color: 'bg-blue-100 text-blue-800 border-blue-200' },
+  pending: { label: 'Ödeme Bekliyor', color: 'bg-orange-100 text-orange-800 border-orange-200' },
+  processing: { label: 'Yeni (Ödendi)', color: 'bg-green-100 text-green-800 border-green-200' },
   shipped: { label: 'Kargolandı', color: 'bg-indigo-100 text-indigo-800 border-indigo-200' },
-  delivered: { label: 'Teslim Edildi', color: 'bg-green-100 text-green-800 border-green-200' },
-  cancelled: { label: 'İptal', color: 'bg-red-100 text-red-800 border-red-200' }
+  delivered: { label: 'Teslim Edildi', color: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
+  cancelled: { label: 'İptal / Ödeme Başarısız', color: 'bg-red-100 text-red-800 border-red-200' }
 }
 
 const invoiceStatusMap: any = {
@@ -579,11 +579,11 @@ export function OrderManager() {
                     onChange={e => setEditStatus(e.target.value)}
                     className="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-trust-blue-500"
                   >
-                    <option value="pending">Bekliyor (Yeni)</option>
-                    <option value="processing">İşleme Alındı (Hazırlanıyor)</option>
+                    <option value="pending">Ödeme Bekliyor</option>
+                    <option value="processing">Yeni (Ödendi)</option>
                     <option value="shipped">Kargolandı</option>
                     <option value="delivered">Teslim Edildi</option>
-                    <option value="cancelled">İptal Edildi</option>
+                    <option value="cancelled">İptal / Ödeme Başarısız</option>
                   </select>
                 </div>
 
