@@ -29,17 +29,31 @@ export async function POST(req: Request) {
     }
 
     if (status === 'success') {
-      // Ödeme başarılı, siparişi güncelle
-      await prisma.order.update({
+      const existingOrder = await prisma.order.findUnique({
         where: { orderNumber: merchant_oid },
-        data: { status: 'processing' } // İşleme alındı
+        select: { status: true }
       })
+      
+      // Sadece 'pending' veya 'cancelled' ise 'processing' yap.
+      // Eğer admin zaten 'shipped' veya 'delivered' yaptıysa PayTR webhook'u bunu geri almasın!
+      if (existingOrder && (existingOrder.status === 'pending' || existingOrder.status === 'cancelled')) {
+        await prisma.order.update({
+          where: { orderNumber: merchant_oid },
+          data: { status: 'processing' }
+        })
+      }
     } else {
-      // Ödeme hatalı
-      await prisma.order.update({
+      const existingOrder = await prisma.order.findUnique({
         where: { orderNumber: merchant_oid },
-        data: { status: 'cancelled' } // veya pending olarak kalıp not eklenebilir
+        select: { status: true }
       })
+      
+      if (existingOrder && existingOrder.status === 'pending') {
+        await prisma.order.update({
+          where: { orderNumber: merchant_oid },
+          data: { status: 'cancelled' }
+        })
+      }
       console.error('PayTR Payment Failed:', fail_reason)
     }
 

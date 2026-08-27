@@ -78,8 +78,29 @@ export async function POST(req: Request) {
 
     // 3. Calculate Totals
     let cartTotal = 0
+    // GÜVENLİK ÖNLEMİ: Kullanıcıdan gelen (client-side) fiyata KESİNLİKLE güvenme! 
+    // Veritabanından gerçek güncel fiyatı çek ve onunla hesapla.
+    const dbCartItems = []
+    
     for (const item of cart) {
-      cartTotal += item.price * item.qty
+      const dbProduct = await prisma.product.findUnique({
+        where: { id: item.id },
+        select: { id: true, sale_price: true, title: true }
+      })
+      
+      if (!dbProduct) {
+        return NextResponse.json({ error: `Ürün bulunamadı: ${item.title}` }, { status: 400 })
+      }
+      
+      const realPrice = dbProduct.sale_price
+      cartTotal += realPrice * item.qty
+      
+      // Siparişi oluştururken gerçek fiyatı kullanmak için kaydediyoruz
+      dbCartItems.push({
+        ...item,
+        title: dbProduct.title,
+        price: realPrice
+      })
     }
 
     let loyalDiscountAmount = isLoyalCustomer ? (cartTotal * 0.05) : 0
@@ -120,7 +141,7 @@ export async function POST(req: Request) {
         shippingAddress: customerInfo.address,
         status: 'pending',
         items: {
-          create: cart.map((item: any) => ({
+          create: dbCartItems.map((item: any) => ({
             productId: item.id,
             quantity: item.qty,
             price: item.price
@@ -144,7 +165,7 @@ export async function POST(req: Request) {
     const merchant_fail_url = "https://fodos.com.tr/odeme/hata"
     
     // user_basket: [[ItemName, ItemPrice, ItemQty], ...]
-    const basketArray = cart.map((item: any) => [
+    const basketArray = dbCartItems.map((item: any) => [
       item.title,
       item.price.toFixed(2).toString(),
       item.qty

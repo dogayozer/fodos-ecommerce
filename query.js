@@ -1,0 +1,1 @@
+const { PrismaClient } = require('@prisma/client'); const prisma = new PrismaClient(); async function main() { const order = await prisma.order.findUnique({ where: { orderNumber: 'ORD1787840540025531' } }); console.log(order); } main().finally(() => prisma.$disconnect());

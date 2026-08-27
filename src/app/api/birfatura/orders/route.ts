@@ -77,6 +77,10 @@ async function handleGetOrders(req: Request) {
     // Sipariş Durumu
     if (status && status !== 'all') {
       whereClause.status = status
+    } else {
+      // GÜVENLİK ÖNLEMİ: BirFatura yanlışlıkla tüm siparişleri çekmek isterse bile,
+      // ödenmemiş (pending) ve başarısız (cancelled) olanları kesinlikle gönderme.
+      whereClause.status = { notIn: ['pending', 'cancelled'] }
     }
 
     // Fatura Durumu Filtresi (Örn: Sadece fatura bekleyenler)
