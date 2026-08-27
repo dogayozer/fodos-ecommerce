@@ -1,1 +1,1 @@
-export async function GET() { return Response.json({ status: true, message: \" BirFatura API "Endpoint\ }) } export async function POST() { return Response.json({ status: true, message: \BirFatura" API "Endpoint\ }) } 
+export async function GET() { return Response.json({ status: true, message: 'BirFatura API Endpoint' }) } export async function POST() { return Response.json({ status: true, message: 'BirFatura API Endpoint' }) } 
