@@ -1,14 +1,1 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
-  },
-};
-
-export default nextConfig;
+import type { NextConfig } from 'next'; const nextConfig: NextConfig = { images: { remotePatterns: [ { protocol: 'https', hostname: '**' } ] }, skipTrailingSlashRedirect: true, rewrites: async () => { return { beforeFiles: [ { source: '/api/orderStatus/', destination: '/api/orderStatus' }, { source: '/api/paymentMethods/', destination: '/api/paymentMethods' }, { source: '/api/orders', destination: '/api/birfatura/orders' }, { source: '/api/orders/', destination: '/api/birfatura/orders' } ] }; } }; export default nextConfig;
