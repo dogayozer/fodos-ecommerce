@@ -146,16 +146,16 @@ export function OrderManager() {
           <div class="totals">
             <table>
               <tr>
-                <td style="padding: 8px;">Ara Toplam:</td>
-                <td style="padding: 8px; text-align: right;">${order.totalAmount.toLocaleString('tr-TR')} TL</td>
+                <td style="padding: 8px;">Ara Toplam (Ürünler):</td>
+                <td style="padding: 8px; text-align: right;">${(order.totalAmount - order.shippingCost).toLocaleString('tr-TR')} TL</td>
               </tr>
               <tr>
-                <td style="padding: 8px;">Kargo:</td>
+                <td style="padding: 8px;">Kargo Ücreti:</td>
                 <td style="padding: 8px; text-align: right;">${order.shippingCost.toLocaleString('tr-TR')} TL</td>
               </tr>
               <tr style="font-weight: bold; font-size: 18px;">
                 <td style="padding: 8px; border-top: 2px solid #333;">Genel Toplam:</td>
-                <td style="padding: 8px; text-align: right; border-top: 2px solid #333;">${(order.totalAmount + order.shippingCost).toLocaleString('tr-TR')} TL</td>
+                <td style="padding: 8px; text-align: right; border-top: 2px solid #333;">${order.totalAmount.toLocaleString('tr-TR')} TL</td>
               </tr>
             </table>
           </div>
