@@ -23,6 +23,7 @@ export function Dashboard() {
   const [bulkUpdating, setBulkUpdating] = useState(false)
   const [bulkResult, setBulkResult] = useState<any>(null)
   const [bulkError, setBulkError] = useState('')
+  const [bulkTargetStore, setBulkTargetStore] = useState<'fodos' | 'mpm'>('fodos')
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -142,7 +143,8 @@ export function Dashboard() {
           increasePercent: parseFloat(bulkIncrease) || 0,
           discountPercent: parseFloat(bulkDiscount) || 0,
           modelFilter: modelFilter.trim(),
-          resetToOriginal
+          resetToOriginal,
+          targetStore: bulkTargetStore
         }),
       })
 
@@ -280,8 +282,41 @@ export function Dashboard() {
         {/* Bulk Update Section */}
         <div className="mb-8 p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
           <h2 className="text-lg font-semibold mb-4 text-gray-800">Toplu Fiyat Güncelleme</h2>
-          <p className="text-sm text-gray-600 mb-6">Excel'de kayıtlı orijinal piyasa fiyatları (`original_excel_price`) üzerinden tüm sisteme zam/indirim uygulayın.</p>
-          
+          <p className="text-sm text-gray-600 mb-4">Excel'de kayıtlı orijinal piyasa fiyatları (`original_excel_price`) üzerinden tüm sisteme zam/indirim uygulayın.</p>
+
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Hangi Marka İçin Uygulanacak?</label>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setBulkTargetStore('fodos')}
+                className={`px-4 py-2 rounded-lg text-sm font-bold border transition-colors ${
+                  bulkTargetStore === 'fodos'
+                    ? 'bg-trust-blue-600 text-white border-trust-blue-600'
+                    : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                Fodos
+              </button>
+              <button
+                type="button"
+                onClick={() => setBulkTargetStore('mpm')}
+                className={`px-4 py-2 rounded-lg text-sm font-bold border transition-colors ${
+                  bulkTargetStore === 'mpm'
+                    ? 'bg-trust-blue-600 text-white border-trust-blue-600'
+                    : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                Mobil Parça Merkezi
+              </button>
+            </div>
+            <p className="text-xs text-gray-400 mt-1">
+              {bulkTargetStore === 'fodos'
+                ? 'Fodos\'un normal satış fiyatı (sale_price / reference_price) güncellenir.'
+                : 'Sadece Mobil Parça Merkezi\'ne özel fiyat (mpm_sale_price / mpm_reference_price) güncellenir, Fodos fiyatı değişmez.'}
+            </p>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Model Kodu ile Filtrele</label>

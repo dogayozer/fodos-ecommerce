@@ -12,7 +12,11 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { increasePercent, discountPercent, modelFilter, resetToOriginal } = await req.json()
+    const { increasePercent, discountPercent, modelFilter, resetToOriginal, targetStore } = await req.json()
+
+    // targetStore: 'fodos' (varsayılan, mevcut davranış birebir korunur) veya 'mpm'
+    // (Mobil Parça Merkezi'ne özel mpm_sale_price/mpm_reference_price alanlarına yazar).
+    const isMpm = targetStore === 'mpm'
 
     let updatedCount = 0
 
@@ -55,10 +59,9 @@ export async function POST(req: Request) {
 
         await tx.product.update({
           where: { id: product.id },
-          data: {
-            reference_price: newRefPrice,
-            sale_price: newSalePrice
-          }
+          data: isMpm
+            ? { mpm_reference_price: newRefPrice, mpm_sale_price: newSalePrice }
+            : { reference_price: newRefPrice, sale_price: newSalePrice }
         })
 
         updatedCount++

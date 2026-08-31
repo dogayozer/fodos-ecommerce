@@ -22,6 +22,7 @@ export function OrderManager() {
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('all')
+  const [storeFilter, setStoreFilter] = useState<'all' | 'fodos' | 'mpm'>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedOrder, setSelectedOrder] = useState<any>(null)
 
@@ -205,6 +206,9 @@ export function OrderManager() {
 
   // Filtering
   const filteredOrders = orders.filter(o => {
+    // Store (brand) filter
+    if (storeFilter !== 'all' && (o.store || 'fodos') !== storeFilter) return false
+
     // Search query filter
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim()
@@ -311,15 +315,39 @@ export function OrderManager() {
           </button>
         </div>
 
-        <div className="relative min-w-[260px]">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Sipariş no, müşteri, fatura no ara..."
-            className="w-full pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
-          />
+        <div className="flex items-center gap-3">
+          {/* Marka Filtresi */}
+          <div className="flex bg-gray-100 rounded-lg p-1 text-xs font-bold shrink-0">
+            <button
+              onClick={() => setStoreFilter('all')}
+              className={`px-3 py-1.5 rounded-md transition-colors ${storeFilter === 'all' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              Tümü
+            </button>
+            <button
+              onClick={() => setStoreFilter('fodos')}
+              className={`px-3 py-1.5 rounded-md transition-colors ${storeFilter === 'fodos' ? 'bg-white shadow-sm text-trust-blue-700' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              Fodos
+            </button>
+            <button
+              onClick={() => setStoreFilter('mpm')}
+              className={`px-3 py-1.5 rounded-md transition-colors ${storeFilter === 'mpm' ? 'bg-white shadow-sm text-purple-700' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              MPM
+            </button>
+          </div>
+
+          <div className="relative min-w-[260px]">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Sipariş no, müşteri, fatura no ara..."
+              className="w-full pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
+            />
+          </div>
         </div>
       </div>
 
@@ -349,7 +377,18 @@ export function OrderManager() {
                   return (
                     <tr key={order.id} className="hover:bg-gray-50/80 transition-colors">
                       <td className="p-4">
-                        <div className="font-bold text-gray-900 font-mono">{order.orderNumber}</div>
+                        <div className="flex items-center gap-1.5">
+                          <div className="font-bold text-gray-900 font-mono">{order.orderNumber}</div>
+                          <span
+                            className={`px-1.5 py-0.5 rounded text-[10px] font-black uppercase shrink-0 ${
+                              (order.store || 'fodos') === 'mpm'
+                                ? 'bg-purple-100 text-purple-700'
+                                : 'bg-trust-blue-100 text-trust-blue-700'
+                            }`}
+                          >
+                            {(order.store || 'fodos') === 'mpm' ? 'MPM' : 'Fodos'}
+                          </span>
+                        </div>
                         <div className="text-xs text-gray-500">
                           {new Date(order.createdAt).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' })}
                         </div>

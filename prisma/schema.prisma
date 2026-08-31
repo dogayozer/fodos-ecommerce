@@ -32,6 +32,8 @@ model Product {
   reference_price     Float?           // Piyasa Satış Fiyatı
   sale_price          Float            // Trendyol'da Satılacak Fiyat
   original_excel_price Float?          // Orijinal Excel N sütunu fiyatı
+  mpm_sale_price      Float?           // Mobil Parça Merkezi Satış Fiyatı (marka bazlı)
+  mpm_reference_price Float?           // Mobil Parça Merkezi Referans Fiyatı (marka bazlı)
   stock_qty           Int              @default(0)
   status              String           @default("inactive") // active, inactive, out_of_stock
   trendyol_url        String?
@@ -91,6 +93,7 @@ model Order {
   shippingCompany String?     // Kargo Firması (Örn: Yurtiçi Kargo)
   trackingNumber  String?     // Kargo Takip No
   status        String      @default("pending") // pending, processing, shipped, delivered, cancelled
+  store         String      @default("fodos") // fodos, mpm — hangi markadan geldiği
   adminNote     String?     // Admin tarafından siparişe eklenen özel not
   invoiceStatus String      @default("pending") // pending, invoiced, cancelled, failed
   invoiceFailReason String?   // Fatura Red Sebebi
