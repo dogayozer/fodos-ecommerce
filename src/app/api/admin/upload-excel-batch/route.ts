@@ -5,6 +5,17 @@ import { prisma } from '@/lib/prisma'
 
 export const maxDuration = 60;
 
+// Excel'in "Marka" sütunu boşsa, başlığın ilk kelimesini marka olarak kullan
+// (geçmiş bir müşteri isteği) — ama sadece gerçekten marka ismi gibi görünüyorsa.
+// Aksi halde "45 Watt...", "A40 Kamera...", "15ml..." gibi başlıklarda rakam/kod
+// içeren ilk kelime yanlışlıkla marka olarak kaydediliyordu (örn. brand: "45").
+function deriveBrand(title: string, marka: string): string {
+  const firstWord = (title || '').trim().split(/\s+/)[0] || ''
+  const isPlausibleBrandName = /^[A-Za-zÇĞİIÖŞÜçğıiöşü]+$/.test(firstWord) && firstWord.length >= 3
+  if (isPlausibleBrandName) return firstWord
+  return String(marka || '').trim()
+}
+
 function mapCategoryToTemplateType(categoryName: string): string {
   const cat = categoryName.toLowerCase()
   if (cat.includes('kasa') || cat.includes('kılıf') || cat.includes('kapak')) return 'case'
@@ -117,7 +128,7 @@ export async function POST(req: Request) {
 
         const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + barcode
 
-        const brandName = String(row['urun_markasi'] || row['Marka'] || '').trim()
+        const brandName = deriveBrand(title, row['urun_markasi'] || row['Marka'] || '')
         const modelCode = String(row['urun_modeli'] || row['Model Kodu'] || '').trim()
         const compatibleModels = String(row['varyantlar'] || '').trim()
 

@@ -18,6 +18,17 @@ function generateSlug(text: string) {
     .replace(/^-+|-+$/g, '')
 }
 
+// Excel'in "Marka" sütunu boşsa, başlığın ilk kelimesini marka olarak kullan
+// (geçmiş bir müşteri isteği) — ama sadece gerçekten marka ismi gibi görünüyorsa.
+// Aksi halde "45 Watt...", "A40 Kamera...", "15ml..." gibi başlıklarda rakam/kod
+// içeren ilk kelime yanlışlıkla marka olarak kaydediliyordu (örn. brand: "45").
+function deriveBrand(title: string, marka: string): string {
+  const firstWord = (title || '').trim().split(/\s+/)[0] || ''
+  const isPlausibleBrandName = /^[A-Za-zÇĞİIÖŞÜçğıiöşü]+$/.test(firstWord) && firstWord.length >= 3
+  if (isPlausibleBrandName) return firstWord
+  return String(marka || '').trim()
+}
+
 function mapCategoryToTemplateType(categoryName: string): string {
   const cat = categoryName.toLowerCase()
   if (cat.includes('kasa') || cat.includes('kılıf') || cat.includes('kapak')) return 'case'
@@ -143,8 +154,10 @@ export async function POST(req: Request) {
           const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + barcode
 
           // MÜŞTERİ İSTEĞİ: "Marka (I) sütunu yerine, Ürün Adı (L) sütunundaki ilk kelimeyi Marka yap"
-          let firstWordBrand = title.trim().split(' ')[0]
-          if (!firstWordBrand) firstWordBrand = String(row['Marka'] || '')
+          // (deriveBrand ile: sadece ilk kelime gerçekten marka ismine benziyorsa kullanılır,
+          // aksi halde Excel'in Marka sütununa düşer — "45 Watt...", "A40..." gibi anlamsız
+          // değerlerin marka olarak kaydedilmesini önler.)
+          const firstWordBrand = deriveBrand(title, row['Marka'] || '')
 
           const productData = {
             model_code: String(row['Model Kodu'] || ''),
