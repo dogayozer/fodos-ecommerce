@@ -1,4 +1,4 @@
-import { generateText, tool } from 'ai'
+import { generateText, tool, stepCountIs } from 'ai'
 import { google } from '@ai-sdk/google'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
@@ -10,13 +10,19 @@ export async function POST(req: Request) {
   try {
     const body = await req.json()
     console.log("API /api/chat received body:", JSON.stringify(body, null, 2))
-    const messages = body.messages || []
+    // Token maliyetini düşürmek için sadece son birkaç mesajı gönderiyoruz (uzun sohbetlerde
+    // tüm geçmişi tekrar tekrar modele yollamak gereksiz token tüketimine yol açar).
+    const messages = (body.messages || []).slice(-8)
 
     const result = await generateText({
-      model: google('gemini-flash-latest'),
-      maxRetries: 0,
+      model: google('gemini-3.6-flash'),
+      maxRetries: 2,
+      maxOutputTokens: 350,
+      // Araç çağrısından sonra modelin sonucu yorumlayıp gerçek bir metin cevabı üretmesi
+      // için en az 2 adıma izin veriyoruz (aksi halde sadece boş text + tool call döner).
+      stopWhen: stepCountIs(3),
       messages,
-      system: `Sen Fodos ve Piaks markalarının resmi akıllı alışveriş asistanısın. 
+      system: `Sen Fodos ve Piaks markalarının resmi akıllı alışveriş asistanısın.
       Müşteriler yedek parça, telefon aksesuarı veya elektronik ürünler hakkında sorular soracak.
       Görevlerin:
       1. Müşterilere çok kibar, samimi ve KISA cevaplar ver.
