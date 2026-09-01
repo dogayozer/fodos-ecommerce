@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/admin/', '/api/'],
+      disallow: ['/admin/', '/api/', '/sepet', '/odeme', '/giris', '/kayit-ol', '/hesabim'],
     },
     sitemap: 'https://fodos.com.tr/sitemap.xml',
   }

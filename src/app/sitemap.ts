@@ -44,8 +44,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  // Dynamic Categories
+  // Dynamic Categories — sadece en az bir aktif ürünü olan kategoriler (boş/çöp
+  // kategorileri sitemap'e sokup ince/boş içerik sinyali vermemek için)
   const categories = await prisma.category.findMany({
+    where: { products: { some: { status: { not: 'inactive' } } } },
     select: { slug: true }
   })
   

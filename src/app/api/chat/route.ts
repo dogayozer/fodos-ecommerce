@@ -42,17 +42,24 @@ export async function POST(req: Request) {
           }),
           // @ts-ignore
           execute: async (args: any) => {
-            let keywords = args.keywords || args.query || args.query_keywords || [];
-            
-            // Eğer Gemini Zod schema key'ini farklı uydurduysa (halüsinasyon), ilk property'i zorla al:
-            if ((!keywords || keywords.length === 0) && Object.keys(args).length > 0) {
+            // Model bazen şemayı görmezden gelip farklı bir anahtar adıyla (örn. "query")
+            // ya da dizi yerine tek bir metinle çağırabiliyor — her ihtimale karşı normalize et.
+            // (Önceki halde args.query bir string geldiğinde keywords.map() string üzerinde
+            // çalışmaya çalışıp hataya düşüyordu; artık string her zaman kelimelere bölünüyor.)
+            const raw = args.keywords ?? args.query ?? args.query_keywords ?? args.keyword ?? null;
+            let keywords: string[] = [];
+            if (Array.isArray(raw)) {
+              keywords = raw.filter((k: any) => typeof k === 'string' && k.trim());
+            } else if (typeof raw === 'string' && raw.trim()) {
+              keywords = raw.trim().split(/\s+/).filter(Boolean);
+            } else if (raw == null && Object.keys(args).length > 0) {
               const val = Object.values(args)[0];
-              if (Array.isArray(val)) keywords = val;
-              else if (typeof val === 'string') keywords = val.split(' ').filter(Boolean);
+              if (Array.isArray(val)) keywords = (val as any[]).filter((k) => typeof k === 'string');
+              else if (typeof val === 'string') keywords = val.trim().split(/\s+/).filter(Boolean);
             }
 
-            if (!keywords || keywords.length === 0) return { success: false, message: "Anahtar kelime bulunamadı." };
-            
+            if (keywords.length === 0) return { success: false, message: "Anahtar kelime bulunamadı." };
+
             // Her bir anahtar kelime için, o kelimenin title veya brand içinde geçme şartını (AND) oluşturuyoruz.
             // Bu sayede "65w adaptör" aramasında kelimelerin sırası veya aralarındaki kelimeler önemsiz olur.
             const andConditions = keywords.map((keyword: string) => ({
