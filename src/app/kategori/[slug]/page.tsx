@@ -6,8 +6,43 @@ import { ProductCard } from '@/components/ProductCard'
 import { ModelFilter } from '@/components/ModelFilter'
 import { getCachedCategoryData } from '@/lib/data'
 import { toTitleCase } from '@/lib/utils'
+import type { Metadata } from 'next'
 
 export const revalidate = 60; // ISR cache
+
+const MAX_TITLE = 60
+const MAX_DESC = 155
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const resolvedParams = await params
+  const slug = decodeURIComponent(resolvedParams.slug)
+  const data = await getCachedCategoryData(slug)
+
+  if (!data) {
+    return { title: 'Kategori Bulunamadı | Fodos' }
+  }
+
+  const name = toTitleCase(data.category.name)
+  const pageTitle = `${name} | Fodos`.length <= MAX_TITLE ? `${name} | Fodos` : name.slice(0, MAX_TITLE - 1).trim() + '…'
+  const desc = `${name} çeşitleri uygun fiyatlarla Fodos'ta. Orijinal, test edilmiş yedek parçalar, aynı gün kargo ve stoktan teslim.`
+  const pageDescription = desc.length > MAX_DESC ? desc.slice(0, MAX_DESC - 1).trim() + '…' : desc
+
+  return {
+    title: pageTitle,
+    description: pageDescription,
+    alternates: {
+      canonical: `https://fodos.com.tr/kategori/${slug}`,
+    },
+    openGraph: {
+      title: pageTitle,
+      description: pageDescription,
+    },
+  }
+}
 
 export default async function CategoryPage({
   params,
