@@ -1,20 +1,83 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { MessageCircle, X, Send, Bot, User, Loader2, BotMessageSquare } from 'lucide-react'
+import { MessageCircle, X, Send, Bot, User, Loader2, BotMessageSquare, RotateCcw, Search } from 'lucide-react'
 import Link from 'next/link'
+
+const WELCOME_MESSAGE = {
+  id: 'welcome-message',
+  role: 'assistant',
+  content: 'Merhaba! Fodos ve Piaks akıllı alışveriş asistanına hoş geldiniz. Aşağıdan kategori/marka seçerek hızlıca arayabilir, ya da doğrudan yazabilirsiniz.'
+}
 
 export function SmartAssistant() {
   const [isOpen, setIsOpen] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [messages, setMessages] = useState<any[]>([
-    {
-      id: 'welcome-message',
-      role: 'assistant',
-      content: 'Merhaba! Fodos ve Piaks akıllı alışveriş asistanına hoş geldiniz. Size nasıl yardımcı olabilirim?'
+  const [messages, setMessages] = useState<any[]>([WELCOME_MESSAGE])
+
+  // Seçimli (butonlu) arama — AI'ya gitmeden, token maliyetsiz hızlı sonuç
+  const [options, setOptions] = useState<{ categories: any[]; brands: string[] }>({ categories: [], brands: [] })
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [selectedBrand, setSelectedBrand] = useState<string | null>(null)
+  const [modelText, setModelText] = useState('')
+  const [guidedLoading, setGuidedLoading] = useState(false)
+
+  useEffect(() => {
+    if (isOpen && options.categories.length === 0) {
+      fetch('/api/assistant/options')
+        .then((r) => r.json())
+        .then((d) => setOptions({ categories: d.categories || [], brands: d.brands || [] }))
+        .catch(() => {})
     }
-  ])
+  }, [isOpen])
+
+  const handleReset = () => {
+    setMessages([WELCOME_MESSAGE])
+    setSelectedCategory(null)
+    setSelectedBrand(null)
+    setModelText('')
+    setInputValue('')
+  }
+
+  const handleGuidedSearch = async () => {
+    if (guidedLoading) return
+    setGuidedLoading(true)
+
+    const label = [selectedCategory, selectedBrand, modelText.trim()].filter(Boolean).join(' / ') || 'Tüm ürünler'
+    const userMessage = { id: Date.now().toString(), role: 'user', content: `🔎 ${label}` }
+    setMessages((prev) => [...prev, userMessage])
+
+    try {
+      const catSlug = options.categories.find((c) => c.name === selectedCategory)?.slug
+      const res = await fetch('/api/assistant/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ categorySlug: catSlug, brand: selectedBrand, model: modelText.trim() }),
+      })
+      const data = await res.json()
+      const products = data.products || []
+
+      setMessages((prev) => [...prev, {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: products.length > 0 ? `${products.length} ürün buldum:` : 'Bu kritere uygun ürün bulamadım — farklı bir seçim deneyin veya serbest yazarak sorun.',
+        toolInvocations: products.length > 0 ? [{
+          state: 'result',
+          toolCallId: 'guided-' + Date.now(),
+          result: { success: true, products },
+        }] : [],
+      }])
+    } catch {
+      setMessages((prev) => [...prev, {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'Arama sırasında bir hata oluştu, lütfen tekrar deneyin.',
+      }])
+    } finally {
+      setGuidedLoading(false)
+    }
+  }
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -119,12 +182,21 @@ export function SmartAssistant() {
                 </p>
               </div>
             </div>
-            <button 
-              onClick={() => setIsOpen(false)}
-              className="p-2 hover:bg-white/20 rounded-full transition-colors"
-            >
-              <X size={20} />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={handleReset}
+                title="Başa Dön"
+                className="p-2 hover:bg-white/20 rounded-full transition-colors"
+              >
+                <RotateCcw size={18} />
+              </button>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-2 hover:bg-white/20 rounded-full transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
           </div>
 
           {/* Messages Area */}
@@ -203,6 +275,60 @@ export function SmartAssistant() {
             )}
             
             <div ref={messagesEndRef} />
+          </div>
+
+          {/* Seçimli Hızlı Arama Paneli — AI'ya gitmeden kategori/marka/model seçimi */}
+          <div className="border-t border-gray-100 bg-white px-3 pt-2.5 pb-1 space-y-1.5">
+            {options.categories.length > 0 && (
+              <div className="flex gap-1.5 overflow-x-auto pb-1 text-[11px]">
+                {options.categories.map((c) => (
+                  <button
+                    key={c.slug}
+                    onClick={() => setSelectedCategory(selectedCategory === c.name ? null : c.name)}
+                    className={`shrink-0 px-2.5 py-1 rounded-lg font-semibold transition-colors ${
+                      selectedCategory === c.name
+                        ? 'bg-trust-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            )}
+            {options.brands.length > 0 && (
+              <div className="flex gap-1.5 overflow-x-auto pb-1 text-[11px]">
+                {options.brands.map((b) => (
+                  <button
+                    key={b}
+                    onClick={() => setSelectedBrand(selectedBrand === b ? null : b)}
+                    className={`shrink-0 px-2.5 py-1 rounded-lg font-semibold transition-colors ${
+                      selectedBrand === b
+                        ? 'bg-trust-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    {b}
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="flex gap-1.5">
+              <input
+                value={modelText}
+                onChange={(e) => setModelText(e.target.value)}
+                placeholder="Model (opsiyonel, örn: iPhone 13)"
+                className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-[11px] focus:outline-none focus:ring-2 focus:ring-trust-blue-500"
+              />
+              <button
+                onClick={handleGuidedSearch}
+                disabled={guidedLoading || (!selectedCategory && !selectedBrand && !modelText.trim())}
+                className="shrink-0 flex items-center gap-1 px-3 py-1.5 bg-trust-blue-600 hover:bg-trust-blue-700 disabled:opacity-40 text-white rounded-lg text-[11px] font-bold transition-colors"
+              >
+                {guidedLoading ? <Loader2 size={12} className="animate-spin" /> : <Search size={12} />}
+                Sonuçları Gör
+              </button>
+            </div>
           </div>
 
           {/* Input Area */}

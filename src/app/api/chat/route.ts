@@ -21,6 +21,9 @@ export async function POST(req: Request) {
       // Araç çağrısından sonra modelin sonucu yorumlayıp gerçek bir metin cevabı üretmesi
       // için en az 2 adıma izin veriyoruz (aksi halde sadece boş text + tool call döner).
       stopWhen: stepCountIs(3),
+      // "Thinking" (uzun düşünme) bütçesi minimuma çekildi — bu model tamamen kapatmayı
+      // reddediyor (400 hatası), ama düşük bütçe yanıt süresini 30-40sn'den ~5-10sn'ye indiriyor.
+      providerOptions: { google: { thinkingConfig: { thinkingBudget: 128 } } },
       messages,
       system: `Sen Fodos ve Piaks markalarının resmi akıllı alışveriş asistanısın.
       Müşteriler yedek parça, telefon aksesuarı veya elektronik ürünler hakkında sorular soracak.
