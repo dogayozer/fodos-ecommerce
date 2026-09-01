@@ -138,7 +138,9 @@ export function OrderManager() {
             .totals td { border-bottom: none; padding: 3px; }
             .totals .grand td { font-weight: 800; font-size: 14px; border-top: 2px solid #000; padding-top: 5px; }
             .note { padding: 6px; background: #eee; border-radius: 4px; margin-top: 8px; font-size: 10px; font-weight: 600; }
+            #barcode { display: block; margin: 3px 0 0 auto; max-width: 100%; }
           </style>
+          <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
         </head>
         <body>
           <div class="header">
@@ -149,8 +151,21 @@ export function OrderManager() {
             <div style="text-align: right;">
               <h2>#${order.orderNumber}</h2>
               <p class="subtle">${new Date(order.createdAt).toLocaleDateString('tr-TR')}</p>
+              <svg id="barcode"></svg>
             </div>
           </div>
+          <script>
+            if (typeof JsBarcode !== 'undefined') {
+              JsBarcode('#barcode', ${JSON.stringify(order.orderNumber)}, {
+                format: 'CODE128',
+                width: 1.3,
+                height: 32,
+                fontSize: 9,
+                margin: 0,
+                displayValue: false
+              });
+            }
+          </script>
 
           <div class="info-block">
             <div>
