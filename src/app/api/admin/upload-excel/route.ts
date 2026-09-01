@@ -6,6 +6,18 @@ import { prisma } from '@/lib/prisma'
 
 export const maxDuration = 60; // Vercel Free Plan max timeout limitine çıkar (60 saniye)
 
+function generateSlug(text: string) {
+  const trMap: any = {
+    'ç': 'c', 'ğ': 'g', 'ı': 'i', 'i': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u',
+    'Ç': 'c', 'Ğ': 'g', 'I': 'i', 'İ': 'i', 'Ö': 'o', 'Ş': 's', 'Ü': 'u'
+  }
+  let slug = text.replace(/[çğıiöşüÇĞIİÖŞÜ]/g, match => trMap[match])
+  return slug
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
 function mapCategoryToTemplateType(categoryName: string): string {
   const cat = categoryName.toLowerCase()
   if (cat.includes('kasa') || cat.includes('kılıf') || cat.includes('kapak')) return 'case'
@@ -81,20 +93,21 @@ export async function POST(req: Request) {
           const templateType = mapCategoryToTemplateType(categoryName)
           const title = String(row['Ürün Adı'] || '').trim()
           
-          let category: any = categoryCache.get(categoryName)
+          const catSlug = generateSlug(categoryName)
+          let category: any = categoryCache.get(catSlug)
           if (!category) {
-            category = await tx.category.findUnique({ where: { slug: categoryName } })
+            category = await tx.category.findUnique({ where: { slug: catSlug } })
             if (!category) {
               category = await tx.category.create({
                 data: {
                   name: categoryName,
-                  slug: categoryName,
+                  slug: catSlug,
                   template_type: templateType,
                   risk_profile: templateType === 'battery' ? 'Yüksek Risk' : 'Normal',
                 }
               })
             }
-            categoryCache.set(categoryName, category)
+            categoryCache.set(catSlug, category)
           }
 
           const trendyolPriceStr = String(row["Trendyol'da Satılacak Fiyat"] || row["Satış Fiyatı"] || row["Trendyol'da Satılacak Fiyat (KDV Dahil)"] || row["Satış Fiyatı (KDV Dahil)"] || row["Fiyat"] || '0')
