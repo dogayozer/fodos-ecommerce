@@ -120,7 +120,7 @@ export function OrderManager() {
         <head>
           <title>Sipariş Fişi - ${order.orderNumber}</title>
           <style>
-            body { font-family: sans-serif; color: #333; margin: 40px; }
+            body { font-family: sans-serif; color: #333; margin: 40px; zoom: 1.2; }
             .header { display: flex; justify-content: space-between; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
             .info-block { margin-bottom: 30px; }
             table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
