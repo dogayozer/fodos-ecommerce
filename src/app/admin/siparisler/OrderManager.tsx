@@ -107,11 +107,11 @@ export function OrderManager() {
     if (!printWindow) return
 
     const itemsHtml = order.items?.map((item: any) => `
-      <tr style="border-bottom: 1px solid #ddd;">
-        <td style="padding: 12px 8px;">${item.product?.title || 'Ürün'}</td>
-        <td style="padding: 12px 8px; text-align: center;">${item.quantity}</td>
-        <td style="padding: 12px 8px; text-align: right;">${item.price.toLocaleString('tr-TR')} TL</td>
-        <td style="padding: 12px 8px; text-align: right;">${(item.quantity * item.price).toLocaleString('tr-TR')} TL</td>
+      <tr>
+        <td>${item.product?.title || 'Ürün'}</td>
+        <td style="text-align: center;">${item.quantity}</td>
+        <td style="text-align: right;">${item.price.toLocaleString('tr-TR')} TL</td>
+        <td style="text-align: right;">${(item.quantity * item.price).toLocaleString('tr-TR')} TL</td>
       </tr>
     `).join('') || ''
 
@@ -120,41 +120,51 @@ export function OrderManager() {
         <head>
           <title>Sipariş Fişi - ${order.orderNumber}</title>
           <style>
-            body { font-family: sans-serif; color: #333; margin: 40px; zoom: 1.2; }
-            .header { display: flex; justify-content: space-between; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
-            .info-block { margin-bottom: 30px; }
-            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-            th { text-align: left; padding: 12px 8px; background-color: #f9fafb; border-bottom: 2px solid #ddd; }
-            .totals { width: 100%; display: flex; justify-content: flex-end; }
-            .totals table { width: 300px; }
-            .note { padding: 15px; background: #f9fafb; border-radius: 8px; margin-top: 30px; font-size: 14px; }
+            @page { size: 100mm 100mm; margin: 2mm; }
+            * { box-sizing: border-box; }
+            body { font-family: sans-serif; color: #000; margin: 0; padding: 0; font-size: 12px; line-height: 1.3; }
+            .header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+            h1 { margin: 0; font-size: 15px; font-weight: 800; }
+            h2 { margin: 0; font-size: 13px; font-weight: 800; }
+            h3 { margin: 0 0 4px 0; font-size: 11px; font-weight: 700; border-bottom: 1px solid #000; padding-bottom: 3px; }
+            .subtle { margin: 2px 0 0 0; color: #000; font-size: 10px; }
+            .info-block { margin-bottom: 8px; }
+            .info-block > div { margin-bottom: 6px; }
+            .info-block p { margin: 2px 0; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 11px; }
+            th { text-align: left; padding: 4px 3px; background-color: #eee; border-bottom: 2px solid #000; font-weight: 700; }
+            td { padding: 4px 3px; border-bottom: 1px solid #000; }
+            .totals table { width: 100%; margin-bottom: 0; }
+            .totals td { border-bottom: none; padding: 3px; }
+            .totals .grand td { font-weight: 800; font-size: 14px; border-top: 2px solid #000; padding-top: 5px; }
+            .note { padding: 6px; background: #eee; border-radius: 4px; margin-top: 8px; font-size: 10px; font-weight: 600; }
           </style>
         </head>
         <body>
           <div class="header">
             <div>
-              <h1 style="margin:0;">FODOS & PİAKS</h1>
-              <p style="margin:5px 0 0 0; color:#666;">Sipariş Fişi</p>
+              <h1>FODOS &amp; PİAKS</h1>
+              <p class="subtle">Sipariş Fişi</p>
             </div>
             <div style="text-align: right;">
-              <h2 style="margin:0;">#${order.orderNumber}</h2>
-              <p style="margin:5px 0 0 0; color:#666;">Tarih: ${new Date(order.createdAt).toLocaleDateString('tr-TR')}</p>
+              <h2>#${order.orderNumber}</h2>
+              <p class="subtle">${new Date(order.createdAt).toLocaleDateString('tr-TR')}</p>
             </div>
           </div>
-          
-          <div style="display: flex; justify-content: space-between;" class="info-block">
-            <div style="width: 48%;">
-              <h3 style="margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Müşteri Bilgileri</h3>
-              <p style="margin: 4px 0;"><strong>${order.customer?.name || 'Misafir'}</strong></p>
-              <p style="margin: 4px 0;">${order.customer?.phone || ''}</p>
-              <p style="margin: 4px 0;">${order.customer?.email || ''}</p>
-              ${order.taxNumber ? `<p style="margin: 4px 0; color: #555;">TC/Vergi No: ${order.taxNumber}</p>` : ''}
-              ${order.companyTitle ? `<p style="margin: 4px 0; color: #555;">Unvan: ${order.companyTitle}</p>` : ''}
+
+          <div class="info-block">
+            <div>
+              <h3>Müşteri Bilgileri</h3>
+              <p><strong>${order.customer?.name || 'Misafir'}</strong></p>
+              <p>${order.customer?.phone || ''}</p>
+              <p>${order.customer?.email || ''}</p>
+              ${order.taxNumber ? `<p>TC/Vergi No: ${order.taxNumber}</p>` : ''}
+              ${order.companyTitle ? `<p>Unvan: ${order.companyTitle}</p>` : ''}
             </div>
-            <div style="width: 48%;">
-              <h3 style="margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Teslimat Adresi</h3>
-              <p style="margin: 4px 0;">${order.shippingAddress || ''}</p>
-              <p style="margin: 4px 0;">${order.shippingDistrict || ''} / ${order.shippingCity || ''}</p>
+            <div>
+              <h3>Teslimat Adresi</h3>
+              <p>${order.shippingAddress || ''}</p>
+              <p>${order.shippingDistrict || ''} / ${order.shippingCity || ''}</p>
             </div>
           </div>
 
@@ -163,7 +173,7 @@ export function OrderManager() {
               <tr>
                 <th>Ürün</th>
                 <th style="text-align: center;">Adet</th>
-                <th style="text-align: right;">Birim Fiyat</th>
+                <th style="text-align: right;">Fiyat</th>
                 <th style="text-align: right;">Toplam</th>
               </tr>
             </thead>
@@ -175,23 +185,23 @@ export function OrderManager() {
           <div class="totals">
             <table>
               <tr>
-                <td style="padding: 8px;">Ara Toplam:</td>
-                <td style="padding: 8px; text-align: right;">${(order.totalAmount - (order.shippingCost || 0)).toLocaleString('tr-TR')} TL</td>
+                <td>Ara Toplam:</td>
+                <td style="text-align: right;">${(order.totalAmount - (order.shippingCost || 0)).toLocaleString('tr-TR')} TL</td>
               </tr>
               <tr>
-                <td style="padding: 8px;">Kargo Ücreti:</td>
-                <td style="padding: 8px; text-align: right;">${(order.shippingCost || 0).toLocaleString('tr-TR')} TL</td>
+                <td>Kargo Ücreti:</td>
+                <td style="text-align: right;">${(order.shippingCost || 0).toLocaleString('tr-TR')} TL</td>
               </tr>
-              <tr style="font-weight: bold; font-size: 18px;">
-                <td style="padding: 8px; border-top: 2px solid #333;">Genel Toplam:</td>
-                <td style="padding: 8px; text-align: right; border-top: 2px solid #333;">${order.totalAmount.toLocaleString('tr-TR')} TL</td>
+              <tr class="grand">
+                <td>Genel Toplam:</td>
+                <td style="text-align: right;">${order.totalAmount.toLocaleString('tr-TR')} TL</td>
               </tr>
             </table>
           </div>
 
           ${order.invoiceNumber ? `<div class="note"><strong>BirFatura E-Fatura No:</strong> ${order.invoiceNumber}</div>` : ''}
           ${order.adminNote ? `<div class="note"><strong>Yönetici Notu:</strong><br/>${order.adminNote.replace(/\n/g, '<br/>')}</div>` : ''}
-          
+
           <script>
             window.onload = () => {
               window.print();
