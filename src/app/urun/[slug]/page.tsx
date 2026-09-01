@@ -41,17 +41,33 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const defaultDescription = `${product.title} modeli için uyumlu ve kaliteli ${categoryName.toLowerCase()}. Sirkeci toptan telefon parçası güvencesiyle en uygun fiyatlarla Fodos'ta. Aynı gün kargo ve stoktan teslim!`
 
+  // Google arama sonuçlarında <title> ~60, meta description ~155 karakterden sonra
+  // kesiliyor. Ürüne özel başlık her zaman genel Fodos ekinden daha değerli anahtar
+  // kelime içerdiği için önceliklendiriliyor; ek ancak sığdığı kadar ekleniyor.
+  const MAX_TITLE = 60
+  const MAX_DESC = 155
+  const shortSuffix = ' | Fodos'
+  const pageTitle =
+    product.title.length + shortSuffix.length <= MAX_TITLE
+      ? `${product.title}${shortSuffix}`
+      : product.title.length <= MAX_TITLE
+        ? product.title
+        : product.title.slice(0, MAX_TITLE - 1).trim() + '…'
+
+  const rawDesc = (product.description_raw || defaultDescription).replace(/;/g, ' ').replace(/\s+/g, ' ').trim()
+  const pageDescription = rawDesc.length > MAX_DESC ? rawDesc.slice(0, MAX_DESC - 1).trim() + '…' : rawDesc
+
   return {
-    title: `${product.title} | Fodos Sirkeci Telefon Parçası`,
-    description: product.description_raw ? product.description_raw.substring(0, 150) + '... ' + defaultDescription : defaultDescription,
+    title: pageTitle,
+    description: pageDescription,
     keywords: keywords,
     openGraph: {
-      title: `${product.title} | Fodos`,
-      description: defaultDescription,
+      title: pageTitle,
+      description: pageDescription,
       images: product.images.length > 0 ? [product.images[0].url] : [],
     },
     alternates: {
-      canonical: `https://fodos.com/urun/${product.slug}`,
+      canonical: `https://fodos.com.tr/urun/${product.slug}`,
     }
   }
 }
@@ -87,7 +103,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     },
     offers: {
       '@type': 'Offer',
-      url: `https://fodos.com/urun/${product.slug}`,
+      url: `https://fodos.com.tr/urun/${product.slug}`,
       priceCurrency: 'TRY',
       price: product.sale_price,
       itemCondition: 'https://schema.org/NewCondition',
