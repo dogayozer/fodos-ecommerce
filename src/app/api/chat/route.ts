@@ -81,6 +81,7 @@ export async function POST(req: Request) {
                 reference_price: true,
                 slug: true
               },
+              orderBy: [{ has_real_photo: 'desc' }, { stock_qty: 'desc' }],
               take: 3
             })
             

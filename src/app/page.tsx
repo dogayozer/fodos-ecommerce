@@ -12,7 +12,7 @@ export default async function HomePage() {
   // Fetch New Arrivals (Yeni Gelenler)
   const newArrivals = await prisma.product.findMany({
     orderBy: [
-      { images: { _count: 'desc' } },
+      { has_real_photo: 'desc' },
       { createdAt: 'desc' }
     ],
     take: 4,
@@ -22,9 +22,9 @@ export default async function HomePage() {
   // Mock Best Sellers (Çok Satanlar)
   const bestSellers = await prisma.product.findMany({
     orderBy: [
-      { images: { _count: 'desc' } },
+      { has_real_photo: 'desc' },
       { stock_qty: 'desc' }
-    ], 
+    ],
     take: 4,
     include: { images: true }
   })

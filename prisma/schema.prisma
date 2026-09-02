@@ -45,6 +45,7 @@ model Product {
   createdAt           DateTime         @default(now())
   updatedAt           DateTime         @updatedAt
   last_synced_at      DateTime?
+  has_real_photo      Boolean          @default(false) // Trendyol import placeholder'ı değil, gerçek/benzersiz ürün fotoğrafı var mı
 }
 
 model ProductVariant {

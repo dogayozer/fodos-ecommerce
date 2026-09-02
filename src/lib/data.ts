@@ -53,23 +53,17 @@ export const getCachedCategoryData = unstable_cache(
     if (brand) whereClause.brand = brand
     if (model) whereClause.model_code = model
 
+    // Gerçek/benzersiz fotoğrafı olan ürünler önce gelsin (has_real_photo, Trendyol import
+    // placeholder'ı olan ~7.400 ürünü hariç tutacak şekilde önceden hesaplanmış bir alan —
+    // eskiden burada "resim sayısı >= 2" ile yapılan JS sıralaması, placeholder'lı ürünleri de
+    // "iyi çalışılmış" sayıp yanlış öne çıkarıyordu)
     const products = await prisma.product.findMany({
       where: whereClause,
       include: { images: true },
-      orderBy: { createdAt: 'desc' }
-    })
-
-    // Ürünleri sıralama: En az 2 görseli olanlar (daha iyi çalışılmış ürünler) önce gelsin
-    products.sort((a, b) => {
-      const aHasGoodImages = a.images.length >= 2 ? 1 : 0;
-      const bHasGoodImages = b.images.length >= 2 ? 1 : 0;
-      
-      if (aHasGoodImages !== bHasGoodImages) {
-        return bHasGoodImages - aHasGoodImages; // 1 olanlar önce
-      }
-      
-      // Kendi içlerinde eklenme tarihine göre yeniden eskiye
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      orderBy: [
+        { has_real_photo: 'desc' },
+        { createdAt: 'desc' }
+      ]
     })
 
     let availableModels: string[] = []

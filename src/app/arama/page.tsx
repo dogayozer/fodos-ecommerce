@@ -63,7 +63,7 @@ export default async function SearchPage({
         where: whereClause,
         include: { images: true },
         orderBy: [
-          { images: { _count: 'desc' } },
+          { has_real_photo: 'desc' },
           { createdAt: 'desc' }
         ]
       })
