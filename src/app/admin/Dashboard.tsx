@@ -211,6 +211,16 @@ export function Dashboard() {
               Üyelere Git
             </a>
           </div>
+
+          <div className="p-6 bg-white border border-orange-100 rounded-xl shadow-sm flex flex-col justify-between">
+            <div>
+              <h2 className="text-xl font-bold mb-1 text-orange-700">Pazaryeri Siparişleri</h2>
+              <p className="text-sm text-gray-500 mb-4">Trendyol, Hepsiburada, N11, Çiçeksepeti siparişlerini tek ekranda topla, işleme al, tedarik notu gir.</p>
+            </div>
+            <a href="/admin/pazaryeri-siparisleri" className="bg-orange-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-orange-700 transition-colors shadow-sm text-center inline-block">
+              Pazaryeri Siparişlerine Git
+            </a>
+          </div>
         </div>
 
         <div className="mb-8">

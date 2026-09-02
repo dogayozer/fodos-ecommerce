@@ -178,3 +178,77 @@ model ChatLog {
   isFound   Boolean  @default(false) // Did the searchProducts tool find anything?
   createdAt DateTime @default(now())
 }
+
+// --- Pazaryeri Sipariş Toplama (Trendyol/Hepsiburada/N11/Çiçeksepeti) ---
+// Bilerek fodos.com.tr'nin kendi Order/OrderItem modelinden tamamen izole:
+// OrderItem.productId zorunlu FK olduğu için pazaryeri SKU'ları her zaman
+// katalogla eşleşmeyebilir; bu modeller checkout/PayTR/BirFatura akışına dokunmaz.
+
+model MarketplaceAccount {
+  id            String   @id @default(cuid())
+  platform      String   // trendyol, hepsiburada, n11, ciceksepeti
+  accountLabel  String   // "Trendyol - Ana Hesap" gibi ayırt edici isim
+  apiKey        String?
+  apiSecret     String?
+  supplierId    String?  // sellerId / merchantId / mağaza kodu
+  isActive      Boolean  @default(true)
+  lastSyncAt    DateTime?
+  lastSyncError String?
+  orders        MarketplaceOrder[]
+  syncLogs      MarketplaceSyncLog[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([platform, accountLabel])
+}
+
+model MarketplaceOrder {
+  id                String   @id @default(cuid())
+  accountId         String
+  account           MarketplaceAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  platformOrderId   String   // pazaryerinin kendi sipariş/paket no'su
+  orderNumber       String?  // görünen sipariş no (varsa)
+  customerName      String?
+  customerCity      String?
+  customerDistrict  String?
+  totalAmount       Float
+  currency          String   @default("TRY")
+  rawPayload        Json?    // ham API cevabı — debug ve alan eşleme iyileştirmesi için
+  status            String   @default("new") // new, processing, supplied, cancelled
+  supplierNote      String?  // "kimden/hangi komdan alındı" serbest metin
+  supplyCost        Float?   // ₺ tedarik maliyeti
+  suppliedAt        DateTime?
+  platformCreatedAt DateTime
+  items             MarketplaceOrderItem[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([accountId, platformOrderId])
+  @@index([status])
+  @@index([platformCreatedAt])
+}
+
+model MarketplaceOrderItem {
+  id               String   @id @default(cuid())
+  orderId          String
+  order            MarketplaceOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  platformSku      String?
+  barcode          String?
+  productName      String
+  quantity         Int
+  unitPrice        Float
+  matchedProductId String?  // Product.id — NULLABLE, sadece bilgi amaçlı best-effort eşleşme
+}
+
+model MarketplaceSyncLog {
+  id           String   @id @default(cuid())
+  accountId    String
+  account      MarketplaceAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  platform     String
+  status       String   // success, partial, failed
+  fetched      Int      @default(0)
+  created      Int      @default(0)
+  errorMessage String?
+  startedAt    DateTime @default(now())
+  completedAt  DateTime?
+}
