@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/admin/', '/api/', '/sepet', '/odeme', '/giris', '/kayit-ol', '/hesabim'],
     },
-    sitemap: 'https://fodos.com.tr/sitemap.xml',
+    sitemap: 'https://www.fodos.com.tr/sitemap.xml',
   }
 }

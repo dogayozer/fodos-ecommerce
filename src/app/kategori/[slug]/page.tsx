@@ -35,7 +35,7 @@ export async function generateMetadata({
     title: pageTitle,
     description: pageDescription,
     alternates: {
-      canonical: `https://fodos.com.tr/kategori/${slug}`,
+      canonical: `https://www.fodos.com.tr/kategori/${slug}`,
     },
     openGraph: {
       title: pageTitle,

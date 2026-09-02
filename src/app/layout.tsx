@@ -12,14 +12,17 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://fodos.com.tr'),
+  metadataBase: new URL('https://www.fodos.com.tr'),
   title: "Fodos ve Piaks | Orijinal Cep Telefonu Yedek Parçaları",
   description: "Fodos ve Piaks markalı telefon kasası, tuş takımı, şarj aleti ve batarya gibi telefon aksesuarları ve yedek parçalar. Türkiye'nin lider tedarikçisi.",
   keywords: ["telefon yedek parça", "sirkeci telefon parçası", "toptan telefon parçası", "fodos", "piaks", "orijinal batarya", "telefon ekranı", "cep telefonu tamir parçaları"],
+  alternates: {
+    canonical: 'https://www.fodos.com.tr',
+  },
   openGraph: {
     title: "Fodos ve Piaks | Orijinal Cep Telefonu Yedek Parçaları",
     description: "Türkiye'nin Cep Telefonu Parça Tedarikçisi. Binlerce Tamir Merkezi, Onbinlerce Memnun Müşteri.",
-    url: 'https://fodos.com.tr',
+    url: 'https://www.fodos.com.tr',
     siteName: 'Fodos',
     locale: 'tr_TR',
     type: 'website',

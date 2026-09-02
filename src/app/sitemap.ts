@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { getAllFaqs } from '@/lib/markdown'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://fodos.com.tr'
+  const baseUrl = 'https://www.fodos.com.tr'
   
   // Static Routes
   const routes = [

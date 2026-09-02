@@ -67,7 +67,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       images: product.images.length > 0 ? [product.images[0].url] : [],
     },
     alternates: {
-      canonical: `https://fodos.com.tr/urun/${product.slug}`,
+      canonical: `https://www.fodos.com.tr/urun/${product.slug}`,
     }
   }
 }
@@ -103,7 +103,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     },
     offers: {
       '@type': 'Offer',
-      url: `https://fodos.com.tr/urun/${product.slug}`,
+      url: `https://www.fodos.com.tr/urun/${product.slug}`,
       priceCurrency: 'TRY',
       price: product.sale_price,
       itemCondition: 'https://schema.org/NewCondition',
