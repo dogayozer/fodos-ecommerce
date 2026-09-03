@@ -7,7 +7,7 @@ import Link from 'next/link'
 const WELCOME_MESSAGE = {
   id: 'welcome-message',
   role: 'assistant',
-  content: 'Merhaba! Fodos ve Piaks akıllı alışveriş asistanına hoş geldiniz. Aşağıdan kategori/marka seçerek hızlıca arayabilir, ya da doğrudan yazabilirsiniz.'
+  content: 'Merhaba! hoş geldiniz. Aşağıdan kategori/marka seçerek hızlıca arayabilir, ya da doğrudan yazabilirsiniz.'
 }
 
 export function SmartAssistant() {
