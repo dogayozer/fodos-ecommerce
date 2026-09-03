@@ -13,6 +13,7 @@ export const revalidate = 300; // 5 dakikada bir sayfayı yenile — vitrin gale
 export default async function HomePage() {
   // Fetch New Arrivals (Yeni Gelenler)
   const newArrivals = await prisma.product.findMany({
+    where: { status: { not: 'inactive' } },
     orderBy: [
       { has_real_photo: 'desc' },
       { createdAt: 'desc' }
@@ -23,6 +24,7 @@ export default async function HomePage() {
 
   // Mock Best Sellers (Çok Satanlar)
   const bestSellers = await prisma.product.findMany({
+    where: { status: { not: 'inactive' } },
     orderBy: [
       { has_real_photo: 'desc' },
       { stock_qty: 'desc' }
@@ -34,6 +36,7 @@ export default async function HomePage() {
   // Fetch products to display random images at the top
   const randomProducts = await prisma.product.findMany({
     where: {
+      status: { not: 'inactive' }, // pasife alınan ürünler (ve harici/güvenilmez görsel domain'leri) vitrine hiç girmesin
       has_real_photo: true, // Trendyol import placeholder'ı değil, gerçek/benzersiz fotoğrafı olan ürünler
     },
     include: { images: true },
