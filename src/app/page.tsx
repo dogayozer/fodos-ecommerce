@@ -43,11 +43,18 @@ export default async function HomePage() {
     take: 50 // Fetch up to 50 to shuffle
   })
 
-  // Shuffle and pick 12 images
+  // Shuffle and pick 12 images — 10 günlük periyoda göre sabit kalacak şekilde
+  // (kullanıcı isteği: her yenilemede değişmesine gerek yok, haftalık/10 günlük yeterli)
+  const periodSeed = Math.floor(Date.now() / (10 * 24 * 60 * 60 * 1000))
+  const seededRandom = (n: number) => {
+    const x = Math.sin(n) * 10000
+    return x - Math.floor(x)
+  }
   const randomImages = randomProducts
     .map(p => ({ url: p.images[0]?.url, title: p.title, slug: p.slug }))
     .filter(p => p.url)
-    .sort(() => 0.5 - Math.random())
+    .map((p, i) => ({ ...p, sortKey: seededRandom(periodSeed + i * 7919) }))
+    .sort((a, b) => a.sortKey - b.sortKey)
     .slice(0, 12)
 
   return (
