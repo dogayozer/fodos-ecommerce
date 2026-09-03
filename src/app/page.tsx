@@ -62,14 +62,14 @@ export default async function HomePage() {
       
       {/* Random Products Marquee (Top) */}
       {randomImages.length > 0 && (
-        <div className="w-full bg-white border-b border-gray-100 py-3 overflow-hidden flex flex-col justify-center">
+        <div className="w-full bg-neutral-0 border-b border-neutral-200 py-3 overflow-hidden flex flex-col justify-center">
           <div className="flex space-x-4 animate-marquee-infinite min-w-max hover:animation-paused">
             {/* Double the array to make the infinite scroll smooth */}
             {[...randomImages, ...randomImages].map((img, idx) => (
-              <Link 
-                key={idx} 
+              <Link
+                key={idx}
                 href={`/urun/${img.slug}`}
-                className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex-shrink-0 bg-gray-50 rounded-xl border border-gray-100 p-2 block hover:border-trust-blue-500 transition-colors"
+                className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex-shrink-0 bg-neutral-50 rounded-[var(--radius-xl)] border border-neutral-200 p-2 block hover:border-trust-blue-500 transition-colors"
                 title={img.title}
               >
                 <div className="relative w-full h-full">
@@ -132,22 +132,22 @@ export default async function HomePage() {
 
           <div className="md:w-1/2 mt-12 md:mt-0 relative hidden sm:block">
             <div className="aspect-video max-w-md mx-auto relative">
-              <div className="absolute inset-0 rounded-3xl shadow-2xl overflow-hidden border-4 border-trust-blue-400/30 flex items-center justify-center bg-gray-100">
-                <Image 
-                  src="/hero_gaze_cueing.jpg" 
-                  alt="Güvenilir Telefon Tamiri" 
+              <div className="absolute inset-0 rounded-[var(--radius-2xl)] shadow-[var(--shadow-float)] overflow-hidden border-4 border-trust-blue-400/30 flex items-center justify-center bg-neutral-100">
+                <Image
+                  src="/hero_gaze_cueing.jpg"
+                  alt="Güvenilir Telefon Tamiri"
                   fill
                   priority
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover"
                 />
               </div>
-              
-              <div className="absolute -bottom-6 -left-6 bg-white p-3 rounded-xl shadow-xl flex items-center space-x-3 border border-gray-100">
+
+              <div className="absolute -bottom-6 -left-6 bg-neutral-0 p-3 rounded-[var(--radius-xl)] shadow-[var(--shadow-card-hover)] flex items-center space-x-3 border border-neutral-200">
                 <ShieldCheck className="text-badge-certified" size={24} />
                 <div>
-                  <p className="text-xs text-gray-500 font-semibold uppercase">Güvenlik</p>
-                  <p className="text-sm font-bold text-gray-900">Sertifikalı</p>
+                  <p className="text-xs text-neutral-500 font-semibold uppercase">Güvenlik</p>
+                  <p className="text-sm font-bold text-neutral-900">Sertifikalı</p>
                 </div>
               </div>
             </div>
@@ -158,33 +158,33 @@ export default async function HomePage() {
 
 
       {/* Best Sellers (Çok Satanlar) */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-neutral-50">
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-end mb-4 sm:mb-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Çok Satanlar</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-neutral-900">Çok Satanlar</h2>
             <Link href="/cok-satanlar" className="text-xs sm:text-sm font-semibold text-trust-blue-600 hover:underline">Tümünü Gör</Link>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {bestSellers.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}
-            {bestSellers.length === 0 && <p className="text-gray-500 col-span-2">Henüz çok satan ürün bulunmuyor.</p>}
+            {bestSellers.length === 0 && <p className="text-neutral-500 col-span-2">Henüz çok satan ürün bulunmuyor.</p>}
           </div>
         </div>
       </section>
 
       {/* New Arrivals (Yeni Gelenler) */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-neutral-0">
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-end mb-4 sm:mb-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Yeni Gelenler</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-neutral-900">Yeni Gelenler</h2>
             <Link href="/yeni-gelenler" className="text-xs sm:text-sm font-semibold text-trust-blue-600 hover:underline">Tümünü Gör</Link>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {newArrivals.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}
-            {newArrivals.length === 0 && <p className="text-gray-500 col-span-2">Henüz yeni ürün bulunmuyor.</p>}
+            {newArrivals.length === 0 && <p className="text-neutral-500 col-span-2">Henüz yeni ürün bulunmuyor.</p>}
           </div>
         </div>
       </section>

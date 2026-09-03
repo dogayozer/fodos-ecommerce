@@ -31,7 +31,7 @@ export function ShippingCounter({ targetTimeMs, message }: { targetTimeMs?: numb
 
   if (message) {
     return (
-      <div className="bg-blue-50 text-trust-blue-600 px-4 py-3 rounded-lg flex items-center text-sm font-semibold border border-blue-100">
+      <div className="bg-trust-blue-50 text-trust-blue-600 px-4 py-3 rounded-lg flex items-center text-sm font-semibold border border-trust-blue-100">
         <Clock size={18} className="mr-2" />
         {message}
       </div>
@@ -40,7 +40,7 @@ export function ShippingCounter({ targetTimeMs, message }: { targetTimeMs?: numb
 
   if (timeLeft) {
     return (
-      <div className="bg-orange-50 text-action-orange-600 px-4 py-3 rounded-lg flex items-center text-sm font-semibold border border-orange-100 animate-pulse">
+      <div className="bg-action-orange-500/10 text-action-orange-600 px-4 py-3 rounded-lg flex items-center text-sm font-semibold border border-action-orange-500/20 animate-pulse">
         <Clock size={18} className="mr-2" />
         Bugün kargoya verilir — {timeLeft.hours} saat {timeLeft.minutes} dakika kaldı
       </div>

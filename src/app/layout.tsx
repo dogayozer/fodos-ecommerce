@@ -64,7 +64,7 @@ export default async function RootLayout({
         </Script>
         {/* End Google Tag Manager */}
       </head>
-      <body className="min-h-full flex flex-col bg-gray-50 text-gray-900 font-display">
+      <body className="min-h-full flex flex-col">
         {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe
@@ -82,16 +82,16 @@ export default async function RootLayout({
             {children}
           </div>
         </div>
-        <footer className="w-full bg-white border-t border-gray-200 py-6 mt-8 text-center text-sm">
+        <footer className="w-full bg-neutral-0 border-t border-neutral-200 py-6 mt-8 text-center text-sm">
           <div className="max-w-7xl mx-auto px-4 flex flex-col items-center space-y-3">
-            
-            <div className="text-gray-600 font-medium flex flex-col md:flex-row items-center gap-2 md:gap-4">
+
+            <div className="text-neutral-900 font-medium flex flex-col md:flex-row items-center gap-2 md:gap-4">
               {settings?.companyName && <span>{settings.companyName}</span>}
               {settings?.phone && <span><strong>Tel:</strong> {settings.phone}</span>}
               {settings?.address && <span><strong>Adres:</strong> {settings.address}</span>}
             </div>
 
-            <div className="flex flex-wrap justify-center gap-3 text-xs text-gray-500">
+            <div className="flex flex-wrap justify-center gap-3 text-xs text-neutral-500">
               <Link href="/hakkimizda" className="hover:text-trust-blue-600">Hakkımızda</Link>
               <span>|</span>
               <Link href="/iletisim" className="hover:text-trust-blue-600">İletişim</Link>
@@ -100,8 +100,8 @@ export default async function RootLayout({
               <span>|</span>
               <Link href="/kargo-takibi" className="hover:text-trust-blue-600">Kargo Takibi</Link>
             </div>
-            
-            <p className="text-xs text-gray-400 font-medium pt-2">
+
+            <p className="text-xs text-neutral-500 font-medium pt-2">
               www.KobiKlik Teknoloji ile Tasarlanmıştır
             </p>
 

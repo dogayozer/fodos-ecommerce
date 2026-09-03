@@ -48,9 +48,9 @@ export function AddToCart({ product }: { product: any }) {
       <button
         onClick={handleAdd}
         className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center transition-all duration-normal
-          ${added 
-              ? 'bg-badge-compatible text-white shadow-lg'
-              : 'bg-cta-background hover:bg-cta-hover text-white shadow-md hover:shadow-xl'
+          ${added
+              ? 'bg-badge-compatible text-white shadow-[var(--shadow-card-hover)]'
+              : 'bg-cta-background hover:bg-cta-hover text-white shadow-[var(--shadow-button)] hover:shadow-[var(--shadow-card-hover)]'
           }
         `}
       >

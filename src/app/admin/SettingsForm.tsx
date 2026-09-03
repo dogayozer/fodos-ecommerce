@@ -83,43 +83,43 @@ export function SettingsForm() {
     }
   }
 
-  if (loading) return <div className="p-8 text-center text-gray-500">Yükleniyor...</div>
+  if (loading) return <div className="p-8 text-center text-neutral-500">Yükleniyor...</div>
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <form onSubmit={handleSubmit} className="mt-8 bg-neutral-0 rounded-xl shadow-[var(--shadow-card)] border border-neutral-200 p-6">
       <h2 className="text-xl font-bold text-trust-blue-600 mb-6">Firma Bilgileri & Sözleşmeler</h2>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Firma Adı (Footer İçin)</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-1">Firma Adı (Footer İçin)</label>
           <input name="companyName" value={formData.companyName} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="Örn: Fodos ve Piaks" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Telefon Numarası</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-1">Telefon Numarası</label>
           <input name="phone" value={formData.phone} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="Örn: 0532 232 44 99" />
         </div>
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Firma Adresi</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-1">Firma Adresi</label>
           <input name="address" value={formData.address} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="Açık Adres" />
         </div>
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Hakkımızda (Kısa Tanıtım)</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-1">Hakkımızda (Kısa Tanıtım)</label>
           <textarea name="aboutUs" value={formData.aboutUs} onChange={handleChange} rows={4} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="Hakkımızda sayfasına yazılacak metin..." />
         </div>
       </div>
 
-      <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Kargo Ayarları</h3>
+      <h3 className="text-lg font-semibold text-neutral-900 mb-4 border-b pb-2">Kargo Ayarları</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Sabit Kargo Ücreti (TL)</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-1">Sabit Kargo Ücreti (TL)</label>
           <input type="number" name="shippingFee" value={formData.shippingFee} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="Örn: 110" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Ücretsiz Kargo Baremi (TL)</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-1">Ücretsiz Kargo Baremi (TL)</label>
           <input type="number" name="shippingThreshold" value={formData.shippingThreshold} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="Örn: 500" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Aynı Gün Kargo Saati</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-1">Aynı Gün Kargo Saati</label>
           <input type="time" name="sameDayShippingTime" value={formData.sameDayShippingTime} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" />
         </div>
       </div>
@@ -134,8 +134,8 @@ export function SettingsForm() {
               <p className="text-xs text-indigo-700">Fodos siparişlerini BirFatura paneline otomatik bağlamak ve e-Fatura / e-Arşiv kesmek için gereklidir.</p>
             </div>
           </div>
-          <span className="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+          <span className="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             Entegrasyon Hazır
           </span>
         </div>
@@ -143,7 +143,7 @@ export function SettingsForm() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-sm font-semibold text-gray-800">BirFatura API Anahtarı (Token)</label>
+              <label className="block text-sm font-semibold text-neutral-900">BirFatura API Anahtarı (Token)</label>
               <button
                 type="button"
                 onClick={() => {
@@ -161,7 +161,7 @@ export function SettingsForm() {
                 name="birfaturaApiKey"
                 value={formData.birfaturaApiKey}
                 onChange={handleChange}
-                className="w-full px-4 py-2 font-mono text-xs border border-indigo-200 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-4 py-2 font-mono text-xs border border-indigo-200 rounded-lg bg-neutral-0 focus:ring-2 focus:ring-indigo-500"
                 placeholder="API Anahtarı"
               />
               <button
@@ -176,27 +176,27 @@ export function SettingsForm() {
                 {copiedField === 'apiKey' ? '✓ Kopyalandı' : 'Kopyala'}
               </button>
             </div>
-            <p className="text-xs text-gray-500 mt-1">BirFatura paneline girilecek gizli erişim anahtarınız.</p>
+            <p className="text-xs text-neutral-500 mt-1">BirFatura paneline girilecek gizli erişim anahtarınız.</p>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-1">Varsayılan KDV Oranı (%)</label>
+            <label className="block text-sm font-semibold text-neutral-900 mb-1">Varsayılan KDV Oranı (%)</label>
             <input
               type="number"
               name="birfaturaKdvRate"
               value={formData.birfaturaKdvRate}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-indigo-200 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-indigo-200 rounded-lg bg-neutral-0 focus:ring-2 focus:ring-indigo-500"
               placeholder="Örn: 20"
             />
-            <p className="text-xs text-gray-500 mt-1">Fatura kalemleri için varsayılan KDV yüzdesi (%20).</p>
+            <p className="text-xs text-neutral-500 mt-1">Fatura kalemleri için varsayılan KDV yüzdesi (%20).</p>
           </div>
         </div>
 
         {/* URL Bağlantıları */}
-        <div className="space-y-4 bg-white/80 p-4 rounded-lg border border-indigo-100 mb-6">
+        <div className="space-y-4 bg-neutral-0/80 p-4 rounded-lg border border-indigo-100 mb-6">
           <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+            <label className="block text-xs font-bold text-neutral-900 uppercase tracking-wider mb-1">
               1. Sipariş Çekme URL'si (BirFatura "Sipariş Listeleme URL" alanına):
             </label>
             <div className="flex gap-2">
@@ -204,7 +204,7 @@ export function SettingsForm() {
                 type="text"
                 readOnly
                 value={typeof window !== 'undefined' ? `${window.location.origin}/api/birfatura/orders` : 'https://fodos.com.tr/api/birfatura/orders'}
-                className="w-full px-3 py-1.5 font-mono text-xs bg-gray-50 border border-gray-200 rounded text-gray-700"
+                className="w-full px-3 py-1.5 font-mono text-xs bg-neutral-50 border border-neutral-200 rounded text-neutral-900"
               />
               <button
                 type="button"
@@ -214,7 +214,7 @@ export function SettingsForm() {
                   setCopiedField('ordersUrl')
                   setTimeout(() => setCopiedField(null), 2000)
                 }}
-                className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded transition-colors whitespace-nowrap border"
+                className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 text-xs font-semibold rounded transition-colors whitespace-nowrap border"
               >
                 {copiedField === 'ordersUrl' ? '✓ Kopyalandı' : 'Kopyala'}
               </button>
@@ -222,7 +222,7 @@ export function SettingsForm() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+            <label className="block text-xs font-bold text-neutral-900 uppercase tracking-wider mb-1">
               2. Fatura & Kargo Durum Güncelleme URL'si (Webhook):
             </label>
             <div className="flex gap-2">
@@ -230,7 +230,7 @@ export function SettingsForm() {
                 type="text"
                 readOnly
                 value={typeof window !== 'undefined' ? `${window.location.origin}/api/birfatura/update-status` : 'https://fodos.com.tr/api/birfatura/update-status'}
-                className="w-full px-3 py-1.5 font-mono text-xs bg-gray-50 border border-gray-200 rounded text-gray-700"
+                className="w-full px-3 py-1.5 font-mono text-xs bg-neutral-50 border border-neutral-200 rounded text-neutral-900"
               />
               <button
                 type="button"
@@ -240,7 +240,7 @@ export function SettingsForm() {
                   setCopiedField('webhookUrl')
                   setTimeout(() => setCopiedField(null), 2000)
                 }}
-                className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded transition-colors whitespace-nowrap border"
+                className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 text-xs font-semibold rounded transition-colors whitespace-nowrap border"
               >
                 {copiedField === 'webhookUrl' ? '✓ Kopyalandı' : 'Kopyala'}
               </button>
@@ -260,37 +260,37 @@ export function SettingsForm() {
         </div>
       </div>
 
-      <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Yasal Sözleşmeler ve Belgeler</h3>
-      <p className="text-sm text-gray-500 mb-6">Aşağıdaki alanlara sözleşme metinlerinizi yapıştırabilirsiniz. Doldurduğunuz belgelerin linkleri otomatik olarak sitenin en altında (footer) görünecektir.</p>
+      <h3 className="text-lg font-semibold text-neutral-900 mb-4 border-b pb-2">Yasal Sözleşmeler ve Belgeler</h3>
+      <p className="text-sm text-neutral-500 mb-6">Aşağıdaki alanlara sözleşme metinlerinizi yapıştırabilirsiniz. Doldurduğunuz belgelerin linkleri otomatik olarak sitenin en altında (footer) görünecektir.</p>
 
       <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Mesafeli Satış Sözleşmesi</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-1">Mesafeli Satış Sözleşmesi</label>
           <textarea name="mesafeliSatisHtml" value={formData.mesafeliSatisHtml} onChange={handleChange} rows={6} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="Sözleşme metnini buraya yapıştırın..." />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Gizlilik ve Güvenlik Politikası</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-1">Gizlilik ve Güvenlik Politikası</label>
           <textarea name="gizlilikGuvenlikHtml" value={formData.gizlilikGuvenlikHtml} onChange={handleChange} rows={6} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="Politika metnini buraya yapıştırın..." />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">İptal ve İade Koşulları</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-1">İptal ve İade Koşulları</label>
           <textarea name="iptalIadeHtml" value={formData.iptalIadeHtml} onChange={handleChange} rows={6} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="İade koşullarını buraya yapıştırın..." />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Kargo Takibi ve Süreçleri</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-1">Kargo Takibi ve Süreçleri</label>
           <textarea name="kargoTakipHtml" value={formData.kargoTakipHtml} onChange={handleChange} rows={6} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="Kargo bilgilendirmesini buraya yapıştırın..." />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Kişisel Veriler Politikası (KVKK)</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-1">Kişisel Veriler Politikası (KVKK)</label>
           <textarea name="kisiselVerilerHtml" value={formData.kisiselVerilerHtml} onChange={handleChange} rows={6} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="KVKK metnini buraya yapıştırın..." />
         </div>
       </div>
 
       <div className="mt-8 flex items-center gap-4">
-        <button type="submit" disabled={saving} className="px-6 py-3 bg-trust-blue-600 text-white font-medium rounded-lg hover:bg-trust-blue-700 transition-colors disabled:opacity-50">
+        <button type="submit" disabled={saving} className="px-6 py-3 bg-trust-blue-600 text-white font-medium rounded-lg hover:bg-trust-blue-600/90 transition-colors disabled:opacity-50">
           {saving ? 'Kaydediliyor...' : 'Tüm Bilgileri Kaydet'}
         </button>
-        {message && <span className="text-sm font-medium text-green-600 bg-green-50 px-4 py-2 rounded-lg">{message}</span>}
+        {message && <span className="text-sm font-medium text-emerald-800 bg-emerald-50 px-4 py-2 rounded-lg">{message}</span>}
       </div>
     </form>
   )

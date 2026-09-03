@@ -128,13 +128,13 @@ export function CategoryManager() {
 
   return (
     <div className="space-y-8">
-      {message && <div className="p-4 bg-green-50 text-green-700 rounded-lg">{message}</div>}
-      {error && <div className="p-4 bg-red-50 text-red-700 rounded-lg">{error}</div>}
+      {message && <div className="p-4 bg-emerald-50 text-emerald-800 rounded-lg">{message}</div>}
+      {error && <div className="p-4 bg-risk-red-500/10 text-risk-red-500 rounded-lg">{error}</div>}
 
-      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-        <h2 className="text-xl font-bold mb-6 text-gray-800 border-b pb-2">Kategori Listesi & Ekleme</h2>
-        
-        <form onSubmit={handleAdd} className="flex gap-4 mb-8 bg-gray-50 p-4 rounded-lg">
+      <div className="bg-neutral-0 p-6 rounded-xl border border-neutral-200 shadow-[var(--shadow-card)]">
+        <h2 className="text-xl font-bold mb-6 text-neutral-900 border-b pb-2">Kategori Listesi & Ekleme</h2>
+
+        <form onSubmit={handleAdd} className="flex gap-4 mb-8 bg-neutral-50 p-4 rounded-lg">
           <div className="flex-1">
             <input type="text" required placeholder="Kategori Adı (Örn: Kulaklıklar)" value={addName} onChange={e => {
               setAddName(e.target.value)
@@ -155,14 +155,14 @@ export function CategoryManager() {
               <option value="generic">Genel (generic)</option>
             </select>
           </div>
-          <button type="submit" className="bg-trust-blue-600 hover:bg-trust-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+          <button type="submit" className="bg-trust-blue-600 hover:bg-trust-blue-600/90 text-white px-6 py-2 rounded-lg font-medium transition-colors">
             Ekle
           </button>
         </form>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-600">
-            <thead className="bg-gray-100 text-gray-700">
+          <table className="w-full text-left text-sm text-neutral-500">
+            <thead className="bg-neutral-100 text-neutral-900">
               <tr>
                 <th className="px-4 py-3 rounded-tl-lg">Kategori Adı</th>
                 <th className="px-4 py-3">Slug</th>
@@ -173,13 +173,13 @@ export function CategoryManager() {
             </thead>
             <tbody>
               {categories.map((c) => (
-                <tr key={c.id} className="border-b last:border-0 hover:bg-gray-50">
-                  <td className="px-4 py-3 font-semibold text-gray-900">{c.name}</td>
-                  <td className="px-4 py-3 text-gray-500">{c.slug}</td>
+                <tr key={c.id} className="border-b last:border-0 hover:bg-neutral-50">
+                  <td className="px-4 py-3 font-semibold text-neutral-900">{c.name}</td>
+                  <td className="px-4 py-3 text-neutral-500">{c.slug}</td>
                   <td className="px-4 py-3">{c.template_type}</td>
                   <td className="px-4 py-3 font-medium text-trust-blue-600">{c._count?.products || 0} ürün</td>
                   <td className="px-4 py-3 text-right">
-                    <button onClick={() => handleDelete(c.id, c._count?.products || 0)} className="text-red-600 hover:underline">Sil</button>
+                    <button onClick={() => handleDelete(c.id, c._count?.products || 0)} className="text-risk-red-500 hover:underline">Sil</button>
                   </td>
                 </tr>
               ))}
@@ -188,16 +188,16 @@ export function CategoryManager() {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-l-4 border-l-amber-500">
-        <h2 className="text-xl font-bold mb-2 text-gray-800">Toplu Kategori Taşıma</h2>
-        <p className="text-sm text-gray-600 mb-6">Belirttiğiniz kelimeyi başlığında veya açıklamasında barındıran tüm ürünleri seçili kategoriye taşır. Örn: "Kulaklık" kelimesini aratıp tümünü Kulaklıklar kategorisine taşıyabilirsiniz.</p>
-        
+      <div className="bg-neutral-0 p-6 rounded-xl border border-neutral-200 shadow-[var(--shadow-card)] border-l-4 border-l-amber-500">
+        <h2 className="text-xl font-bold mb-2 text-neutral-900">Toplu Kategori Taşıma</h2>
+        <p className="text-sm text-neutral-500 mb-6">Belirttiğiniz kelimeyi başlığında veya açıklamasında barındıran tüm ürünleri seçili kategoriye taşır. Örn: "Kulaklık" kelimesini aratıp tümünü Kulaklıklar kategorisine taşıyabilirsiniz.</p>
+
         <form onSubmit={handleBulkMove} className="flex gap-4">
           <div className="flex-1">
-            <input type="text" required placeholder="Arama Kelimesi (Örn: Kulaklık)" value={searchWord} onChange={e => setSearchWord(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500" />
+            <input type="text" required placeholder="Arama Kelimesi (Örn: Kulaklık)" value={searchWord} onChange={e => setSearchWord(e.target.value)} className="w-full px-4 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-trust-blue-500" />
           </div>
           <div className="flex-1">
-            <select required value={targetCategoryId} onChange={e => setTargetCategoryId(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500">
+            <select required value={targetCategoryId} onChange={e => setTargetCategoryId(e.target.value)} className="w-full px-4 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-trust-blue-500">
               <option value="" disabled>Hedef Kategori Seçin</option>
               {categories.map(c => (
                 <option key={c.id} value={c.id}>{c.name}</option>

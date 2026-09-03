@@ -155,11 +155,11 @@ export function SmartAssistant() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 p-4 bg-trust-blue-600 text-white rounded-full shadow-2xl hover:bg-trust-blue-700 transition-all hover:scale-110 z-50 flex items-center justify-center group"
+          className="fixed bottom-6 right-6 p-4 bg-action-orange-500 text-white rounded-full shadow-[var(--shadow-float)] hover:bg-action-orange-600 transition-all hover:scale-110 z-50 flex items-center justify-center group"
           aria-label="Akıllı Asistanı Aç"
         >
           <BotMessageSquare size={28} />
-          <span className="absolute right-16 bg-white text-gray-800 px-3 py-1 rounded shadow-lg text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+          <span className="absolute right-16 bg-neutral-900 text-white px-3 py-1 rounded shadow-[var(--shadow-card-hover)] text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
             Asistana Sor 🤖
           </span>
         </button>
@@ -167,16 +167,16 @@ export function SmartAssistant() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-[360px] h-[550px] bg-white rounded-2xl shadow-2xl z-50 flex flex-col border border-gray-200 overflow-hidden animate-in slide-in-from-bottom-5">
+        <div className="fixed bottom-6 right-6 w-[360px] h-[550px] bg-neutral-0 rounded-2xl shadow-[var(--shadow-float)] z-50 flex flex-col border border-neutral-200 overflow-hidden animate-in slide-in-from-bottom-5">
           {/* Header */}
-          <div className="bg-gradient-to-r from-trust-blue-600 to-trust-blue-800 p-4 text-white flex justify-between items-center shadow-md">
+          <div className="bg-gradient-to-r from-trust-blue-600 to-trust-blue-600/80 p-4 text-white flex justify-between items-center shadow-[var(--shadow-button)]">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                 <Bot size={24} />
               </div>
               <div>
                 <h3 className="font-bold">Fodos Akıllı Asistan</h3>
-                <p className="text-xs text-blue-100 flex items-center gap-1">
+                <p className="text-xs text-trust-blue-100 flex items-center gap-1">
                   <span className="w-2 h-2 bg-green-400 rounded-full inline-block animate-pulse"></span>
                   Çevrimiçi
                 </p>
@@ -200,13 +200,13 @@ export function SmartAssistant() {
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-neutral-50">
             {(messages || []).map((m: any) => (
               <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-sm ${
-                  m.role === 'user' 
-                    ? 'bg-trust-blue-600 text-white rounded-br-none' 
-                    : 'bg-white border border-gray-100 text-gray-800 rounded-bl-none'
+                <div className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-[var(--shadow-card)] ${
+                  m.role === 'user'
+                    ? 'bg-trust-blue-600 text-white rounded-br-none'
+                    : 'bg-neutral-0 border border-neutral-200 text-neutral-900 rounded-bl-none'
                 }`}>
                   <div className="flex items-center gap-2 mb-1 opacity-70">
                     {m.role === 'user' ? <User size={12} /> : <Bot size={12} />}
@@ -223,18 +223,18 @@ export function SmartAssistant() {
                       const { result } = toolInvocation;
                       if (result.success && result.products) {
                         return (
-                          <div key={toolCallId} className="mt-3 bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm">
+                          <div key={toolCallId} className="mt-3 bg-neutral-50 border border-neutral-200 rounded-xl p-3 text-sm">
                             <p className="font-bold text-trust-blue-600 text-xs mb-2 uppercase tracking-wide border-b pb-1">
                               🔍 Bulunan Ürünler:
                             </p>
                             <div className="space-y-3">
                               {(result.products || []).map((p: any) => (
-                                <Link 
-                                  href={`/urun/${p.slug}`} 
+                                <Link
+                                  href={`/urun/${p.slug}`}
                                   key={p.id}
-                                  className="block bg-white border border-gray-200 p-2 rounded-lg hover:border-trust-blue-400 transition-colors"
+                                  className="block bg-neutral-0 border border-neutral-200 p-2 rounded-lg hover:border-trust-blue-400 transition-colors"
                                 >
-                                  <div className="font-semibold text-gray-800 text-xs line-clamp-2" title={p.title}>{p.title}</div>
+                                  <div className="font-semibold text-neutral-900 text-xs line-clamp-2" title={p.title}>{p.title}</div>
                                   <div className="font-bold text-trust-blue-600 mt-1 text-xs">{p.sale_price?.toLocaleString('tr-TR')} TL</div>
                                 </Link>
                               ))}
@@ -244,14 +244,14 @@ export function SmartAssistant() {
                       }
                       if (!result.success) {
                          return (
-                           <div key={toolCallId} className="mt-2 text-xs bg-red-50 text-red-600 p-2 rounded">
+                           <div key={toolCallId} className="mt-2 text-xs bg-risk-red-500/10 text-risk-red-500 p-2 rounded">
                              ❌ {result.message}
                            </div>
                          )
                       }
                     } else {
                       return (
-                        <div key={toolCallId} className="mt-2 text-xs flex items-center gap-2 text-trust-blue-600 bg-blue-50 p-2 rounded">
+                        <div key={toolCallId} className="mt-2 text-xs flex items-center gap-2 text-trust-blue-600 bg-trust-blue-50 p-2 rounded">
                           <Loader2 size={12} className="animate-spin" /> Veritabanı taranıyor...
                         </div>
                       );
@@ -267,9 +267,9 @@ export function SmartAssistant() {
             
             {isLoading && messages[messages.length - 1]?.role === 'user' && (
               <div className="flex justify-start">
-                <div className="bg-white border border-gray-100 text-gray-800 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm flex items-center gap-2">
+                <div className="bg-neutral-0 border border-neutral-200 text-neutral-900 rounded-2xl rounded-bl-none px-4 py-3 shadow-[var(--shadow-card)] flex items-center gap-2">
                   <Loader2 size={16} className="animate-spin text-trust-blue-600" />
-                  <span className="text-sm text-gray-500">Asistan yazıyor...</span>
+                  <span className="text-sm text-neutral-500">Asistan yazıyor...</span>
                 </div>
               </div>
             )}
@@ -278,7 +278,7 @@ export function SmartAssistant() {
           </div>
 
           {/* Seçimli Hızlı Arama Paneli — AI'ya gitmeden kategori/marka/model seçimi */}
-          <div className="border-t border-gray-100 bg-white px-3 pt-2.5 pb-1 space-y-1.5">
+          <div className="border-t border-neutral-200 bg-neutral-0 px-3 pt-2.5 pb-1 space-y-1.5">
             {options.categories.length > 0 && (
               <div className="flex gap-1.5 overflow-x-auto pb-1 text-[11px]">
                 {options.categories.map((c) => (
@@ -288,7 +288,7 @@ export function SmartAssistant() {
                     className={`shrink-0 px-2.5 py-1 rounded-lg font-semibold transition-colors ${
                       selectedCategory === c.name
                         ? 'bg-trust-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        : 'bg-neutral-100 text-neutral-500 hover:bg-neutral-200'
                     }`}
                   >
                     {c.name}
@@ -305,7 +305,7 @@ export function SmartAssistant() {
                     className={`shrink-0 px-2.5 py-1 rounded-lg font-semibold transition-colors ${
                       selectedBrand === b
                         ? 'bg-trust-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        : 'bg-neutral-100 text-neutral-500 hover:bg-neutral-200'
                     }`}
                   >
                     {b}
@@ -318,7 +318,7 @@ export function SmartAssistant() {
                 value={modelText}
                 onChange={(e) => setModelText(e.target.value)}
                 placeholder="Model (opsiyonel, örn: iPhone 13)"
-                className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-[11px] focus:outline-none focus:ring-2 focus:ring-trust-blue-500"
+                className="flex-1 bg-neutral-50 border border-neutral-200 rounded-lg px-2.5 py-1.5 text-[11px] focus:outline-none focus:ring-2 focus:ring-trust-blue-500"
               />
               <button
                 onClick={handleGuidedSearch}
@@ -332,13 +332,13 @@ export function SmartAssistant() {
           </div>
 
           {/* Input Area */}
-          <div className="p-4 bg-white border-t border-gray-100">
+          <div className="p-4 bg-neutral-0 border-t border-neutral-200">
             <form onSubmit={onSubmit} className="relative flex items-center">
               <input
                 value={inputValue}
                 onChange={e => setInputValue(e.target.value)}
                 placeholder="Örn: iPhone 13 ekran var mı?"
-                className="w-full bg-gray-50 border border-gray-200 rounded-full py-3 pl-4 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-trust-blue-500 focus:bg-white transition-colors"
+                className="w-full bg-neutral-50 border border-neutral-200 rounded-full py-3 pl-4 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-trust-blue-500 focus:bg-neutral-0 transition-colors"
                 disabled={isLoading}
               />
               <button 
@@ -350,7 +350,7 @@ export function SmartAssistant() {
               </button>
             </form>
             <div className="text-center mt-2">
-              <span className="text-[10px] text-gray-400 flex items-center justify-center gap-1">
+              <span className="text-[10px] text-neutral-500 flex items-center justify-center gap-1">
                 Yapay Zeka Destekli <Bot size={10} />
               </span>
             </div>

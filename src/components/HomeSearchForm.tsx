@@ -22,23 +22,23 @@ export function HomeSearchForm() {
   }
 
   return (
-    <form onSubmit={handleSearch} className="w-full bg-white p-4 sm:p-5 rounded-xl shadow-lg border border-trust-blue-100 flex flex-col sm:flex-row gap-3">
+    <form onSubmit={handleSearch} className="w-full bg-neutral-0 p-4 sm:p-5 rounded-xl shadow-[var(--shadow-card-hover)] border border-trust-blue-100 flex flex-col sm:flex-row gap-3">
       <div className="flex-1">
-        <input 
-          type="text" 
+        <input
+          type="text"
           value={brand}
           onChange={(e) => setBrand(e.target.value)}
-          placeholder="Hangi marka parçası arıyorsunuz?" 
-          className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-trust-blue-500 placeholder-gray-400"
+          placeholder="Hangi marka parçası arıyorsunuz?"
+          className="w-full bg-neutral-50 border border-neutral-200 rounded-lg px-4 py-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-trust-blue-500 placeholder-neutral-500"
         />
       </div>
       <div className="flex-1">
-        <input 
-          type="text" 
+        <input
+          type="text"
           value={part}
           onChange={(e) => setPart(e.target.value)}
-          placeholder="Parça ismi yazın (isteğe bağlı)" 
-          className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-trust-blue-500 placeholder-gray-400"
+          placeholder="Parça ismi yazın (isteğe bağlı)"
+          className="w-full bg-neutral-50 border border-neutral-200 rounded-lg px-4 py-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-trust-blue-500 placeholder-neutral-500"
         />
       </div>
       <div className="sm:self-end">

@@ -8,8 +8,8 @@ export function ProductGallery({ images, alt }: { images: { url: string }[], alt
 
   if (!images || images.length === 0) {
     return (
-      <div className="aspect-square bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-center">
-        <span className="text-gray-300">Görsel Yok</span>
+      <div className="aspect-square bg-neutral-50 rounded-lg border border-neutral-200 flex items-center justify-center">
+        <span className="text-neutral-200">Görsel Yok</span>
       </div>
     )
   }
@@ -46,8 +46,8 @@ export function ProductGallery({ images, alt }: { images: { url: string }[], alt
   return (
     <div className="flex flex-col space-y-4">
       {/* Main Image Container */}
-      <div 
-        className="relative aspect-square bg-white rounded-lg border border-gray-100 flex items-center justify-center overflow-hidden group touch-pan-y select-none"
+      <div
+        className="relative aspect-square bg-neutral-0 rounded-lg border border-neutral-200 flex items-center justify-center overflow-hidden group touch-pan-y select-none"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -60,17 +60,17 @@ export function ProductGallery({ images, alt }: { images: { url: string }[], alt
         
         {images.length > 1 && (
           <>
-            <button 
+            <button
               onClick={(e) => { e.preventDefault(); prevImage(); }}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-neutral-0/90 hover:bg-neutral-0 rounded-full flex items-center justify-center shadow-[var(--shadow-button)] md:opacity-0 md:group-hover:opacity-100 transition-opacity"
             >
-              <ChevronLeft size={24} className="text-gray-800" />
+              <ChevronLeft size={24} className="text-neutral-900" />
             </button>
-            <button 
+            <button
               onClick={(e) => { e.preventDefault(); nextImage(); }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-neutral-0/90 hover:bg-neutral-0 rounded-full flex items-center justify-center shadow-[var(--shadow-button)] md:opacity-0 md:group-hover:opacity-100 transition-opacity"
             >
-              <ChevronRight size={24} className="text-gray-800" />
+              <ChevronRight size={24} className="text-neutral-900" />
             </button>
           </>
         )}
@@ -80,11 +80,11 @@ export function ProductGallery({ images, alt }: { images: { url: string }[], alt
       {images.length > 1 && (
         <div className="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide">
           {images.map((img, idx) => (
-            <button 
+            <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
-              className={`flex-shrink-0 w-20 h-20 rounded-lg border-2 bg-white flex items-center justify-center overflow-hidden ${
-                currentIndex === idx ? 'border-trust-blue-500' : 'border-gray-100 hover:border-gray-300'
+              className={`flex-shrink-0 w-20 h-20 rounded-lg border-2 bg-neutral-0 flex items-center justify-center overflow-hidden ${
+                currentIndex === idx ? 'border-trust-blue-500' : 'border-neutral-200 hover:border-neutral-500'
               }`}
             >
               <img src={img.url} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover mix-blend-multiply" />

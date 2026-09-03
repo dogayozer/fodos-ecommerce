@@ -130,17 +130,17 @@ export default function CheckoutPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 flex-1 w-full">
-      <h1 className="text-3xl font-bold mb-8 text-gray-900">Ödeme & Teslimat</h1>
-      
+      <h1 className="text-3xl font-bold mb-8 text-neutral-900">Ödeme & Teslimat</h1>
+
       {paytrToken ? (
-        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+        <div className="bg-neutral-0 p-6 md:p-8 rounded-2xl shadow-[var(--shadow-card)] border border-neutral-200">
           <h2 className="text-xl font-bold mb-6 text-center text-trust-blue-600">Güvenli Ödeme Ekranı</h2>
-          <div className="w-full min-h-[600px] border rounded-xl overflow-hidden shadow-inner bg-gray-50 flex items-center justify-center">
-            <iframe 
-              src={`https://www.paytr.com/odeme/guvenli/${paytrToken}`} 
-              id="paytriframe" 
-              frameBorder="0" 
-              scrolling="no" 
+          <div className="w-full min-h-[600px] border rounded-xl overflow-hidden shadow-inner bg-neutral-50 flex items-center justify-center">
+            <iframe
+              src={`https://www.paytr.com/odeme/guvenli/${paytrToken}`}
+              id="paytriframe"
+              frameBorder="0"
+              scrolling="no"
               style={{ width: '100%', minHeight: '600px' }}
             ></iframe>
           </div>
@@ -148,22 +148,22 @@ export default function CheckoutPage() {
       ) : (
         <>
           {!user && (
-            <div className="mb-8 p-4 bg-blue-50 border border-blue-100 rounded-xl flex justify-between items-center">
+            <div className="mb-8 p-4 bg-trust-blue-50 border border-trust-blue-100 rounded-xl flex justify-between items-center">
               <div>
-                <h3 className="font-semibold text-blue-900">Hesabınız var mı?</h3>
-                <p className="text-sm text-blue-700">Daha hızlı işlem yapmak ve %5 daimi müşteri indiriminden faydalanmak için giriş yapın. Kayıt olmadan da devam edebilirsiniz.</p>
+                <h3 className="font-semibold text-trust-blue-600">Hesabınız var mı?</h3>
+                <p className="text-sm text-trust-blue-600/80">Daha hızlı işlem yapmak ve %5 daimi müşteri indiriminden faydalanmak için giriş yapın. Kayıt olmadan da devam edebilirsiniz.</p>
               </div>
-              <Link href="/giris" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+              <Link href="/giris" className="bg-trust-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-trust-blue-600/90 transition-colors">
                 Giriş Yap
               </Link>
             </div>
           )}
 
-          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+          <div className="bg-neutral-0 p-6 md:p-8 rounded-2xl shadow-[var(--shadow-card)] border border-neutral-200">
             <h2 className="text-xl font-bold mb-6 border-b pb-2">Teslimat Bilgileri</h2>
-            
+
             {error && (
-              <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 border border-red-100">
+              <div className="bg-risk-red-500/10 text-risk-red-500 p-4 rounded-lg mb-6 border border-risk-red-500/20">
                 {error}
               </div>
             )}
@@ -171,72 +171,72 @@ export default function CheckoutPage() {
             <form onSubmit={handleCheckout} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ad Soyad *</label>
+                  <label className="block text-sm font-medium text-neutral-900 mb-1">Ad Soyad *</label>
                   <input type="text" name="name" required value={formData.name} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">E-posta Adresi *</label>
+                  <label className="block text-sm font-medium text-neutral-900 mb-1">E-posta Adresi *</label>
                   <input type="email" name="email" required value={formData.email} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Telefon Numarası *</label>
+                  <label className="block text-sm font-medium text-neutral-900 mb-1">Telefon Numarası *</label>
                   <input type="tel" name="phone" required value={formData.phone} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="05XX XXX XX XX" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">İl *</label>
+                  <label className="block text-sm font-medium text-neutral-900 mb-1">İl *</label>
                   <input type="text" name="city" required value={formData.city} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">İlçe *</label>
+                  <label className="block text-sm font-medium text-neutral-900 mb-1">İlçe *</label>
                   <input type="text" name="district" required value={formData.district} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Açık Adres *</label>
+                  <label className="block text-sm font-medium text-neutral-900 mb-1">Açık Adres *</label>
                   <textarea name="address" required rows={3} value={formData.address} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" />
                 </div>
               </div>
 
-              <div className="bg-blue-50 p-4 rounded-xl border border-blue-200 mt-8 flex gap-3">
+              <div className="bg-trust-blue-50 p-4 rounded-xl border border-trust-blue-100 mt-8 flex gap-3">
                 <span className="text-2xl">🔒</span>
                 <div>
-                  <h3 className="font-bold mb-1 text-blue-900">Güvenli Ödeme</h3>
-                  <p className="text-sm text-blue-800">256-bit SSL sertifikası ile korunan PayTR altyapısı sayesinde kredi kartı bilgileriniz kaydedilmeden güvenle ödeme yapabilirsiniz.</p>
+                  <h3 className="font-bold mb-1 text-trust-blue-600">Güvenli Ödeme</h3>
+                  <p className="text-sm text-trust-blue-600/80">256-bit SSL sertifikası ile korunan PayTR altyapısı sayesinde kredi kartı bilgileriniz kaydedilmeden güvenle ödeme yapabilirsiniz.</p>
                 </div>
               </div>
 
-              <div className="space-y-3 mt-6 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+              <div className="space-y-3 mt-6 bg-neutral-0 p-4 rounded-xl border border-neutral-200 shadow-[var(--shadow-card)]">
                 <label className="flex items-start gap-3 cursor-pointer group">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     name="acceptTerms"
                     required
                     checked={formData.acceptTerms}
                     onChange={handleChange}
-                    className="mt-1 w-4 h-4 text-trust-blue-600 rounded border-gray-300 focus:ring-trust-blue-500"
+                    className="mt-1 w-4 h-4 text-trust-blue-600 rounded border-neutral-200 focus:ring-trust-blue-500"
                   />
-                  <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
+                  <span className="text-sm text-neutral-500 group-hover:text-neutral-900 transition-colors">
                     <Link href="/mesafeli-satis-sozlesmesi" target="_blank" className="text-trust-blue-600 hover:underline font-semibold">Ön Bilgilendirme Formu</Link>'nu ve <Link href="/mesafeli-satis-sozlesmesi" target="_blank" className="text-trust-blue-600 hover:underline font-semibold">Mesafeli Satış Sözleşmesi</Link>'ni okudum ve onaylıyorum.
                   </span>
                 </label>
                 <label className="flex items-start gap-3 cursor-pointer group">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     name="acceptKvkk"
                     required
                     checked={formData.acceptKvkk}
                     onChange={handleChange}
-                    className="mt-1 w-4 h-4 text-trust-blue-600 rounded border-gray-300 focus:ring-trust-blue-500"
+                    className="mt-1 w-4 h-4 text-trust-blue-600 rounded border-neutral-200 focus:ring-trust-blue-500"
                   />
-                  <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
+                  <span className="text-sm text-neutral-500 group-hover:text-neutral-900 transition-colors">
                     Kişisel verilerimin işlenmesine ilişkin <Link href="/kvkk" target="_blank" className="text-trust-blue-600 hover:underline font-semibold">KVKK Aydınlatma Metni</Link>'ni okudum.
                   </span>
                 </label>
               </div>
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={loading || !formData.acceptTerms || !formData.acceptKvkk}
-                className="w-full py-4 bg-cta-background hover:bg-cta-hover text-white rounded-xl font-bold transition-all shadow-md text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-4 bg-cta-background hover:bg-cta-hover text-white rounded-xl font-bold transition-all shadow-[var(--shadow-button)] text-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Güvenli Ödeme Bekleniyor...' : 'Kredi Kartı ile Öde'}
               </button>

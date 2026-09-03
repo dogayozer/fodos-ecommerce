@@ -45,7 +45,7 @@ export function SidebarNav({ tree, onNavigate }: { tree: any[], onNavigate?: () 
 
   return (
     <div className="p-4">
-      <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Kategoriler</h3>
+      <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">Kategoriler</h3>
       <ul className="space-y-2">
         {tree.map(cat => {
           const isCatActive = pathname === `/kategori/${cat.slug}` && !activeBrand && !activeModel
@@ -54,7 +54,7 @@ export function SidebarNav({ tree, onNavigate }: { tree: any[], onNavigate?: () 
             <div className="flex items-center justify-between py-1">
               <Link 
                 href={`/kategori/${cat.slug}`} 
-                className={`flex-1 transition-colors ${isCatActive ? 'font-bold text-trust-blue-600' : 'font-semibold text-gray-700 hover:text-trust-blue-600'}`}
+                className={`flex-1 transition-colors ${isCatActive ? 'font-bold text-trust-blue-600' : 'font-semibold text-neutral-900 hover:text-trust-blue-600'}`}
                 onClick={() => {
                   setOpenCategory(cat.slug)
                   setOpenBrand(null)
@@ -66,7 +66,7 @@ export function SidebarNav({ tree, onNavigate }: { tree: any[], onNavigate?: () 
               {cat.brands.length > 0 && (
                 <button 
                   onClick={() => toggleCategory(cat.slug)} 
-                  className="text-gray-400 hover:text-trust-blue-600 p-1"
+                  className="text-neutral-500 hover:text-trust-blue-600 p-1"
                 >
                   {openCategory === cat.slug ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
                 </button>
@@ -74,7 +74,7 @@ export function SidebarNav({ tree, onNavigate }: { tree: any[], onNavigate?: () 
             </div>
             
             {openCategory === cat.slug && cat.brands.length > 0 && (
-              <ul className="pl-4 mt-1 border-l-2 border-gray-100 space-y-1">
+              <ul className="pl-4 mt-1 border-l-2 border-neutral-200 space-y-1">
                 {cat.brands.map((brand: any) => {
                   const isBrandActive = pathname === `/kategori/${cat.slug}` && activeBrand === brand.name && !activeModel
                   return (
@@ -82,7 +82,7 @@ export function SidebarNav({ tree, onNavigate }: { tree: any[], onNavigate?: () 
                     <div className="flex items-center justify-between">
                       <Link 
                         href={`/kategori/${cat.slug}?brand=${brand.name}`} 
-                        className={`flex-1 py-1 transition-colors ${isBrandActive ? 'font-bold text-trust-blue-600 text-sm' : 'text-sm text-gray-600 hover:text-trust-blue-600'}`}
+                        className={`flex-1 py-1 transition-colors ${isBrandActive ? 'font-bold text-trust-blue-600 text-sm' : 'text-sm text-neutral-500 hover:text-trust-blue-600'}`}
                         onClick={() => {
                           setOpenBrand(brand.name)
                           if (onNavigate) onNavigate()
@@ -98,7 +98,7 @@ export function SidebarNav({ tree, onNavigate }: { tree: any[], onNavigate?: () 
           </li>
         )})}
         {tree.length === 0 && (
-          <div className="text-xs text-gray-400">Kategori bulunamadı.</div>
+          <div className="text-xs text-neutral-500">Kategori bulunamadı.</div>
         )}
       </ul>
     </div>

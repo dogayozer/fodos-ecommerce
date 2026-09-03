@@ -70,26 +70,26 @@ export default async function CategoryPage({
   return (
     <div className="p-4 sm:p-6 lg:p-8 w-full">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-3xl font-bold text-neutral-900 mb-2">
           {toTitleCase(category.name)}
         </h1>
         {brand && (
-          <p className="text-gray-500">
+          <p className="text-neutral-500">
             {toTitleCase(brand)} {model ? `> ${model}` : ''}
           </p>
         )}
-        <p className="text-sm text-gray-400 mt-1">{products.length} ürün bulundu.</p>
+        <p className="text-sm text-neutral-500 mt-1">{products.length} ürün bulundu.</p>
       </div>
 
       {brand && (
-        <Suspense fallback={<div className="mb-8 p-4 text-sm text-gray-500">Modeller yükleniyor...</div>}>
+        <Suspense fallback={<div className="mb-8 p-4 text-sm text-neutral-500">Modeller yükleniyor...</div>}>
           <ModelFilter models={availableModels} activeModel={model} />
         </Suspense>
       )}
 
       {products.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-xl border border-gray-100">
-          <p className="text-gray-500 text-lg">Bu kategoride şu an ürün bulunmamaktadır.</p>
+        <div className="text-center py-20 bg-neutral-0 rounded-xl border border-neutral-200">
+          <p className="text-neutral-500 text-lg">Bu kategoride şu an ürün bulunmamaktadır.</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">

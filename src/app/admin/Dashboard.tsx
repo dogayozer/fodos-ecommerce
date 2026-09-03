@@ -167,24 +167,24 @@ export function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-neutral-50 p-8">
       <OrderNotifier />
-      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="max-w-4xl mx-auto bg-neutral-0 rounded-xl shadow-[var(--shadow-card)] border border-neutral-200 p-6">
         <div className="flex justify-between items-center border-b pb-4 mb-6">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold text-trust-blue-600">Admin Dashboard</h1>
-            <span className="bg-trust-blue-100 text-trust-blue-800 text-xs font-bold px-2 py-1 rounded">v2.1</span>
+            <span className="bg-trust-blue-100 text-trust-blue-600 text-xs font-bold px-2 py-1 rounded">v2.1</span>
           </div>
           <div className="flex gap-2">
-            <button 
+            <button
               onClick={() => playNotificationSound()}
-              className="text-sm px-4 py-2 bg-green-100 hover:bg-green-200 text-green-700 font-bold rounded-md transition-colors"
+              className="text-sm px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold rounded-md transition-colors"
             >
               🔔 Sesi Test Et
             </button>
-            <button 
+            <button
               onClick={handleLogout}
-              className="text-sm px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors text-gray-700"
+              className="text-sm px-4 py-2 bg-neutral-100 hover:bg-neutral-200 rounded-md transition-colors text-neutral-900"
             >
               Çıkış Yap
             </button>
@@ -192,78 +192,78 @@ export function Dashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="p-6 bg-white border border-trust-blue-100 rounded-xl shadow-sm flex flex-col justify-between">
+          <div className="p-6 bg-neutral-0 border border-trust-blue-100 rounded-xl shadow-[var(--shadow-card)] flex flex-col justify-between">
             <div>
-              <h2 className="text-xl font-bold mb-1 text-trust-blue-700">Sipariş Yönetimi</h2>
-              <p className="text-sm text-gray-500 mb-4">Gelen siparişleri görüntüle, fatura yazdır, kargo numaralarını gir ve sipariş notu ekle.</p>
+              <h2 className="text-xl font-bold mb-1 text-trust-blue-600">Sipariş Yönetimi</h2>
+              <p className="text-sm text-neutral-500 mb-4">Gelen siparişleri görüntüle, fatura yazdır, kargo numaralarını gir ve sipariş notu ekle.</p>
             </div>
-            <a href="/admin/siparisler" className="bg-trust-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-trust-blue-700 transition-colors shadow-sm text-center inline-block">
+            <a href="/admin/siparisler" className="bg-trust-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-trust-blue-600/90 transition-colors shadow-[var(--shadow-button)] text-center inline-block">
               Siparişlere Git
             </a>
           </div>
 
-          <div className="p-6 bg-white border border-purple-100 rounded-xl shadow-sm flex flex-col justify-between">
+          <div className="p-6 bg-neutral-0 border border-indigo-100 rounded-xl shadow-[var(--shadow-card)] flex flex-col justify-between">
             <div>
-              <h2 className="text-xl font-bold mb-1 text-purple-700">Üyelik Yönetimi</h2>
-              <p className="text-sm text-gray-500 mb-4">Kayıtlı müşterilerinizi, iletişim bilgilerini ve geçmiş alışveriş detaylarını görüntüleyin.</p>
+              <h2 className="text-xl font-bold mb-1 text-indigo-800">Üyelik Yönetimi</h2>
+              <p className="text-sm text-neutral-500 mb-4">Kayıtlı müşterilerinizi, iletişim bilgilerini ve geçmiş alışveriş detaylarını görüntüleyin.</p>
             </div>
-            <a href="/admin/uyeler" className="bg-purple-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-purple-700 transition-colors shadow-sm text-center inline-block">
+            <a href="/admin/uyeler" className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-indigo-700 transition-colors shadow-[var(--shadow-button)] text-center inline-block">
               Üyelere Git
             </a>
           </div>
 
-          <div className="p-6 bg-white border border-orange-100 rounded-xl shadow-sm flex flex-col justify-between">
+          <div className="p-6 bg-neutral-0 border border-action-orange-500/20 rounded-xl shadow-[var(--shadow-card)] flex flex-col justify-between">
             <div>
-              <h2 className="text-xl font-bold mb-1 text-orange-700">Pazaryeri Siparişleri</h2>
-              <p className="text-sm text-gray-500 mb-4">Trendyol, Hepsiburada, N11, Çiçeksepeti siparişlerini tek ekranda topla, işleme al, tedarik notu gir.</p>
+              <h2 className="text-xl font-bold mb-1 text-action-orange-600">Pazaryeri Siparişleri</h2>
+              <p className="text-sm text-neutral-500 mb-4">Trendyol, Hepsiburada, N11, Çiçeksepeti siparişlerini tek ekranda topla, işleme al, tedarik notu gir.</p>
             </div>
-            <a href="/admin/pazaryeri-siparisleri" className="bg-orange-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-orange-700 transition-colors shadow-sm text-center inline-block">
+            <a href="/admin/pazaryeri-siparisleri" className="bg-action-orange-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-action-orange-600 transition-colors shadow-[var(--shadow-button)] text-center inline-block">
               Pazaryeri Siparişlerine Git
             </a>
           </div>
         </div>
 
         <div className="mb-8">
-          <h2 className="text-lg font-semibold mb-4 text-gray-800">Trendyol Ürün Senkronizasyonu (Excel)</h2>
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50 mb-4">
-            <input 
-              type="file" 
-              accept=".xlsx" 
+          <h2 className="text-lg font-semibold mb-4 text-neutral-900">Trendyol Ürün Senkronizasyonu (Excel)</h2>
+          <div className="border-2 border-dashed border-neutral-200 rounded-lg p-8 text-center bg-neutral-50 mb-4">
+            <input
+              type="file"
+              accept=".xlsx"
               onChange={handleFileChange}
-              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-trust-blue-50 file:text-trust-blue-600 hover:file:bg-trust-blue-100 cursor-pointer"
+              className="block w-full text-sm text-neutral-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-trust-blue-50 file:text-trust-blue-600 hover:file:bg-trust-blue-100 cursor-pointer"
             />
-            {file && <p className="mt-4 text-sm text-gray-600">Seçilen dosya: {file.name}</p>}
+            {file && <p className="mt-4 text-sm text-neutral-500">Seçilen dosya: {file.name}</p>}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Fiyata Eklenecek Zam Oranı (%)</label>
-              <input 
-                type="number" 
-                placeholder="Örn: 40 (Boş bırakırsanız değişmez)" 
+              <label className="block text-sm font-medium text-neutral-900 mb-1">Fiyata Eklenecek Zam Oranı (%)</label>
+              <input
+                type="number"
+                placeholder="Örn: 40 (Boş bırakırsanız değişmez)"
                 value={priceIncreasePercent}
                 onChange={(e) => setPriceIncreasePercent(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
+                className="w-full px-4 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
               />
-              <p className="text-xs text-gray-400 mt-1">Trendyol fiyatına bu oranda zam yapılıp üstü çizili fiyat (referans) oluşturulur.</p>
+              <p className="text-xs text-neutral-500 mt-1">Trendyol fiyatına bu oranda zam yapılıp üstü çizili fiyat (referans) oluşturulur.</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Uygulanacak İndirim Oranı (%)</label>
-              <input 
-                type="number" 
-                placeholder="Örn: 40 (Boş bırakırsanız değişmez)" 
+              <label className="block text-sm font-medium text-neutral-900 mb-1">Uygulanacak İndirim Oranı (%)</label>
+              <input
+                type="number"
+                placeholder="Örn: 40 (Boş bırakırsanız değişmez)"
                 value={discountPercent}
                 onChange={(e) => setDiscountPercent(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
+                className="w-full px-4 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
               />
-              <p className="text-xs text-gray-400 mt-1">Oluşturulan zamlı fiyattan yapılacak indirimle son satış fiyatı belirlenir.</p>
+              <p className="text-xs text-neutral-500 mt-1">Oluşturulan zamlı fiyattan yapılacak indirimle son satış fiyatı belirlenir.</p>
             </div>
           </div>
-          
+
           <button
             onClick={handleUpload}
             disabled={!file || uploading}
-            className="mt-4 w-full py-3 bg-trust-blue-600 hover:bg-trust-blue-700 disabled:opacity-50 text-white rounded-lg font-medium transition-colors"
+            className="mt-4 w-full py-3 bg-trust-blue-600 hover:bg-trust-blue-600/90 disabled:opacity-50 text-white rounded-lg font-medium transition-colors"
           >
             {uploading ? (
               uploadProgress ? `İşleniyor: Paket ${uploadProgress.current} / ${uploadProgress.total} yükleniyor...` : 'İşleniyor, lütfen bekleyin...'
@@ -271,7 +271,7 @@ export function Dashboard() {
           </button>
 
           {error && (
-            <div className="mt-4 p-4 bg-red-50 text-risk-red-500 rounded-md border border-red-100">
+            <div className="mt-4 p-4 bg-risk-red-500/10 text-risk-red-500 rounded-md border border-risk-red-500/20">
               {error}
             </div>
           )}
@@ -290,12 +290,12 @@ export function Dashboard() {
         </div>
 
         {/* Bulk Update Section */}
-        <div className="mb-8 p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
-          <h2 className="text-lg font-semibold mb-4 text-gray-800">Toplu Fiyat Güncelleme</h2>
-          <p className="text-sm text-gray-600 mb-4">Excel'de kayıtlı orijinal piyasa fiyatları (`original_excel_price`) üzerinden tüm sisteme zam/indirim uygulayın.</p>
+        <div className="mb-8 p-6 bg-neutral-0 border border-neutral-200 rounded-xl shadow-[var(--shadow-card)]">
+          <h2 className="text-lg font-semibold mb-4 text-neutral-900">Toplu Fiyat Güncelleme</h2>
+          <p className="text-sm text-neutral-500 mb-4">Excel'de kayıtlı orijinal piyasa fiyatları (`original_excel_price`) üzerinden tüm sisteme zam/indirim uygulayın.</p>
 
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Hangi Marka İçin Uygulanacak?</label>
+            <label className="block text-sm font-medium text-neutral-900 mb-2">Hangi Marka İçin Uygulanacak?</label>
             <div className="flex gap-3">
               <button
                 type="button"
@@ -303,7 +303,7 @@ export function Dashboard() {
                 className={`px-4 py-2 rounded-lg text-sm font-bold border transition-colors ${
                   bulkTargetStore === 'fodos'
                     ? 'bg-trust-blue-600 text-white border-trust-blue-600'
-                    : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+                    : 'bg-neutral-0 text-neutral-500 border-neutral-200 hover:bg-neutral-50'
                 }`}
               >
                 Fodos
@@ -314,13 +314,13 @@ export function Dashboard() {
                 className={`px-4 py-2 rounded-lg text-sm font-bold border transition-colors ${
                   bulkTargetStore === 'mpm'
                     ? 'bg-trust-blue-600 text-white border-trust-blue-600'
-                    : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+                    : 'bg-neutral-0 text-neutral-500 border-neutral-200 hover:bg-neutral-50'
                 }`}
               >
                 Mobil Parça Merkezi
               </button>
             </div>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-neutral-500 mt-1">
               {bulkTargetStore === 'fodos'
                 ? 'Fodos\'un normal satış fiyatı (sale_price / reference_price) güncellenir.'
                 : 'Sadece Mobil Parça Merkezi\'ne özel fiyat (mpm_sale_price / mpm_reference_price) güncellenir, Fodos fiyatı değişmez.'}
@@ -329,38 +329,38 @@ export function Dashboard() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Model Kodu ile Filtrele</label>
-              <input 
+              <label className="block text-sm font-medium text-neutral-900 mb-1">Model Kodu ile Filtrele</label>
+              <input
                 type="text"
-                placeholder="Örn: iPhone 14 Pro" 
+                placeholder="Örn: iPhone 14 Pro"
                 value={modelFilter}
                 onChange={(e) => setModelFilter(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
+                className="w-full px-4 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
               />
-              <p className="text-xs text-gray-400 mt-1">Sadece bu kelimeyi içeren modeller güncellenir. Boş bırakırsanız hepsi güncellenir.</p>
+              <p className="text-xs text-neutral-500 mt-1">Sadece bu kelimeyi içeren modeller güncellenir. Boş bırakırsanız hepsi güncellenir.</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Zam Oranı (%)</label>
-              <input 
+              <label className="block text-sm font-medium text-neutral-900 mb-1">Zam Oranı (%)</label>
+              <input
                 type="number"
-                placeholder="Örn: 20" 
+                placeholder="Örn: 20"
                 value={bulkIncrease}
                 onChange={(e) => setBulkIncrease(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
+                className="w-full px-4 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">İndirim Oranı (%)</label>
-              <input 
-                type="number" 
+              <label className="block text-sm font-medium text-neutral-900 mb-1">İndirim Oranı (%)</label>
+              <input
+                type="number"
                 placeholder="Örn: 10"
                 value={bulkDiscount}
                 onChange={(e) => setBulkDiscount(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
+                className="w-full px-4 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
               />
             </div>
           </div>
-          
+
           <div className="flex gap-4">
             <button
               onClick={() => handleBulkUpdate(false)}
@@ -376,20 +376,20 @@ export function Dashboard() {
                 }
               }}
               disabled={bulkUpdating}
-              className="flex-1 py-3 bg-gray-500 hover:bg-gray-600 disabled:opacity-50 text-white rounded-lg font-medium transition-colors"
+              className="flex-1 py-3 bg-neutral-500 hover:bg-neutral-900 disabled:opacity-50 text-white rounded-lg font-medium transition-colors"
             >
               Excel Fiyatlarına Geri Dön
             </button>
           </div>
 
           {bulkError && (
-            <div className="mt-4 p-4 bg-red-50 text-risk-red-500 rounded-md border border-red-100">
+            <div className="mt-4 p-4 bg-risk-red-500/10 text-risk-red-500 rounded-md border border-risk-red-500/20">
               {bulkError}
             </div>
           )}
 
           {bulkResult && (
-            <div className="mt-4 p-4 bg-green-50 text-green-800 rounded-md border border-green-100">
+            <div className="mt-4 p-4 bg-emerald-50 text-emerald-800 rounded-md border border-emerald-100">
               <h3 className="font-bold mb-2">Güncelleme Başarılı</h3>
               <p className="text-sm">Başarıyla güncellenen ürün sayısı: <strong>{bulkResult.updatedCount}</strong></p>
             </div>
@@ -397,8 +397,8 @@ export function Dashboard() {
         </div>
 
         {/* Sürüm Notları */}
-        <div className="mt-8 bg-blue-50 border border-blue-100 rounded-lg p-5">
-          <h3 className="text-sm font-bold text-trust-blue-700 mb-2">Sistem Güncelleme Notları (v2.1 - BirFatura Entegrasyonu)</h3>
+        <div className="mt-8 bg-trust-blue-50 border border-trust-blue-100 rounded-lg p-5">
+          <h3 className="text-sm font-bold text-trust-blue-600 mb-2">Sistem Güncelleme Notları (v2.1 - BirFatura Entegrasyonu)</h3>
           <ul className="list-disc pl-5 text-xs text-trust-blue-600 space-y-1">
             <li><strong>YENİ - BİRFATURA ENTEGRASYONU:</strong> Tüm siparişlerinizi tek bir yerden yönetmek ve e-Fatura / e-Arşiv kesmek için BirFatura Özel Entegrasyon altyapısı ve webhook bağlantıları eklendi. Aşağıdaki ayarlardan API anahtarınızı alabilirsiniz.</li>
             <li><strong>YENİ - SİPARİŞLER & FATURA ROZETLERİ:</strong> Sipariş yönetiminde fatura durumu (Faturalandı / Fatura Bekliyor), hızlı PDF fatura açma ve arama filtreleri eklendi.</li>

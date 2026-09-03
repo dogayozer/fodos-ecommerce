@@ -262,17 +262,17 @@ export function OrderManager() {
     <div>
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+        <div className="bg-neutral-0 p-4 rounded-xl border border-neutral-200 shadow-[var(--shadow-card)] flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase">Toplam Sipariş</p>
-            <p className="text-2xl font-black text-gray-900">{orders.length}</p>
+            <p className="text-xs font-semibold text-neutral-500 uppercase">Toplam Sipariş</p>
+            <p className="text-2xl font-black text-neutral-900">{orders.length}</p>
           </div>
-          <div className="p-3 bg-blue-50 text-blue-600 rounded-lg">
+          <div className="p-3 bg-trust-blue-50 text-trust-blue-600 rounded-lg">
             <Package className="w-6 h-6" />
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-amber-100 shadow-sm flex items-center justify-between">
+        <div className="bg-neutral-0 p-4 rounded-xl border border-amber-100 shadow-[var(--shadow-card)] flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold text-amber-700 uppercase">Fatura Bekleyen</p>
             <p className="text-2xl font-black text-amber-800">{uninvoicedCount}</p>
@@ -282,7 +282,7 @@ export function OrderManager() {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm flex items-center justify-between">
+        <div className="bg-neutral-0 p-4 rounded-xl border border-emerald-100 shadow-[var(--shadow-card)] flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold text-emerald-700 uppercase">Faturalanan Sipariş</p>
             <p className="text-2xl font-black text-emerald-800">{invoicedCount}</p>
@@ -292,7 +292,7 @@ export function OrderManager() {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-indigo-100 shadow-sm flex items-center justify-between">
+        <div className="bg-neutral-0 p-4 rounded-xl border border-indigo-100 shadow-[var(--shadow-card)] flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold text-indigo-700 uppercase">Kargodaki Sipariş</p>
             <p className="text-2xl font-black text-indigo-800">{orders.filter(o => o.status === 'shipped').length}</p>
@@ -308,7 +308,7 @@ export function OrderManager() {
         <div className="flex space-x-2 overflow-x-auto pb-2 md:pb-0">
           <button
             onClick={() => setActiveTab('all')}
-            className={`px-3 py-2 rounded-lg font-medium text-xs whitespace-nowrap transition-colors ${activeTab === 'all' ? 'bg-trust-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border'}`}
+            className={`px-3 py-2 rounded-lg font-medium text-xs whitespace-nowrap transition-colors ${activeTab === 'all' ? 'bg-trust-blue-600 text-white' : 'bg-neutral-0 text-neutral-500 hover:bg-neutral-100 border border-neutral-200'}`}
           >
             Tümü ({orders.length})
           </button>
@@ -328,13 +328,13 @@ export function OrderManager() {
           </button>
           <button
             onClick={() => setActiveTab('pending')}
-            className={`px-3 py-2 rounded-lg font-medium text-xs whitespace-nowrap transition-colors ${activeTab === 'pending' ? 'bg-yellow-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border'}`}
+            className={`px-3 py-2 rounded-lg font-medium text-xs whitespace-nowrap transition-colors ${activeTab === 'pending' ? 'bg-yellow-500 text-white' : 'bg-neutral-0 text-neutral-500 hover:bg-neutral-100 border border-neutral-200'}`}
           >
             Bekleyenler
           </button>
           <button
             onClick={() => setActiveTab('shipped')}
-            className={`px-3 py-2 rounded-lg font-medium text-xs whitespace-nowrap transition-colors ${activeTab === 'shipped' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border'}`}
+            className={`px-3 py-2 rounded-lg font-medium text-xs whitespace-nowrap transition-colors ${activeTab === 'shipped' ? 'bg-indigo-600 text-white' : 'bg-neutral-0 text-neutral-500 hover:bg-neutral-100 border border-neutral-200'}`}
           >
             Kargolananlar
           </button>
@@ -342,50 +342,50 @@ export function OrderManager() {
 
         <div className="flex items-center gap-3">
           {/* Marka Filtresi */}
-          <div className="flex bg-gray-100 rounded-lg p-1 text-xs font-bold shrink-0">
+          <div className="flex bg-neutral-100 rounded-lg p-1 text-xs font-bold shrink-0">
             <button
               onClick={() => setStoreFilter('all')}
-              className={`px-3 py-1.5 rounded-md transition-colors ${storeFilter === 'all' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`px-3 py-1.5 rounded-md transition-colors ${storeFilter === 'all' ? 'bg-neutral-0 shadow-[var(--shadow-card)] text-neutral-900' : 'text-neutral-500 hover:text-neutral-900'}`}
             >
               Tümü
             </button>
             <button
               onClick={() => setStoreFilter('fodos')}
-              className={`px-3 py-1.5 rounded-md transition-colors ${storeFilter === 'fodos' ? 'bg-white shadow-sm text-trust-blue-700' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`px-3 py-1.5 rounded-md transition-colors ${storeFilter === 'fodos' ? 'bg-neutral-0 shadow-[var(--shadow-card)] text-trust-blue-600' : 'text-neutral-500 hover:text-neutral-900'}`}
             >
               Fodos
             </button>
             <button
               onClick={() => setStoreFilter('mpm')}
-              className={`px-3 py-1.5 rounded-md transition-colors ${storeFilter === 'mpm' ? 'bg-white shadow-sm text-purple-700' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`px-3 py-1.5 rounded-md transition-colors ${storeFilter === 'mpm' ? 'bg-neutral-0 shadow-[var(--shadow-card)] text-indigo-700' : 'text-neutral-500 hover:text-neutral-900'}`}
             >
               MPM
             </button>
           </div>
 
           <div className="relative min-w-[260px]">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
             <input
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Sipariş no, müşteri, fatura no ara..."
-              className="w-full pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
+              className="w-full pl-9 pr-3 py-2 bg-neutral-0 border border-neutral-200 rounded-lg text-xs focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
             />
           </div>
         </div>
       </div>
 
       {/* Orders Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-neutral-0 rounded-xl shadow-[var(--shadow-card)] border border-neutral-200 overflow-hidden">
         {loading ? (
-          <div className="p-8 text-center text-gray-500">Yükleniyor...</div>
+          <div className="p-8 text-center text-neutral-500">Yükleniyor...</div>
         ) : filteredOrders.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">Aramanıza uygun sipariş bulunamadı.</div>
+          <div className="p-8 text-center text-neutral-500">Aramanıza uygun sipariş bulunamadı.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 border-b text-gray-600 text-xs uppercase tracking-wider">
+              <thead className="bg-neutral-50 border-b text-neutral-500 text-xs uppercase tracking-wider">
                 <tr>
                   <th className="p-4 font-semibold">Sipariş No / Tarih</th>
                   <th className="p-4 font-semibold">Müşteri</th>
@@ -396,45 +396,45 @@ export function OrderManager() {
                   <th className="p-4 font-semibold text-right">İşlemler</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-neutral-200">
                 {filteredOrders.map(order => {
                   const isInvoiced = order.invoiceStatus === 'invoiced'
                   return (
-                    <tr key={order.id} className="hover:bg-gray-50/80 transition-colors">
+                    <tr key={order.id} className="hover:bg-neutral-50 transition-colors">
                       <td className="p-4">
                         <div className="flex items-center gap-1.5">
-                          <div className="font-bold text-gray-900 font-mono">{order.orderNumber}</div>
+                          <div className="font-bold text-neutral-900 font-mono">{order.orderNumber}</div>
                           <span
                             className={`px-1.5 py-0.5 rounded text-[10px] font-black uppercase shrink-0 ${
                               (order.store || 'fodos') === 'mpm'
-                                ? 'bg-purple-100 text-purple-700'
-                                : 'bg-trust-blue-100 text-trust-blue-700'
+                                ? 'bg-indigo-100 text-indigo-700'
+                                : 'bg-trust-blue-100 text-trust-blue-600'
                             }`}
                           >
                             {(order.store || 'fodos') === 'mpm' ? 'MPM' : 'Fodos'}
                           </span>
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-neutral-500">
                           {new Date(order.createdAt).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' })}
                         </div>
                       </td>
                       <td className="p-4">
-                        <div className="font-medium text-gray-800">{order.customer?.name || 'Misafir'}</div>
-                        <div className="text-xs text-gray-500">{order.shippingCity}, {order.shippingDistrict}</div>
+                        <div className="font-medium text-neutral-900">{order.customer?.name || 'Misafir'}</div>
+                        <div className="text-xs text-neutral-500">{order.shippingCity}, {order.shippingDistrict}</div>
                         {order.customer?.phone && (
-                          <div className="text-xs text-gray-400">{order.customer.phone}</div>
+                          <div className="text-xs text-neutral-500">{order.customer.phone}</div>
                         )}
                       </td>
                       <td className="p-4">
-                        <div className="font-bold text-gray-900">
+                        <div className="font-bold text-neutral-900">
                           {order.totalAmount.toLocaleString('tr-TR')} TL
                         </div>
                         {order.discountApplied > 0 && (
-                          <div className="text-xs text-green-600">-{order.discountApplied.toLocaleString('tr-TR')} TL indirim</div>
+                          <div className="text-xs text-emerald-600">-{order.discountApplied.toLocaleString('tr-TR')} TL indirim</div>
                         )}
                       </td>
                       <td className="p-4">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${statusMap[order.status]?.color || 'bg-gray-100 text-gray-800'}`}>
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${statusMap[order.status]?.color || 'bg-neutral-100 text-neutral-900'}`}>
                           {statusMap[order.status]?.label || order.status}
                         </span>
                       </td>
@@ -446,7 +446,7 @@ export function OrderManager() {
                               Faturalandı
                             </span>
                             {order.invoiceNumber && (
-                              <div className="text-xs font-mono text-gray-600 flex items-center gap-1">
+                              <div className="text-xs font-mono text-neutral-500 flex items-center gap-1">
                                 <span>{order.invoiceNumber}</span>
                               </div>
                             )}
@@ -483,11 +483,11 @@ export function OrderManager() {
                       <td className="p-4">
                         {order.trackingNumber ? (
                           <div className="text-xs">
-                            <span className="font-semibold text-gray-800">{order.shippingCompany}</span><br />
-                            <span className="font-mono text-gray-500">{order.trackingNumber}</span>
+                            <span className="font-semibold text-neutral-900">{order.shippingCompany}</span><br />
+                            <span className="font-mono text-neutral-500">{order.trackingNumber}</span>
                           </div>
                         ) : (
-                          <span className="text-xs text-gray-400">-</span>
+                          <span className="text-xs text-neutral-500">-</span>
                         )}
                       </td>
                       <td className="p-4 text-right">
@@ -506,7 +506,7 @@ export function OrderManager() {
                           <button
                             onClick={() => handlePrint(order)}
                             title="Sipariş Fişi Yazdır"
-                            className="p-1.5 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                            className="p-1.5 text-neutral-500 hover:bg-neutral-100 rounded-lg transition-colors"
                           >
                             <Printer className="w-4 h-4" />
                           </button>
@@ -530,15 +530,15 @@ export function OrderManager() {
       {/* Edit / Details Modal */}
       {selectedOrder && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 my-8 max-h-[90vh] overflow-y-auto">
+          <div className="bg-neutral-0 rounded-2xl shadow-[var(--shadow-float)] max-w-2xl w-full p-6 my-8 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b pb-4 mb-4">
               <div>
-                <h3 className="text-xl font-bold text-gray-900">Sipariş Yönetimi & BirFatura</h3>
-                <p className="text-xs text-gray-500 font-mono">#{selectedOrder.orderNumber} • {new Date(selectedOrder.createdAt).toLocaleString('tr-TR')}</p>
+                <h3 className="text-xl font-bold text-neutral-900">Sipariş Yönetimi & BirFatura</h3>
+                <p className="text-xs text-neutral-500 font-mono">#{selectedOrder.orderNumber} • {new Date(selectedOrder.createdAt).toLocaleString('tr-TR')}</p>
               </div>
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="text-gray-400 hover:text-gray-600 p-2 text-xl font-bold"
+                className="text-neutral-500 hover:text-neutral-900 p-2 text-xl font-bold"
               >
                 ✕
               </button>
@@ -546,7 +546,7 @@ export function OrderManager() {
 
             <div className="space-y-5">
               {/* BirFatura ve Fatura Bilgileri Kartı */}
-              <div className="bg-gradient-to-br from-indigo-50/60 to-purple-50/40 p-4 rounded-xl border border-indigo-100">
+              <div className="bg-gradient-to-br from-indigo-50/60 to-indigo-100/40 p-4 rounded-xl border border-indigo-100">
                 <div className="flex items-center justify-between mb-3 border-b border-indigo-100/80 pb-2">
                   <div className="flex items-center gap-2">
                     <span className="text-xl">🧾</span>
@@ -566,7 +566,7 @@ export function OrderManager() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">Fatura Durumu</label>
+                    <label className="block text-xs font-semibold text-neutral-900 mb-1">Fatura Durumu</label>
                     <select
                       value={editInvoiceStatus}
                       onChange={e => setEditInvoiceStatus(e.target.value)}
@@ -580,7 +580,7 @@ export function OrderManager() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">Fatura Numarası</label>
+                    <label className="block text-xs font-semibold text-neutral-900 mb-1">Fatura Numarası</label>
                     <input
                       type="text"
                       value={editInvoiceNumber}
@@ -591,7 +591,7 @@ export function OrderManager() {
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">Fatura PDF / Görüntüleme Linki</label>
+                    <label className="block text-xs font-semibold text-neutral-900 mb-1">Fatura PDF / Görüntüleme Linki</label>
                     <input
                       type="text"
                       value={editInvoiceUrl}
@@ -602,7 +602,7 @@ export function OrderManager() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">TC Kimlik / Vergi No</label>
+                    <label className="block text-xs font-semibold text-neutral-900 mb-1">TC Kimlik / Vergi No</label>
                     <input
                       type="text"
                       value={editTaxNumber}
@@ -613,7 +613,7 @@ export function OrderManager() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">Vergi Dairesi / Şirket Unvanı</label>
+                    <label className="block text-xs font-semibold text-neutral-900 mb-1">Vergi Dairesi / Şirket Unvanı</label>
                     <div className="flex gap-2">
                       <input
                         type="text"
@@ -637,7 +637,7 @@ export function OrderManager() {
               {/* Sipariş ve Kargo Bilgileri */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">Sipariş Durumu</label>
+                  <label className="block text-xs font-semibold text-neutral-900 mb-1">Sipariş Durumu</label>
                   <select
                     value={editStatus}
                     onChange={e => setEditStatus(e.target.value)}
@@ -652,7 +652,7 @@ export function OrderManager() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">Kargo Firması</label>
+                  <label className="block text-xs font-semibold text-neutral-900 mb-1">Kargo Firması</label>
                   <select
                     value={editCompany}
                     onChange={e => setEditCompany(e.target.value)}
@@ -669,7 +669,7 @@ export function OrderManager() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">Kargo Takip Numarası</label>
+                  <label className="block text-xs font-semibold text-neutral-900 mb-1">Kargo Takip Numarası</label>
                   <input
                     type="text"
                     value={editTracking}
@@ -681,7 +681,7 @@ export function OrderManager() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">Admin Notu (Müşteri Görmez)</label>
+                <label className="block text-xs font-semibold text-neutral-900 mb-1">Admin Notu (Müşteri Görmez)</label>
                 <textarea
                   value={editAdminNote}
                   onChange={e => setEditAdminNote(e.target.value)}
@@ -693,15 +693,15 @@ export function OrderManager() {
 
               {/* Sipariş İçeriği */}
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-2">Sipariş İçeriği & Kalemler</label>
-                <div className="bg-gray-50 border rounded-lg p-3 space-y-2 max-h-40 overflow-y-auto">
+                <label className="block text-xs font-semibold text-neutral-900 mb-2">Sipariş İçeriği & Kalemler</label>
+                <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 space-y-2 max-h-40 overflow-y-auto">
                   {selectedOrder.items?.map((item: any) => (
-                    <div key={item.id} className="flex justify-between items-center text-xs bg-white p-2 border rounded">
+                    <div key={item.id} className="flex justify-between items-center text-xs bg-neutral-0 p-2 border border-neutral-200 rounded">
                       <div className="flex-1 truncate mr-2">
-                        <p className="font-semibold text-gray-800">{item.product?.title || 'Ürün'}</p>
-                        <p className="text-gray-400 font-mono">Barkod: {item.product?.barcode || '-'}</p>
+                        <p className="font-semibold text-neutral-900">{item.product?.title || 'Ürün'}</p>
+                        <p className="text-neutral-500 font-mono">Barkod: {item.product?.barcode || '-'}</p>
                       </div>
-                      <div className="text-gray-500 w-16 text-center">{item.quantity} Adet</div>
+                      <div className="text-neutral-500 w-16 text-center">{item.quantity} Adet</div>
                       <div className="font-bold text-right w-24">{(item.price * item.quantity).toLocaleString('tr-TR')} TL</div>
                     </div>
                   ))}
@@ -712,21 +712,21 @@ export function OrderManager() {
             <div className="mt-6 flex justify-between items-center border-t pt-4">
               <button
                 onClick={() => handlePrint(selectedOrder)}
-                className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 text-xs font-bold flex items-center gap-1.5"
+                className="px-4 py-2 bg-neutral-900 text-white rounded-lg hover:bg-neutral-900/90 text-xs font-bold flex items-center gap-1.5"
               >
                 <Printer className="w-4 h-4" /> Fiş Yazdır
               </button>
               <div className="flex space-x-3">
                 <button
                   onClick={() => setSelectedOrder(null)}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg text-xs font-semibold"
+                  className="px-4 py-2 text-neutral-500 hover:bg-neutral-100 rounded-lg text-xs font-semibold"
                 >
                   Kapat
                 </button>
                 <button
                   onClick={handleUpdate}
                   disabled={saving}
-                  className="px-5 py-2 bg-trust-blue-600 text-white rounded-lg hover:bg-trust-blue-700 disabled:opacity-50 text-xs font-bold"
+                  className="px-5 py-2 bg-trust-blue-600 text-white rounded-lg hover:bg-trust-blue-600/90 disabled:opacity-50 text-xs font-bold"
                 >
                   {saving ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet'}
                 </button>
