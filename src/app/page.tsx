@@ -6,7 +6,9 @@ import { ProductCard } from '@/components/ProductCard'
 import { HomeSearchForm } from '@/components/HomeSearchForm'
 import { RotatingHeroText } from '@/components/RotatingHeroText'
 
-export const revalidate = 60; // 60 saniyede bir sayfayı yenile
+export const revalidate = 300; // 5 dakikada bir sayfayı yenile — vitrin galerisindeki rastgele
+// dış CDN görsellerinin Next.js önbelleğinde daha uzun kalması için (60sn'de bir değişince her
+// yenilemede yeni görseller cold-cache'e düşüyor, özellikle mobilde yükleme gecikmesine yol açıyordu)
 
 export default async function HomePage() {
   // Fetch New Arrivals (Yeni Gelenler)
@@ -31,8 +33,8 @@ export default async function HomePage() {
 
   // Fetch products to display random images at the top
   const randomProducts = await prisma.product.findMany({
-    where: { 
-      images: { some: {} }
+    where: {
+      has_real_photo: true, // Trendyol import placeholder'ı değil, gerçek/benzersiz fotoğrafı olan ürünler
     },
     include: { images: true },
     take: 50 // Fetch up to 50 to shuffle
@@ -61,12 +63,13 @@ export default async function HomePage() {
                 title={img.title}
               >
                 <div className="relative w-full h-full">
-                  <Image 
-                    src={img.url} 
-                    alt={img.title} 
+                  <Image
+                    src={img.url}
+                    alt={img.title}
                     fill
                     sizes="120px"
-                    className="object-contain mix-blend-multiply" 
+                    priority={idx < 4}
+                    className="object-contain mix-blend-multiply"
                   />
                 </div>
               </Link>
