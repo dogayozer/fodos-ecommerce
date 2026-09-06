@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckCircle, AlertTriangle } from 'lucide-react'
+import { CheckCircle, AlertTriangle, PhoneCall } from 'lucide-react'
 
 export function AddToCart({ product }: { product: any }) {
   const [added, setAdded] = useState(false)
@@ -36,9 +36,20 @@ export function AddToCart({ product }: { product: any }) {
     setTimeout(() => setAdded(false), 2000)
   }
 
+  if (product.stock_qty <= 0) {
+    return (
+      <div className="mt-8">
+        <div className="w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center bg-neutral-100 text-neutral-900 border border-neutral-200">
+          <PhoneCall size={20} className="mr-2 flex-shrink-0" />
+          Stok ve Güncel Fiyat için sorunuz!
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="mt-8">
-      {product.stock_qty <= 10 && product.stock_qty > 0 && (
+      {product.stock_qty <= 10 && (
         <div className="flex items-center text-action-orange-600 text-sm font-bold mb-3">
           <AlertTriangle size={16} className="mr-1" />
           Son {product.stock_qty} adet!
