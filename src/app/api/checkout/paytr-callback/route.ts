@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import crypto from 'crypto'
+import { sendHepsijetOrder } from '@/lib/hepsijet'
 
 export async function POST(req: Request) {
   try {
@@ -41,6 +42,40 @@ export async function POST(req: Request) {
           where: { orderNumber: merchant_oid },
           data: { status: 'processing' }
         })
+
+        // Ödeme onaylandığı an HepsiJET'e otomatik gönderi oluştur (STD). Bu adım asla
+        // ödeme webhook'unun PayTR'a "OK" dönmesini engellememeli — hata olursa sadece
+        // logla, sipariş "processing" kalır, admin panelinden manuel tekrar denenebilir.
+        try {
+          const fullOrder = await prisma.order.findUnique({
+            where: { orderNumber: merchant_oid },
+            include: { customer: true }
+          })
+          if (fullOrder && !fullOrder.trackingNumber) {
+            const result = await sendHepsijetOrder({
+              orderNumber: fullOrder.orderNumber,
+              customerName: fullOrder.customer?.name || 'Misafir Müşteri',
+              customerPhone: fullOrder.customer?.phone || '',
+              customerEmail: fullOrder.customer?.email,
+              shippingCity: fullOrder.shippingCity || '',
+              shippingDistrict: fullOrder.shippingDistrict || '',
+              shippingAddress: fullOrder.shippingAddress || '',
+            })
+            if (result.success) {
+              await prisma.order.update({
+                where: { orderNumber: merchant_oid },
+                data: {
+                  trackingNumber: result.trackingNumber,
+                  shippingCompany: 'HepsiJET',
+                }
+              })
+            } else {
+              console.error('HepsiJET gönderi oluşturma hatası:', result.error)
+            }
+          }
+        } catch (hepsijetError) {
+          console.error('HepsiJET entegrasyon hatası:', hepsijetError)
+        }
       }
     } else {
       const existingOrder = await prisma.order.findUnique({
