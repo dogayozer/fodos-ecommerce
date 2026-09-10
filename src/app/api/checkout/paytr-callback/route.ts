@@ -11,7 +11,8 @@ export async function POST(req: Request) {
     const status = formData.get('status') as string
     const total_amount = formData.get('total_amount') as string
     const hash = formData.get('hash') as string
-    const fail_reason = formData.get('fail_reason') as string
+    const failed_reason_code = formData.get('failed_reason_code') as string
+    const failed_reason_msg = formData.get('failed_reason_msg') as string
 
     if (!merchant_oid || !status || !hash) {
       return new NextResponse('Bad Request', { status: 400 })
@@ -86,10 +87,13 @@ export async function POST(req: Request) {
       if (existingOrder && existingOrder.status === 'pending') {
         await prisma.order.update({
           where: { orderNumber: merchant_oid },
-          data: { status: 'cancelled' }
+          data: {
+            status: 'cancelled',
+            adminNote: `PayTR Ödeme Başarısız: ${failed_reason_msg} (Kod: ${failed_reason_code})`,
+          }
         })
       }
-      console.error('PayTR Payment Failed:', fail_reason)
+      console.error('PayTR Payment Failed:', failed_reason_code, failed_reason_msg)
     }
 
     return new NextResponse('OK', { status: 200 })
