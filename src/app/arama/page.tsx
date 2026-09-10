@@ -43,8 +43,12 @@ export default async function SearchPage({
     }
 
     const whereStr = conditions.join(' AND ')
-    const rawSql = `SELECT id FROM "Product" WHERE ${whereStr}`
-    
+    // LIMIT: index'siz full-table scan (17bin+ ürün) yaygın terimlerde (örn. "ekran")
+    // binlerce satır eşleştiriyordu; hepsini bulup sonra hepsini render etmenin hem
+    // DB hem sayfa tarafında anlamı yok. LIMIT, Postgres'in yeterli eşleşmeyi bulur
+    // bulmaz taramayı durdurmasını sağlıyor (yaygın terimlerde büyük hızlanma).
+    const rawSql = `SELECT id FROM "Product" WHERE ${whereStr} LIMIT 100`
+
     const matchedProductsRaw: { id: string }[] = await prisma.$queryRawUnsafe(rawSql, ...parameters)
     const matchedIds = matchedProductsRaw.map(r => r.id)
 
