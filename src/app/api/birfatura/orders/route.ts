@@ -202,7 +202,11 @@ async function handleGetOrders(req: Request) {
     })
 
     return NextResponse.json({
-      Orders: formattedOrders
+      status: true,
+      Orders: formattedOrders,
+      total,
+      page,
+      limit
     })
   } catch (error: any) {
     console.error('BirFatura orders fetch error:', error)
