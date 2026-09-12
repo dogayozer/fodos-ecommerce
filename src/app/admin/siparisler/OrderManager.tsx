@@ -110,8 +110,6 @@ export function OrderManager() {
       <tr>
         <td>${item.product?.title || 'Ürün'}</td>
         <td style="text-align: center;">${item.quantity}</td>
-        <td style="text-align: right;">${item.price.toLocaleString('tr-TR')} TL</td>
-        <td style="text-align: right;">${(item.quantity * item.price).toLocaleString('tr-TR')} TL</td>
       </tr>
     `).join('') || ''
 
@@ -134,9 +132,6 @@ export function OrderManager() {
             table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 11px; }
             th { text-align: left; padding: 4px 3px; background-color: #eee; border-bottom: 2px solid #000; font-weight: 700; }
             td { padding: 4px 3px; border-bottom: 1px solid #000; }
-            .totals table { width: 100%; margin-bottom: 0; }
-            .totals td { border-bottom: none; padding: 3px; }
-            .totals .grand td { font-weight: 800; font-size: 14px; border-top: 2px solid #000; padding-top: 5px; }
             .note { padding: 6px; background: #eee; border-radius: 4px; margin-top: 8px; font-size: 10px; font-weight: 600; }
             #barcode { display: block; margin: 3px 0 0 auto; max-width: 100%; }
           </style>
@@ -156,7 +151,7 @@ export function OrderManager() {
           </div>
           <script>
             if (typeof JsBarcode !== 'undefined') {
-              JsBarcode('#barcode', ${JSON.stringify(order.orderNumber)}, {
+              JsBarcode('#barcode', ${JSON.stringify(order.trackingNumber || order.orderNumber)}, {
                 format: 'CODE128',
                 width: 1.3,
                 height: 32,
@@ -181,6 +176,11 @@ export function OrderManager() {
               <p>${order.shippingAddress || ''}</p>
               <p>${order.shippingDistrict || ''} / ${order.shippingCity || ''}</p>
             </div>
+            ${order.shippingCompany ? `
+            <div>
+              <h3>Kargo</h3>
+              <p><strong>${order.shippingCompany}</strong>${order.trackingNumber ? ` — ${order.trackingNumber}` : ''}</p>
+            </div>` : ''}
           </div>
 
           <table>
@@ -188,31 +188,12 @@ export function OrderManager() {
               <tr>
                 <th>Ürün</th>
                 <th style="text-align: center;">Adet</th>
-                <th style="text-align: right;">Fiyat</th>
-                <th style="text-align: right;">Toplam</th>
               </tr>
             </thead>
             <tbody>
               ${itemsHtml}
             </tbody>
           </table>
-
-          <div class="totals">
-            <table>
-              <tr>
-                <td>Ara Toplam:</td>
-                <td style="text-align: right;">${(order.totalAmount - (order.shippingCost || 0)).toLocaleString('tr-TR')} TL</td>
-              </tr>
-              <tr>
-                <td>Kargo Ücreti:</td>
-                <td style="text-align: right;">${(order.shippingCost || 0).toLocaleString('tr-TR')} TL</td>
-              </tr>
-              <tr class="grand">
-                <td>Genel Toplam:</td>
-                <td style="text-align: right;">${order.totalAmount.toLocaleString('tr-TR')} TL</td>
-              </tr>
-            </table>
-          </div>
 
           ${order.invoiceNumber ? `<div class="note"><strong>BirFatura E-Fatura No:</strong> ${order.invoiceNumber}</div>` : ''}
           ${order.adminNote ? `<div class="note"><strong>Yönetici Notu:</strong><br/>${order.adminNote.replace(/\n/g, '<br/>')}</div>` : ''}
@@ -659,6 +640,7 @@ export function OrderManager() {
                     className="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-trust-blue-500"
                   >
                     <option value="">Seçiniz...</option>
+                    <option value="HepsiJET">HepsiJET</option>
                     <option value="Yurtiçi Kargo">Yurtiçi Kargo</option>
                     <option value="Aras Kargo">Aras Kargo</option>
                     <option value="MNG Kargo">MNG Kargo</option>
