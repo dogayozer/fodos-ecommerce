@@ -77,6 +77,79 @@ export interface HepsijetResult {
   error?: string
 }
 
+function buildDeliveryBody(order: HepsijetOrderInput, deliveryType: 'RETAIL' | 'RETURNED', deliveryDate: string) {
+  const { firstName, lastName } = splitName(order.customerName)
+  return {
+    company: { name: COMPANY_NAME, abbreviationCode: COMPANY_CODE },
+    delivery: {
+      customerDeliveryNo: order.orderNumber,
+      customerOrderId: order.orderNumber,
+      totalParcels: '1',
+      desi: '1',
+      deliverySlotOriginal: '0',
+      deliveryDateOriginal: deliveryDate,
+      deliveryType,
+      product: { productCode: 'HX_STD' },
+      senderAddress: {
+        companyAddressId: SENDER_ADDRESS_ID,
+        country: { name: 'Türkiye' },
+        city: { name: SENDER_CITY },
+        town: { name: SENDER_TOWN },
+        district: { name: SENDER_DISTRICT },
+        addressLine1: SENDER_ADDRESS_LINE1,
+      },
+      receiver: {
+        companyCustomerId: crypto.randomUUID(),
+        firstName,
+        lastName,
+        phone1: order.customerPhone || '',
+        phone2: '',
+        email: order.customerEmail || '',
+      },
+      recipientAddress: {
+        companyAddressId: crypto.randomUUID(),
+        country: { name: 'Türkiye' },
+        city: { name: order.shippingCity || '' },
+        town: { name: order.shippingDistrict || '' },
+        district: { name: '' },
+        addressLine1: order.shippingAddress || '',
+      },
+      recipientPerson: order.customerName,
+      recipientPersonPhone1: order.customerPhone || '',
+    },
+    currentXDock: { abbreviationCode: XDOCK_CODE },
+  }
+}
+
+async function sendDeliveryOrder(order: HepsijetOrderInput, deliveryType: 'RETAIL' | 'RETURNED', deliveryDate: string): Promise<HepsijetResult> {
+  const token = await getToken()
+  const body = buildDeliveryBody(order, deliveryType, deliveryDate)
+
+  const res = await fetch(`${BASE_URL}/delivery/sendDeliveryOrderEnhanced`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Auth-Token': token,
+      'X-Origin': 'integration',
+      'X-Client-Id': 'hj-integration',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify(body),
+  })
+  const json: any = await res.json()
+
+  if (!res.ok || json?.status !== 'OK') {
+    return { success: false, error: json?.message || `HTTP ${res.status}` }
+  }
+
+  const barcodeInfo = json?.data?.zplBarcodeDTOList?.[0]
+  return {
+    success: true,
+    trackingNumber: json?.data?.customerDeliveryNo || barcodeInfo?.barcodeNo,
+    trackingUrl: barcodeInfo?.trackingUrl,
+  }
+}
+
 /**
  * Bir siparişi HepsiJET'e STD (Standart Teslimat) gönderisi olarak iletir.
  * Başarılı olursa barkod/takip numarasını döner; hata durumunda süreci
@@ -85,74 +158,75 @@ export interface HepsijetResult {
  */
 export async function sendHepsijetOrder(order: HepsijetOrderInput): Promise<HepsijetResult> {
   try {
-    const token = await getToken()
-    const { firstName, lastName } = splitName(order.customerName)
     const today = new Date().toISOString().slice(0, 10)
+    return await sendDeliveryOrder(order, 'RETAIL', today)
+  } catch (e: any) {
+    return { success: false, error: e.message || 'Bilinmeyen hata' }
+  }
+}
 
-    const body = {
-      company: { name: COMPANY_NAME, abbreviationCode: COMPANY_CODE },
-      delivery: {
-        customerDeliveryNo: order.orderNumber,
-        customerOrderId: order.orderNumber,
-        totalParcels: '1',
-        desi: '1',
-        deliverySlotOriginal: '0',
-        deliveryDateOriginal: today,
-        deliveryType: 'RETAIL',
-        product: { productCode: 'HX_STD' },
-        senderAddress: {
-          companyAddressId: SENDER_ADDRESS_ID,
-          country: { name: 'Türkiye' },
-          city: { name: SENDER_CITY },
-          town: { name: SENDER_TOWN },
-          district: { name: SENDER_DISTRICT },
-          addressLine1: SENDER_ADDRESS_LINE1,
-        },
-        receiver: {
-          companyCustomerId: crypto.randomUUID(),
-          firstName,
-          lastName,
-          phone1: order.customerPhone || '',
-          phone2: '',
-          email: order.customerEmail || '',
-        },
-        recipientAddress: {
-          companyAddressId: crypto.randomUUID(),
-          country: { name: 'Türkiye' },
-          city: { name: order.shippingCity || '' },
-          town: { name: order.shippingDistrict || '' },
-          district: { name: '' },
-          addressLine1: order.shippingAddress || '',
-        },
-        recipientPerson: order.customerName,
-        recipientPersonPhone1: order.customerPhone || '',
-      },
-      currentXDock: { abbreviationCode: XDOCK_CODE },
-    }
+/**
+ * HepsiJET'in resmi dokümantasyonuna göre (developers.hepsiburada.com), RETURNED
+ * (randevulu iade) gönderisi oluşturmadan önce delivery/findAvailableDeliveryDatesV2
+ * servisinden uygun bir randevu tarihi alınması gerekiyor. Bu servis test ortamında
+ * (deneme yaptığımızda) sürekli genel bir sunucu hatası döndürdü — dokümantasyonda
+ * örnek bir başarılı yanıt da yok, bu yüzden yanıtı esnek/savunmacı şekilde
+ * ayrıştırıyoruz. Servis başarısız olursa veya beklenmeyen bir yanıt dönerse,
+ * daha önce canlı ortamda iki kez doğrulanmış "yarının tarihi" yöntemine düşüyoruz
+ * (HepsiJET bugünün tarihini randevu için kabul etmiyor).
+ */
+async function findAvailableReturnDate(city: string, town: string): Promise<string> {
+  const tomorrow = new Date()
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  const fallback = tomorrow.toISOString().slice(0, 10)
 
-    const res = await fetch(`${BASE_URL}/delivery/sendDeliveryOrderEnhanced`, {
-      method: 'POST',
+  try {
+    const token = await getToken()
+    const start = new Date().toISOString().slice(0, 10)
+    const endDate = new Date()
+    endDate.setDate(endDate.getDate() + 14)
+    const params = new URLSearchParams({
+      startDate: start,
+      endDate: endDate.toISOString().slice(0, 10),
+      deliveryType: 'RETURNED',
+      city,
+      town,
+    })
+
+    const res = await fetch(`${BASE_URL}/rest/delivery/findAvailableDeliveryDatesV2?${params.toString()}`, {
       headers: {
-        'Content-Type': 'application/json',
         'X-Auth-Token': token,
         'X-Origin': 'integration',
         'X-Client-Id': 'hj-integration',
         'Accept': 'application/json',
       },
-      body: JSON.stringify(body),
     })
+    if (!res.ok) return fallback
     const json: any = await res.json()
 
-    if (!res.ok || json?.status !== 'OK') {
-      return { success: false, error: json?.message || `HTTP ${res.status}` }
-    }
+    // Yanıt şekli dokümante edilmemiş — birkaç olası şekli deneyelim.
+    const candidates: any[] =
+      json?.data?.availableDates || json?.data?.dates || json?.availableDates || json?.dates || json?.data || []
+    if (!Array.isArray(candidates) || candidates.length === 0) return fallback
 
-    const barcodeInfo = json?.data?.zplBarcodeDTOList?.[0]
-    return {
-      success: true,
-      trackingNumber: json?.data?.customerDeliveryNo || barcodeInfo?.barcodeNo,
-      trackingUrl: barcodeInfo?.trackingUrl,
-    }
+    const first = candidates[0]
+    const date = typeof first === 'string' ? first : first?.date || first?.deliveryDate
+    return date || fallback
+  } catch {
+    return fallback
+  }
+}
+
+/**
+ * Bir siparişi HepsiJET'e RETURNED (randevulu iade) gönderisi olarak iletir.
+ * Şu an uygulamanın hiçbir yerinden otomatik çağrılmıyor (ödeme sonrası otomasyon
+ * sadece STD/RETAIL kullanıyor) — ileride bir "iade süreci" özelliği eklenirse
+ * hazır olması için burada tutuluyor.
+ */
+export async function sendHepsijetReturn(order: HepsijetOrderInput): Promise<HepsijetResult> {
+  try {
+    const deliveryDate = await findAvailableReturnDate(order.shippingCity || SENDER_CITY, order.shippingDistrict || SENDER_TOWN)
+    return await sendDeliveryOrder(order, 'RETURNED', deliveryDate)
   } catch (e: any) {
     return { success: false, error: e.message || 'Bilinmeyen hata' }
   }
