@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
+import { verifyAdminSessionToken } from '@/lib/adminSession'
 
 async function checkAuth() {
   const cookieStore: any = cookies()
   const store = cookieStore instanceof Promise ? await cookieStore : cookieStore
   const session = store.get('admin_session')
-  return session?.value === 'authenticated'
+  return await verifyAdminSessionToken(session?.value)
 }
 
 export async function POST(req: Request) {

@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
+import { verifyAdminSessionToken } from '@/lib/adminSession'
 
 export async function POST(req: Request) {
   const cookieStore: any = cookies()
   const store = cookieStore instanceof Promise ? await cookieStore : cookieStore
   const session = store.get('admin_session')
   
-  if (session?.value !== 'authenticated') {
+  if (!(await verifyAdminSessionToken(session?.value))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

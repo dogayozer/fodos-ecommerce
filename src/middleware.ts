@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { verifyAdminSessionToken } from '@/lib/adminSession'
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   // Yalnızca /admin ve /api/admin altındaki rotaları kontrol et
   if (request.nextUrl.pathname.startsWith('/admin') || request.nextUrl.pathname.startsWith('/api/admin')) {
     
@@ -12,7 +13,7 @@ export function middleware(request: NextRequest) {
 
     const session = request.cookies.get('admin_session')
     
-    if (session?.value !== 'authenticated') {
+    if (!(await verifyAdminSessionToken(session?.value))) {
       // API isteğiyse 401 dön
       if (request.nextUrl.pathname.startsWith('/api/')) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

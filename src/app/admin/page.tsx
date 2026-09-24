@@ -3,6 +3,7 @@ import { LoginForm } from './LoginForm'
 import { Dashboard } from './Dashboard'
 import { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
+import { verifyAdminSessionToken } from '@/lib/adminSession'
 
 export const metadata: Metadata = {
   title: "Admin Panel | Fodos",
@@ -15,7 +16,7 @@ export default async function AdminPage() {
     const store = cookieStore instanceof Promise ? await cookieStore : cookieStore
     const session = store.get('admin_session')
 
-    if (session?.value === 'authenticated') {
+    if (await verifyAdminSessionToken(session?.value)) {
       const [customerCount, totalOrderCount, cancelledOrderCount] = await Promise.all([
         prisma.customer.count(),
         prisma.order.count(),

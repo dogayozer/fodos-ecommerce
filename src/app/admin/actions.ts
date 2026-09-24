@@ -1,18 +1,26 @@
 'use server'
 
 import { cookies } from 'next/headers'
+import {
+  ADMIN_USERNAME,
+  ADMIN_PASSWORD,
+  ADMIN_SESSION_COOKIE,
+  ADMIN_SESSION_MAX_AGE,
+  createAdminSessionToken,
+} from '@/lib/adminSession'
 
 export async function login(formData: FormData) {
   const username = formData.get('username')
   const password = formData.get('password')
 
-  if (username === 'Admin' && password === 'Pds135596') {
+  if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
     const cookieStore: any = cookies()
     const store = cookieStore instanceof Promise ? await cookieStore : cookieStore
-    store.set('admin_session', 'authenticated', {
+    store.set(ADMIN_SESSION_COOKIE, await createAdminSessionToken(), {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24, // 1 day
+      sameSite: 'lax',
+      maxAge: ADMIN_SESSION_MAX_AGE,
       path: '/',
     })
     return { success: true }
@@ -24,5 +32,5 @@ export async function login(formData: FormData) {
 export async function logout() {
   const cookieStore: any = cookies()
   const store = cookieStore instanceof Promise ? await cookieStore : cookieStore
-  store.delete('admin_session')
+  store.delete(ADMIN_SESSION_COOKIE)
 }
