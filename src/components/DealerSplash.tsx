@@ -9,7 +9,7 @@ import { BUSINESS_TYPES } from '@/lib/accountTypes'
 const STORAGE_KEY = 'dealerSplash'
 const DISMISS_DAYS = 7
 // Alışveriş/ödeme ve üyelik akışını bölmemek için bu sayfalarda gösterilmez
-const HIDDEN_PREFIXES = ['/admin', '/odeme', '/sepet', '/kayit-ol', '/giris']
+const HIDDEN_PREFIXES = ['/admin', '/odeme', '/sepet', '/kayit-ol', '/giris', '/bayi']
 
 export function DealerSplash() {
   const pathname = usePathname()

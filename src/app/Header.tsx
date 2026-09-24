@@ -105,6 +105,10 @@ export function Header({ tree }: { tree: any[] }) {
               <a href="tel:05322324499" className="text-sm font-bold text-neutral-900">0532 232 44 99</a>
             </div>
 
+            <Link href="/bayi" className="text-sm font-semibold text-action-orange-600 hover:text-action-orange-700 transition-colors">
+              Bayi Girişi
+            </Link>
+
             {user ? (
               <div className="flex items-center space-x-4">
                 <div className="flex flex-col text-right">
@@ -186,6 +190,7 @@ export function Header({ tree }: { tree: any[] }) {
                   <Link href="/kayit-ol" className="text-center py-2 bg-trust-blue-600 text-white rounded-lg font-medium text-sm">Üye Ol</Link>
                 </div>
               )}
+              <Link href="/bayi" className="block text-center py-2 mt-2 bg-action-orange-50 text-action-orange-600 rounded-lg font-semibold text-sm">Bayi Girişi</Link>
             </div>
 
             <div className="pt-4 flex flex-col items-center bg-neutral-50 rounded-xl p-4">
