@@ -46,6 +46,20 @@ model Product {
   updatedAt           DateTime         @updatedAt
   last_synced_at      DateTime?
   has_real_photo      Boolean          @default(false) // Trendyol import placeholder'ı değil, gerçek/benzersiz ürün fotoğrafı var mı
+  dealerPrice         DealerPrice?
+}
+
+// Bayi portalı: bayi statüsündeki müşterilerin gördüğü fiyat. Ayrı tabloda tutuluyor
+// (Product'a yeni bir kolon eklemek yerine) — sadece bayi fiyatı atanmış ürünler burada
+// satır olarak var, admin panelinden toplu (%X indirim) ya da ürün bazında güncellenir.
+// fodos ve MPM aynı veritabanını paylaştığı için tek bir bayi fiyatı iki sitede de geçerli.
+model DealerPrice {
+  id        String   @id @default(cuid())
+  productId String   @unique
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  price     Float
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
 }
 
 model ProductVariant {
@@ -75,8 +89,10 @@ model Customer {
   district    String?
   address     String?
   isGuest     Boolean  @default(false)
-  accountType  String  @default("bireysel") // bireysel, isletme
+  accountType  String  @default("bireysel") // bireysel, isletme — müşterinin kendi beyanı
   businessType String?  // isletme ise: Cep Telefonu Tamiri, Cep Telefonu Mağazası, Diğer
+  isDealer       Boolean   @default(false) // admin onayıyla verilen bayi statüsü — accountType'tan ayrı, admin panelinden Üyeler sayfasında değiştirilir
+  dealerApprovedAt DateTime?
   orders      Order[]
   createdAt   DateTime @default(now())
 }

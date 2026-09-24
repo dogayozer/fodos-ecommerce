@@ -27,3 +27,24 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
+
+// Bayi statüsü ver/al — /api/admin/* zaten middleware ile admin oturumuna bağlı
+export async function PATCH(req: Request) {
+  try {
+    const { customerId, isDealer } = await req.json()
+    if (!customerId || typeof isDealer !== 'boolean') {
+      return NextResponse.json({ error: 'customerId ve isDealer (boolean) zorunlu' }, { status: 400 })
+    }
+
+    const customer = await prisma.customer.update({
+      where: { id: customerId },
+      data: {
+        isDealer,
+        dealerApprovedAt: isDealer ? new Date() : null,
+      },
+    })
+    return NextResponse.json({ success: true, customer })
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+}

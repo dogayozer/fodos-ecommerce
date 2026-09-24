@@ -6,6 +6,7 @@ import * as xlsx from 'xlsx'
 import { SettingsForm } from './SettingsForm'
 import { CouponManager } from './CouponManager'
 import { CategoryManager } from './CategoryManager'
+import { DealerPriceManager } from './DealerPriceManager'
 import { OrderNotifier, playNotificationSound } from '@/components/OrderNotifier'
 import { Users, Package, XCircle } from 'lucide-react'
 
@@ -446,6 +447,11 @@ export function Dashboard({ stats }: { stats: DashboardStats }) {
         </div>
       </div>
       
+      {/* Dealer Price Manager */}
+      <div className="max-w-4xl mx-auto mt-8">
+        <DealerPriceManager />
+      </div>
+
       {/* Category Manager */}
       <div className="max-w-4xl mx-auto mt-8">
         <CategoryManager />

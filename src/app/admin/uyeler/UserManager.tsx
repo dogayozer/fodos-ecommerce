@@ -1,13 +1,36 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Search, User, Mail, Phone, MapPin, ShoppingBag } from 'lucide-react'
+import { Search, User, Mail, Phone, MapPin, ShoppingBag, Store } from 'lucide-react'
 
 export function UserManager() {
   const [customers, setCustomers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null)
+  const [dealerUpdating, setDealerUpdating] = useState<string | null>(null)
+
+  const toggleDealer = async (customer: any) => {
+    const nextValue = !customer.isDealer
+    const label = nextValue ? 'bayi yapmak' : 'bayilikten çıkarmak'
+    if (!window.confirm(`${customer.name || customer.email} kullanıcısını ${label} istediğinize emin misiniz?`)) return
+
+    setDealerUpdating(customer.id)
+    try {
+      const res = await fetch('/api/admin/customers', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId: customer.id, isDealer: nextValue }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Güncellenemedi')
+      setCustomers(prev => prev.map(c => c.id === customer.id ? { ...c, isDealer: nextValue, dealerApprovedAt: data.customer.dealerApprovedAt } : c))
+    } catch (e: any) {
+      alert(e.message || 'Bir hata oluştu')
+    } finally {
+      setDealerUpdating(null)
+    }
+  }
 
   useEffect(() => {
     fetchCustomers()
@@ -81,15 +104,22 @@ export function UserManager() {
                       </div>
                     </td>
                     <td className="p-4">
-                      {customer.accountType === 'isletme' ? (
-                        <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-indigo-50 text-indigo-700">
-                          İşletme{customer.businessType ? ` · ${customer.businessType}` : ''}
-                        </span>
-                      ) : (
-                        <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-gray-100 text-gray-600">
-                          Bireysel
-                        </span>
-                      )}
+                      <div className="flex flex-wrap gap-1.5">
+                        {customer.accountType === 'isletme' ? (
+                          <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-indigo-50 text-indigo-700">
+                            İşletme{customer.businessType ? ` · ${customer.businessType}` : ''}
+                          </span>
+                        ) : (
+                          <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-gray-100 text-gray-600">
+                            Bireysel
+                          </span>
+                        )}
+                        {customer.isDealer && (
+                          <span className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-bold bg-amber-100 text-amber-800">
+                            <Store size={12} /> Bayi
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="p-4">
                       <div className="flex items-center space-x-2 text-gray-600 mb-1">
@@ -112,12 +142,25 @@ export function UserManager() {
                       </div>
                     </td>
                     <td className="p-4 text-right">
-                      <button 
-                        onClick={() => setSelectedCustomer(customer)}
-                        className="text-trust-blue-600 hover:bg-trust-blue-50 px-3 py-1 rounded font-medium text-sm border border-transparent hover:border-trust-blue-200 transition-colors"
-                      >
-                        Geçmişi Gör
-                      </button>
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => toggleDealer(customer)}
+                          disabled={dealerUpdating === customer.id}
+                          className={`px-3 py-1 rounded font-medium text-sm border transition-colors disabled:opacity-50 ${
+                            customer.isDealer
+                              ? 'text-red-600 border-transparent hover:bg-red-50 hover:border-red-200'
+                              : 'text-amber-700 border-transparent hover:bg-amber-50 hover:border-amber-200'
+                          }`}
+                        >
+                          {dealerUpdating === customer.id ? '...' : customer.isDealer ? 'Bayiliği Kaldır' : 'Bayi Yap'}
+                        </button>
+                        <button
+                          onClick={() => setSelectedCustomer(customer)}
+                          className="text-trust-blue-600 hover:bg-trust-blue-50 px-3 py-1 rounded font-medium text-sm border border-transparent hover:border-trust-blue-200 transition-colors"
+                        >
+                          Geçmişi Gör
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
