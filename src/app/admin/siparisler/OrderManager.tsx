@@ -231,12 +231,12 @@ export function OrderManager() {
 
     // Tab filter
     if (activeTab === 'all') return true
-    if (activeTab === 'pending_invoice') return o.invoiceStatus === 'pending' || !o.invoiceStatus
+    if (activeTab === 'pending_invoice') return (o.invoiceStatus === 'pending' || !o.invoiceStatus) && o.status !== 'cancelled'
     if (activeTab === 'invoiced') return o.invoiceStatus === 'invoiced'
     return o.status === activeTab
   })
 
-  const uninvoicedCount = orders.filter(o => o.invoiceStatus === 'pending' || !o.invoiceStatus).length
+  const uninvoicedCount = orders.filter(o => (o.invoiceStatus === 'pending' || !o.invoiceStatus) && o.status !== 'cancelled').length
   const invoicedCount = orders.filter(o => o.invoiceStatus === 'invoiced').length
 
   return (
@@ -454,6 +454,11 @@ export function OrderManager() {
                               </div>
                             )}
                           </div>
+                        ) : order.status === 'cancelled' ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-neutral-100 text-neutral-500 border border-neutral-200">
+                            <span className="w-1.5 h-1.5 rounded-full bg-neutral-400"></span>
+                            Faturaya Gerek Yok
+                          </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
                             <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
