@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
-import { Search, ShoppingCart, Menu, X, Smartphone, User, LogOut } from 'lucide-react'
+import { Search, ShoppingCart, Menu, X, Smartphone, User, LogOut, Store } from 'lucide-react'
 
 import { SidebarNav } from './SidebarNav'
 
@@ -105,7 +105,8 @@ export function Header({ tree }: { tree: any[] }) {
               <a href="tel:05322324499" className="text-sm font-bold text-neutral-900">0532 232 44 99</a>
             </div>
 
-            <Link href="/bayi" className="text-sm font-semibold text-action-orange-600 hover:text-action-orange-700 transition-colors">
+            <Link href="/bayi" className="flex items-center px-3.5 py-1.5 rounded-full border border-action-orange-500 text-action-orange-600 hover:bg-action-orange-50 transition-colors font-semibold text-sm">
+              <Store size={16} className="mr-1.5" />
               Bayi Girişi
             </Link>
 
