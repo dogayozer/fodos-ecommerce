@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { LoginForm } from './LoginForm'
 import { Dashboard } from './Dashboard'
 import { Metadata } from 'next'
+import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
   title: "Admin Panel | Fodos",
@@ -15,7 +16,12 @@ export default async function AdminPage() {
     const session = store.get('admin_session')
 
     if (session?.value === 'authenticated') {
-      return <Dashboard />
+      const [customerCount, totalOrderCount, cancelledOrderCount] = await Promise.all([
+        prisma.customer.count(),
+        prisma.order.count(),
+        prisma.order.count({ where: { status: 'cancelled' } }),
+      ])
+      return <Dashboard stats={{ customerCount, totalOrderCount, cancelledOrderCount }} />
     }
 
     return <LoginForm />

@@ -7,8 +7,15 @@ import { SettingsForm } from './SettingsForm'
 import { CouponManager } from './CouponManager'
 import { CategoryManager } from './CategoryManager'
 import { OrderNotifier, playNotificationSound } from '@/components/OrderNotifier'
+import { Users, Package, XCircle } from 'lucide-react'
 
-export function Dashboard() {
+interface DashboardStats {
+  customerCount: number
+  totalOrderCount: number
+  cancelledOrderCount: number
+}
+
+export function Dashboard({ stats }: { stats: DashboardStats }) {
   const [file, setFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
   const [result, setResult] = useState<any>(null)
@@ -188,6 +195,38 @@ export function Dashboard() {
             >
               Çıkış Yap
             </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <div className="bg-neutral-0 p-4 rounded-xl border border-indigo-100 shadow-[var(--shadow-card)] flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-indigo-700 uppercase">Üye Sayısı</p>
+              <p className="text-2xl font-black text-indigo-800">{stats.customerCount}</p>
+            </div>
+            <div className="p-3 bg-indigo-50 text-indigo-600 rounded-lg">
+              <Users className="w-6 h-6" />
+            </div>
+          </div>
+
+          <div className="bg-neutral-0 p-4 rounded-xl border border-trust-blue-100 shadow-[var(--shadow-card)] flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-trust-blue-600 uppercase">Toplam Sipariş</p>
+              <p className="text-2xl font-black text-trust-blue-600">{stats.totalOrderCount}</p>
+            </div>
+            <div className="p-3 bg-trust-blue-50 text-trust-blue-600 rounded-lg">
+              <Package className="w-6 h-6" />
+            </div>
+          </div>
+
+          <div className="bg-neutral-0 p-4 rounded-xl border border-red-100 shadow-[var(--shadow-card)] flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-red-700 uppercase">İptal Edilen Sipariş</p>
+              <p className="text-2xl font-black text-red-800">{stats.cancelledOrderCount}</p>
+            </div>
+            <div className="p-3 bg-red-50 text-red-600 rounded-lg">
+              <XCircle className="w-6 h-6" />
+            </div>
           </div>
         </div>
 
