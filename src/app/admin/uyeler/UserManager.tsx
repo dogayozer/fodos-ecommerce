@@ -61,6 +61,7 @@ export function UserManager() {
               <thead className="bg-gray-50 border-b">
                 <tr>
                   <th className="p-4 font-semibold text-gray-600">Müşteri</th>
+                  <th className="p-4 font-semibold text-gray-600">Hesap Türü</th>
                   <th className="p-4 font-semibold text-gray-600">İletişim</th>
                   <th className="p-4 font-semibold text-gray-600">Bölge</th>
                   <th className="p-4 font-semibold text-gray-600">Siparişler</th>
@@ -78,6 +79,17 @@ export function UserManager() {
                       <div className="text-xs text-gray-500 mt-1">
                         Kayıt: {new Date(customer.createdAt).toLocaleDateString('tr-TR')}
                       </div>
+                    </td>
+                    <td className="p-4">
+                      {customer.accountType === 'isletme' ? (
+                        <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-indigo-50 text-indigo-700">
+                          İşletme{customer.businessType ? ` · ${customer.businessType}` : ''}
+                        </span>
+                      ) : (
+                        <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-gray-100 text-gray-600">
+                          Bireysel
+                        </span>
+                      )}
                     </td>
                     <td className="p-4">
                       <div className="flex items-center space-x-2 text-gray-600 mb-1">

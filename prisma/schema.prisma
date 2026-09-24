@@ -75,8 +75,22 @@ model Customer {
   district    String?
   address     String?
   isGuest     Boolean  @default(false)
+  accountType  String  @default("bireysel") // bireysel, isletme
+  businessType String?  // isletme ise: Cep Telefonu Tamiri, Cep Telefonu Mağazası, Diğer
   orders      Order[]
   createdAt   DateTime @default(now())
+}
+
+// "Bayi portalımız yakında" splash formu kayıtları (fodos + MPM)
+model DealerNewsletterSignup {
+  id               String   @id @default(cuid())
+  name             String?
+  phone            String
+  email            String?
+  businessType     String?  // Cep Telefonu Tamiri, Cep Telefonu Mağazası, Diğer
+  store            String   @default("fodos") // fodos, mpm — formun doldurulduğu site
+  marketingConsent Boolean  @default(false)   // ticari elektronik ileti onayı
+  createdAt        DateTime @default(now())
 }
 
 model Order {

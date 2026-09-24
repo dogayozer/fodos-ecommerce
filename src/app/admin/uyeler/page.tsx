@@ -1,4 +1,5 @@
 import { UserManager } from './UserManager'
+import { DealerSignupList } from './DealerSignupList'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
@@ -12,6 +13,7 @@ export default function UsersPage() {
         <h1 className="text-2xl font-bold text-gray-900">Üyelik Yönetimi</h1>
       </div>
       <UserManager />
+      <DealerSignupList />
     </div>
   )
 }

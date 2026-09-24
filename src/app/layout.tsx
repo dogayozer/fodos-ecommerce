@@ -39,6 +39,7 @@ import { getCategoryTree } from "@/lib/data";
 import { prisma } from "@/lib/prisma";
 import Link from 'next/link';
 import { SmartAssistant } from "@/components/SmartAssistant";
+import { DealerSplash } from "@/components/DealerSplash";
 
 export default async function RootLayout({
   children,
@@ -109,6 +110,7 @@ export default async function RootLayout({
         </footer>
         <WhatsAppButton />
         <SmartAssistant />
+        <DealerSplash />
       </body>
     </html>
   );

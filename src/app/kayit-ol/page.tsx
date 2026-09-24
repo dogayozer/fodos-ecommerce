@@ -2,9 +2,12 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { BUSINESS_TYPES } from '@/lib/accountTypes'
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
+    accountType: 'bireysel' as 'bireysel' | 'isletme',
+    businessType: '',
     name: '',
     email: '',
     phone: '',
@@ -18,7 +21,7 @@ export default function RegisterPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
@@ -66,6 +69,38 @@ export default function RegisterPage() {
         )}
 
         <form onSubmit={handleRegister} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Hesap Türü *</label>
+            <div className="grid grid-cols-2 gap-3">
+              {([['bireysel', 'Bireysel'], ['isletme', 'İşletme']] as const).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, accountType: value, businessType: value === 'bireysel' ? '' : formData.businessType })}
+                  className={`py-2.5 rounded-lg border text-sm font-semibold transition-colors ${
+                    formData.accountType === value
+                      ? 'bg-trust-blue-600 border-trust-blue-600 text-white'
+                      : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            {formData.accountType === 'isletme' && (
+              <select
+                name="businessType" required
+                value={formData.businessType} onChange={handleChange}
+                className="mt-3 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 outline-none bg-white"
+              >
+                <option value="">İşletme türünü seçin</option>
+                {BUSINESS_TYPES.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            )}
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Ad Soyad *</label>

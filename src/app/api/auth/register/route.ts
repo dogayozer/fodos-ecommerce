@@ -3,15 +3,21 @@ import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import { SignJWT } from 'jose'
 import { cookies } from 'next/headers'
+import { parseAccountType } from '@/lib/accountTypes'
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fodos-super-secret-customer-key')
 
 export async function POST(req: Request) {
   try {
-    const { name, email, phone, password, city, district, address } = await req.json()
+    const { name, email, phone, password, city, district, address, accountType: rawAccountType, businessType: rawBusinessType } = await req.json()
 
     if (!email || !password || !name) {
       return NextResponse.json({ error: 'Ad, email ve şifre zorunludur' }, { status: 400 })
+    }
+
+    const account = parseAccountType(rawAccountType, rawBusinessType)
+    if (!account) {
+      return NextResponse.json({ error: 'Lütfen işletme türünü seçin' }, { status: 400 })
     }
 
     // Check if user already exists
@@ -32,10 +38,12 @@ export async function POST(req: Request) {
             city,
             district,
             address,
-            isGuest: false
+            isGuest: false,
+            accountType: account.accountType,
+            businessType: account.businessType
           }
         })
-        
+
         // Login immediately
         const token = await new SignJWT({ sub: updatedUser.id, email: updatedUser.email, role: 'customer' })
           .setProtectedHeader({ alg: 'HS256' })
@@ -62,7 +70,9 @@ export async function POST(req: Request) {
         city,
         district,
         address,
-        isGuest: false
+        isGuest: false,
+        accountType: account.accountType,
+        businessType: account.businessType
       }
     })
 
