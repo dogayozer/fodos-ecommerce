@@ -61,22 +61,28 @@ export function OrderManager() {
     if (!selectedOrder) return
     setSaving(true)
     try {
+      // Sadece değişen alanlar gönderilir: pencere açıkken BirFatura'nın arka planda yazdığı
+      // fatura no/PDF linki veya kargo takip no, eski (boş) değerlerle ezilmesin.
+      const o = selectedOrder
+      const edited: Record<string, [string, string]> = {
+        status: [editStatus, o.status],
+        shippingCompany: [editCompany, o.shippingCompany || ''],
+        trackingNumber: [editTracking, o.trackingNumber || ''],
+        adminNote: [editAdminNote, o.adminNote || ''],
+        invoiceStatus: [editInvoiceStatus, o.invoiceStatus || 'pending'],
+        invoiceNumber: [editInvoiceNumber, o.invoiceNumber || ''],
+        invoiceUrl: [editInvoiceUrl, o.invoiceUrl || ''],
+        taxNumber: [editTaxNumber, o.taxNumber || ''],
+        taxOffice: [editTaxOffice, o.taxOffice || ''],
+        companyTitle: [editCompanyTitle, o.companyTitle || ''],
+      }
+      const changes = Object.fromEntries(
+        Object.entries(edited).filter(([, [value, original]]) => value !== original).map(([key, [value]]) => [key, value])
+      )
       const res = await fetch('/api/admin/orders', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: selectedOrder.id,
-          status: editStatus,
-          shippingCompany: editCompany,
-          trackingNumber: editTracking,
-          adminNote: editAdminNote,
-          invoiceStatus: editInvoiceStatus,
-          invoiceNumber: editInvoiceNumber,
-          invoiceUrl: editInvoiceUrl,
-          taxNumber: editTaxNumber,
-          taxOffice: editTaxOffice,
-          companyTitle: editCompanyTitle
-        })
+        body: JSON.stringify({ id: o.id, ...changes })
       })
       if (res.ok) {
         await fetchOrders()
