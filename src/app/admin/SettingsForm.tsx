@@ -197,19 +197,19 @@ export function SettingsForm() {
         <div className="space-y-4 bg-neutral-0/80 p-4 rounded-lg border border-indigo-100 mb-6">
           <div>
             <label className="block text-xs font-bold text-neutral-900 uppercase tracking-wider mb-1">
-              1. Sipariş Çekme URL'si (BirFatura "Sipariş Listeleme URL" alanına):
+              Web Site Adresi (BirFatura özel entegrasyon mağazası ayarlarına):
             </label>
             <div className="flex gap-2">
               <input
                 type="text"
                 readOnly
-                value={typeof window !== 'undefined' ? `${window.location.origin}/api/birfatura/orders` : 'https://fodos.com.tr/api/birfatura/orders'}
+                value={typeof window !== 'undefined' ? window.location.origin : 'https://fodos.com.tr'}
                 className="w-full px-3 py-1.5 font-mono text-xs bg-neutral-50 border border-neutral-200 rounded text-neutral-900"
               />
               <button
                 type="button"
                 onClick={() => {
-                  const url = typeof window !== 'undefined' ? `${window.location.origin}/api/birfatura/orders` : 'https://fodos.com.tr/api/birfatura/orders'
+                  const url = typeof window !== 'undefined' ? window.location.origin : 'https://fodos.com.tr'
                   navigator.clipboard.writeText(url)
                   setCopiedField('ordersUrl')
                   setTimeout(() => setCopiedField(null), 2000)
@@ -219,32 +219,7 @@ export function SettingsForm() {
                 {copiedField === 'ordersUrl' ? '✓ Kopyalandı' : 'Kopyala'}
               </button>
             </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-neutral-900 uppercase tracking-wider mb-1">
-              2. Fatura & Kargo Durum Güncelleme URL'si (Webhook):
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                readOnly
-                value={typeof window !== 'undefined' ? `${window.location.origin}/api/birfatura/update-status` : 'https://fodos.com.tr/api/birfatura/update-status'}
-                className="w-full px-3 py-1.5 font-mono text-xs bg-neutral-50 border border-neutral-200 rounded text-neutral-900"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  const url = typeof window !== 'undefined' ? `${window.location.origin}/api/birfatura/update-status` : 'https://fodos.com.tr/api/birfatura/update-status'
-                  navigator.clipboard.writeText(url)
-                  setCopiedField('webhookUrl')
-                  setTimeout(() => setCopiedField(null), 2000)
-                }}
-                className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 text-xs font-semibold rounded transition-colors whitespace-nowrap border"
-              >
-                {copiedField === 'webhookUrl' ? '✓ Kopyalandı' : 'Kopyala'}
-              </button>
-            </div>
+            <p className="text-xs text-neutral-500 mt-1">BirFatura bu adrese /api/orderStatus/, /api/paymentMethods/, /api/orders/, /api/orderCargoUpdate/ ve /api/invoiceLinkUpdate/ yollarını kendisi ekler.</p>
           </div>
         </div>
 
@@ -254,7 +229,7 @@ export function SettingsForm() {
           <ol className="list-decimal list-inside space-y-1 text-indigo-800">
             <li>BirFatura panelinizde <strong>Ayarlar → Mağaza Ayarları → Yeni Mağaza Ekle → Özel Entegrasyon (veya XML/API Mağaza)</strong> bölümüne gidin.</li>
             <li>Mağaza Adı olarak <strong>FODOS</strong> girin.</li>
-            <li>Yukarıdaki <strong>Sipariş Çekme URL</strong>'sini ve <strong>API Anahtarı</strong>'nı ilgili alanlara yapıştırıp kaydedin.</li>
+            <li>Yukarıdaki <strong>Web Site Adresi</strong>'ni ve <strong>API Anahtarı</strong>'nı (api şifresi alanına) ilgili alanlara yapıştırıp kaydedin.</li>
             <li>Siparişleriniz BirFatura'ya otomatik aktarılacak ve fatura kesildiğinde faturanız doğrudan Fodos paneline yansıyacaktır.</li>
           </ol>
         </div>

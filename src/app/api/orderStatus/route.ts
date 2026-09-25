@@ -1,1 +1,3 @@
-export async function POST() { return Response.json({ OrderStatus: [ { Id: 1, Value: 'pending' }, { Id: 2, Value: 'processing' }, { Id: 3, Value: 'shipped' }, { Id: 4, Value: 'delivered' }, { Id: 5, Value: 'cancelled' }, { Id: 6, Value: 'in_progress' } ] }); }
+import { ORDER_STATUSES } from '@/lib/birfatura'
+
+export async function POST() { return Response.json({ OrderStatus: ORDER_STATUSES }); }

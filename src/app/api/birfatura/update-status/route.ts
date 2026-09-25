@@ -1,49 +1,14 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-
-import { timingSafeEqual } from 'crypto'
+import { authenticateBirfatura } from '@/lib/birfatura'
 
 /**
  * BirFatura Fatura / Kargo Durumu Güncelleme Webhook Endpoint'i
  * POST /api/birfatura/update-status
  */
-async function authenticateRequest(req: Request): Promise<boolean> {
-  const url = new URL(req.url)
-  const authHeader = req.headers.get('authorization')
-  const apiKeyHeader = req.headers.get('x-api-key') || req.headers.get('x-token')
-  const queryToken = url.searchParams.get('token') || url.searchParams.get('apiKey') || url.searchParams.get('key')
-
-  let providedToken = queryToken || apiKeyHeader
-
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    providedToken = authHeader.substring(7).trim()
-  }
-
-  const settings = await prisma.storeSettings.findUnique({
-    where: { id: 'default' }
-  })
-
-  const validKey = settings?.birfaturaApiKey || process.env.BIRFATURA_API_KEY || 'fodos_bf_live_key_2026'
-
-  if (!providedToken) {
-    return false
-  }
-
-  try {
-    const providedBuffer = Buffer.from(providedToken)
-    const validBuffer = Buffer.from(validKey)
-    if (providedBuffer.length !== validBuffer.length) {
-      return false
-    }
-    return timingSafeEqual(providedBuffer, validBuffer)
-  } catch (e) {
-    return false
-  }
-}
-
 export async function POST(req: Request) {
   try {
-    const isAuth = await authenticateRequest(req)
+    const isAuth = await authenticateBirfatura(req)
     if (!isAuth) {
       return NextResponse.json(
         { status: false, error: 'Unauthorized. Geçersiz veya eksik API Anahtarı.' },
