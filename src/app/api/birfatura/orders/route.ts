@@ -78,6 +78,8 @@ async function handleGetOrders(req: Request) {
       const itemsTotal = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0)
       const taxNumber = order.taxNumber?.trim() || ''
       const isPersonalId = taxNumber.length === 11 && !order.companyTitle
+      const city = order.shippingCity?.trim() || ''
+      const town = order.shippingDistrict?.trim() || ''
 
       return {
         OrderId: orderNumericId(order.orderNumber),
@@ -87,8 +89,8 @@ async function handleGetOrders(req: Request) {
         CustomerId: customerNumericId,
         BillingName: order.companyTitle || customerName,
         BillingAddress: order.shippingAddress || '',
-        BillingTown: order.shippingDistrict || '',
-        BillingCity: order.shippingCity || '',
+        BillingTown: town,
+        BillingCity: city,
         BillingMobilePhone: order.customer?.phone || '',
         TaxOffice: order.taxOffice || '',
         TaxNo: isPersonalId ? '' : taxNumber,
@@ -97,8 +99,8 @@ async function handleGetOrders(req: Request) {
         ShippingId: customerNumericId,
         ShippingName: customerName,
         ShippingAddress: order.shippingAddress || '',
-        ShippingTown: order.shippingDistrict || '',
-        ShippingCity: order.shippingCity || '',
+        ShippingTown: town,
+        ShippingCity: city,
         ShippingCountry: 'Türkiye',
         ShippingZipCode: '',
         ShippingPhone: order.customer?.phone || '',

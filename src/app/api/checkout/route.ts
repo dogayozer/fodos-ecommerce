@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
 import { jwtVerify } from 'jose'
 import crypto from 'crypto'
+import { matchIl, matchIlce } from '@/lib/ilIlce'
 
 const SECRET_KEY = new TextEncoder().encode('fodos-super-secret-customer-key')
 
@@ -18,6 +19,15 @@ export async function POST(req: Request) {
     if (!customerInfo.name || !customerInfo.phone || !customerInfo.city || !customerInfo.district || !customerInfo.address) {
       return NextResponse.json({ error: 'Lütfen tüm teslimat bilgilerini doldurun' }, { status: 400 })
     }
+
+    // E-fatura (BirFatura) geçerli bir il/ilçe istiyor; serbest metin kabul edilmez.
+    const city = matchIl(customerInfo.city)
+    const district = matchIlce(city, customerInfo.district)
+    if (!city || !district) {
+      return NextResponse.json({ error: 'Lütfen il ve ilçeyi listeden seçin' }, { status: 400 })
+    }
+    customerInfo.city = city
+    customerInfo.district = district
 
     // 1. Get Session / Customer
     const cookieStore: any = cookies()

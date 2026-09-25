@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { getCustomerFromRequest } from '@/lib/customerAuth'
+import { matchIl, matchIlce } from '@/lib/ilIlce'
 
 export async function updateProfile(formData: FormData) {
   try {
@@ -14,8 +15,8 @@ export async function updateProfile(formData: FormData) {
 
     const name = formData.get('name') as string
     const phone = formData.get('phone') as string
-    const city = formData.get('city') as string
-    const district = formData.get('district') as string
+    const city = matchIl(formData.get('city') as string)
+    const district = matchIlce(city, formData.get('district') as string)
     const address = formData.get('address') as string
 
     await prisma.customer.update({

@@ -4,12 +4,15 @@ import bcrypt from 'bcryptjs'
 import { SignJWT } from 'jose'
 import { cookies } from 'next/headers'
 import { parseAccountType } from '@/lib/accountTypes'
+import { matchIl, matchIlce } from '@/lib/ilIlce'
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fodos-super-secret-customer-key')
 
 export async function POST(req: Request) {
   try {
-    const { name, email, phone, password, city, district, address, accountType: rawAccountType, businessType: rawBusinessType } = await req.json()
+    const { name, email, phone, password, city: rawCity, district: rawDistrict, address, accountType: rawAccountType, businessType: rawBusinessType } = await req.json()
+    const city = matchIl(rawCity) || null
+    const district = (city && matchIlce(city, rawDistrict)) || null
 
     if (!email || !password || !name) {
       return NextResponse.json({ error: 'Ad, email ve şifre zorunludur' }, { status: 400 })

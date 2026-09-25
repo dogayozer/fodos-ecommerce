@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { IlIlceSelects } from '@/components/IlIlceSelects'
+import { matchIl, matchIlce } from '@/lib/ilIlce'
 
 export function CheckoutClient({ shippingFee, shippingThreshold }: { shippingFee: number, shippingThreshold: number }) {
   const [cart, setCart] = useState<any[]>([])
@@ -44,12 +46,13 @@ export function CheckoutClient({ shippingFee, shippingThreshold }: { shippingFee
       .then(data => {
         if (data.user) {
           setUser(data.user)
+          const city = matchIl(data.user.city)
           setFormData({
             name: data.user.name || '',
             email: data.user.email || '',
             phone: data.user.phone || '',
-            city: data.user.city || '',
-            district: data.user.district || '',
+            city,
+            district: matchIlce(city, data.user.district),
             address: data.user.address || '',
             acceptTerms: false,
             acceptKvkk: false
@@ -266,14 +269,16 @@ export function CheckoutClient({ shippingFee, shippingThreshold }: { shippingFee
                     <label className="block text-sm font-medium text-neutral-900 mb-1">Telefon Numarası *</label>
                     <input type="tel" name="phone" required value={formData.phone} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="05XX XXX XX XX" />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-900 mb-1">İl *</label>
-                    <input type="text" name="city" required value={formData.city} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-900 mb-1">İlçe *</label>
-                    <input type="text" name="district" required value={formData.district} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" />
-                  </div>
+                  <IlIlceSelects
+                    city={formData.city}
+                    district={formData.district}
+                    onChange={(city, district) => setFormData((f) => ({ ...f, city, district }))}
+                    required
+                    cityLabel="İl *"
+                    districtLabel="İlçe *"
+                    labelClassName="block text-sm font-medium text-neutral-900 mb-1"
+                    selectClassName="w-full px-4 py-2 border rounded-lg bg-white focus:ring-2 focus:ring-trust-blue-500 disabled:bg-neutral-50 disabled:text-neutral-500"
+                  />
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-neutral-900 mb-1">Açık Adres *</label>
                     <textarea name="address" required rows={3} value={formData.address} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" />

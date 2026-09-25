@@ -3,8 +3,14 @@
 import { useState } from 'react'
 import { updateProfile } from '@/app/actions/profile'
 import { Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
+import { IlIlceSelects } from '@/components/IlIlceSelects'
+import { matchIl, matchIlce } from '@/lib/ilIlce'
 
 export function ProfileForm({ customer }: { customer: any }) {
+  const [location, setLocation] = useState(() => {
+    const city = matchIl(customer.city)
+    return { city, district: matchIlce(city, customer.district) }
+  })
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
 
@@ -80,28 +86,15 @@ export function ProfileForm({ customer }: { customer: any }) {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">İl</label>
-          <input 
-            type="text" 
-            id="city"
-            name="city" 
-            defaultValue={customer.city || ''} 
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:border-trust-blue-500 outline-none transition-all"
-            placeholder="İl"
-          />
-        </div>
-        <div>
-          <label htmlFor="district" className="block text-sm font-medium text-gray-700 mb-1">İlçe</label>
-          <input 
-            type="text" 
-            id="district"
-            name="district" 
-            defaultValue={customer.district || ''} 
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 focus:border-trust-blue-500 outline-none transition-all"
-            placeholder="İlçe"
-          />
-        </div>
+        <IlIlceSelects
+          city={location.city}
+          district={location.district}
+          onChange={(city, district) => setLocation({ city, district })}
+          cityLabel="İl"
+          districtLabel="İlçe"
+          labelClassName="block text-sm font-medium text-gray-700 mb-1"
+          selectClassName="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-trust-blue-500 focus:border-trust-blue-500 outline-none transition-all disabled:bg-gray-50 disabled:text-gray-400"
+        />
       </div>
 
       <div>

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { BUSINESS_TYPES } from '@/lib/accountTypes'
+import { IlIlceSelects } from '@/components/IlIlceSelects'
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -135,22 +136,15 @@ export default function RegisterPage() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 outline-none"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">İl (Kargo İçin)</label>
-              <input 
-                type="text" name="city"
-                value={formData.city} onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">İlçe (Kargo İçin)</label>
-              <input 
-                type="text" name="district"
-                value={formData.district} onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-blue-500 outline-none"
-              />
-            </div>
+            <IlIlceSelects
+              city={formData.city}
+              district={formData.district}
+              onChange={(city, district) => setFormData((f) => ({ ...f, city, district }))}
+              cityLabel="İl (Kargo İçin)"
+              districtLabel="İlçe (Kargo İçin)"
+              labelClassName="block text-sm font-medium text-gray-700 mb-1"
+              selectClassName="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-trust-blue-500 outline-none disabled:bg-gray-50 disabled:text-gray-400"
+            />
           </div>
           
           <div>
