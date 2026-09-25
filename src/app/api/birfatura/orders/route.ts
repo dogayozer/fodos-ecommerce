@@ -14,25 +14,14 @@ import {
  * BirFatura Özel Entegrasyon sipariş listesi (POST /api/orders/ → buraya rewrite edilir)
  * İstek: header `token`, body { orderStatusId, startDateTime, endDateTime }
  */
-// GEÇİCİ TEŞHİS: BirFatura'nın gönderdiği filtreleri görmek için. Sorun çözülünce kaldırılacak.
-async function debugLog(message: object, response: object) {
-  try {
-    await prisma.chatLog.create({
-      data: { sessionId: 'birfatura-debug', message: JSON.stringify(message), response: JSON.stringify(response) },
-    })
-  } catch {}
-}
-
 async function handleGetOrders(req: Request) {
   try {
-    const url = new URL(req.url)
-    const body = req.method === 'POST' ? await readJsonBody(req) : {}
-    const requestInfo = { method: req.method, query: url.search, body, ua: req.headers.get('user-agent') }
-
     if (!(await authenticateBirfatura(req))) {
-      await debugLog(requestInfo, { unauthorized: true })
       return NextResponse.json({ status: false, error: 'Unauthorized. Geçersiz veya eksik API Anahtarı.' }, { status: 200 })
     }
+
+    const url = new URL(req.url)
+    const body = req.method === 'POST' ? await readJsonBody(req) : {}
 
     const startDate = parseBirfaturaDate(body.startDateTime ?? url.searchParams.get('startDate') ?? url.searchParams.get('start_date'))
     const endDate = parseBirfaturaDate(body.endDateTime ?? url.searchParams.get('endDate') ?? url.searchParams.get('end_date'))
@@ -133,10 +122,6 @@ async function handleGetOrders(req: Request) {
       }
     })
 
-    await debugLog(
-      { ...requestInfo, parsed: { startDate, endDate, status } },
-      { count: formattedOrders.length, codes: formattedOrders.map((o) => o.OrderCode) }
-    )
     return NextResponse.json({ status: true, Orders: formattedOrders })
   } catch (error: any) {
     console.error('BirFatura orders fetch error:', error)
