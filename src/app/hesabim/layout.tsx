@@ -2,16 +2,16 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Package, User, LogOut } from 'lucide-react'
+import { getCustomerFromRequest } from '@/lib/customerAuth'
 
 export default async function HesabimLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const cookieStore = await cookies()
-  const token = cookieStore.get('auth_token')
+  const customer = await getCustomerFromRequest()
 
-  if (!token) {
+  if (!customer) {
     redirect('/giris')
   }
 
@@ -35,7 +35,7 @@ export default async function HesabimLayout({
               <form action={async () => {
                 'use server'
                 const cs = await cookies()
-                cs.delete('auth_token')
+                cs.delete('customer_token')
                 redirect('/giris')
               }}>
                 <button type="submit" className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 text-left w-full">

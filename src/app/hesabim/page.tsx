@@ -1,28 +1,12 @@
-import { cookies } from 'next/headers'
-import { prisma } from '@/lib/prisma'
-import { jwtVerify } from 'jose'
 import { ProfileForm } from '@/components/ProfileForm'
+import { getCustomerFromRequest } from '@/lib/customerAuth'
 
 export const dynamic = 'force-dynamic'
 
 export default async function HesabimPage() {
-  const cookieStore = await cookies()
-  const token = cookieStore.get('auth_token')?.value
-  
-  if (!token) return null // handled by layout
+  const customer = await getCustomerFromRequest()
 
-  let customer = null
-  try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret')
-    const { payload } = await jwtVerify(token, secret)
-    customer = await prisma.customer.findUnique({
-      where: { id: payload.userId as string }
-    })
-  } catch (e) {
-    return <div>Oturum süreniz dolmuş.</div>
-  }
-
-  if (!customer) return <div>Hesap bulunamadı.</div>
+  if (!customer) return <div>Oturum süreniz dolmuş.</div>
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">

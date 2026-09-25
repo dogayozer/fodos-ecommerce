@@ -1,26 +1,16 @@
 'use server'
 
-import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
-import { jwtVerify } from 'jose'
 import { revalidatePath } from 'next/cache'
+import { getCustomerFromRequest } from '@/lib/customerAuth'
 
 export async function updateProfile(formData: FormData) {
   try {
-    const cookieStore = await cookies()
-    const token = cookieStore.get('auth_token')?.value
-
-    if (!token) {
+    const customer = await getCustomerFromRequest()
+    if (!customer) {
       return { success: false, error: 'Oturum bulunamadı. Lütfen tekrar giriş yapın.' }
     }
-
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret')
-    const { payload } = await jwtVerify(token, secret)
-    const userId = payload.userId as string
-
-    if (!userId) {
-      return { success: false, error: 'Geçersiz oturum.' }
-    }
+    const userId = customer.id
 
     const name = formData.get('name') as string
     const phone = formData.get('phone') as string

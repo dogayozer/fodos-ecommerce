@@ -1,46 +1,38 @@
-import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
-import { jwtVerify } from 'jose'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ExternalLink, Truck, CheckCircle, Clock, XCircle, Package } from 'lucide-react'
+import { ExternalLink, Truck, CheckCircle, Clock, XCircle, Package, FileText } from 'lucide-react'
+import { getCustomerFromRequest } from '@/lib/customerAuth'
 
 export const dynamic = 'force-dynamic'
 
 const statusMap: any = {
-  pending: { label: 'Onay Bekliyor', icon: <Clock size={16} className="text-yellow-600"/>, color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
-  processing: { label: 'Hazırlanıyor', icon: <Package size={16} className="text-blue-600"/>, color: 'bg-blue-50 text-blue-700 border-blue-200' },
+  pending: { label: 'Ödeme Bekleniyor', icon: <Clock size={16} className="text-yellow-600"/>, color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
+  processing: { label: 'Sipariş Alındı', icon: <Package size={16} className="text-blue-600"/>, color: 'bg-blue-50 text-blue-700 border-blue-200' },
+  in_progress: { label: 'Hazırlanıyor', icon: <Package size={16} className="text-sky-600"/>, color: 'bg-sky-50 text-sky-700 border-sky-200' },
   shipped: { label: 'Kargoya Verildi', icon: <Truck size={16} className="text-indigo-600"/>, color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
   delivered: { label: 'Teslim Edildi', icon: <CheckCircle size={16} className="text-green-600"/>, color: 'bg-green-50 text-green-700 border-green-200' },
   cancelled: { label: 'İptal Edildi', icon: <XCircle size={16} className="text-red-600"/>, color: 'bg-red-50 text-red-700 border-red-200' }
 }
 
 export default async function SiparislerimPage() {
-  const cookieStore = await cookies()
-  const token = cookieStore.get('auth_token')?.value
-  
-  if (!token) return null
+  const customer = await getCustomerFromRequest()
+  if (!customer) return <div>Oturum süreniz dolmuş.</div>
 
-  let orders: any[] = []
-  try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret')
-    const { payload } = await jwtVerify(token, secret)
-    orders = await prisma.order.findMany({
-      where: { customerId: payload.userId as string },
-      orderBy: { createdAt: 'desc' },
-      include: {
-        items: {
-          include: {
-            product: {
-              include: { images: true }
-            }
+  // Ortak veritabanı: müşterinin MPM'den verdiği siparişler burada gösterilmez.
+  const orders = await prisma.order.findMany({
+    where: { customerId: customer.id, store: 'fodos' },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      items: {
+        include: {
+          product: {
+            include: { images: true }
           }
         }
       }
-    })
-  } catch (e) {
-    return <div>Oturum hatası.</div>
-  }
+    }
+  })
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
@@ -86,9 +78,21 @@ export default async function SiparislerimPage() {
 
                 {/* Order Status & Cargo */}
                 <div className="p-4 bg-white flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border ${status.color}`}>
-                    {status.icon}
-                    <span className="font-bold text-sm">{status.label}</span>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border ${status.color}`}>
+                      {status.icon}
+                      <span className="font-bold text-sm">{status.label}</span>
+                    </div>
+                    {order.invoiceUrl && (
+                      <a
+                        href={order.invoiceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-sm font-bold"
+                      >
+                        <FileText size={16} /> Faturayı Görüntüle (PDF)
+                      </a>
+                    )}
                   </div>
 
                   {order.trackingNumber && (
