@@ -76,7 +76,9 @@ async function handleGetOrders(req: Request) {
 
     // Sipariş Durumu
     if (status && status !== 'all') {
-      whereClause.status = status
+      // BirFatura paneli 'processing' durumunu çekecek şekilde ayarlı; elle 'İşleme Alındı'ya
+      // taşınan siparişlerin de kuyruktan düşmemesi için bu durumu da dahil et.
+      whereClause.status = status === 'processing' ? { in: ['processing', 'in_progress'] } : status
     } else {
       // GÜVENLİK ÖNLEMİ: BirFatura yanlışlıkla tüm siparişleri çekmek isterse bile,
       // ödenmemiş (pending) ve başarısız (cancelled) olanları kesinlikle gönderme.

@@ -111,7 +111,7 @@ export async function POST(req: Request) {
     if (trackingNumber) {
       updateData.trackingNumber = String(trackingNumber)
       // Kargo takip no girildiyse durumu kargolandı yapabiliriz
-      if (existingOrder.status === 'pending' || existingOrder.status === 'processing') {
+      if (existingOrder.status === 'pending' || existingOrder.status === 'processing' || existingOrder.status === 'in_progress') {
         updateData.status = 'shipped'
       }
     }
@@ -129,7 +129,7 @@ export async function POST(req: Request) {
 
     if (newStatus && typeof newStatus === 'string') {
       const normalizedStatus = newStatus.toLowerCase()
-      if (['pending', 'processing', 'shipped', 'delivered', 'cancelled'].includes(normalizedStatus)) {
+      if (['pending', 'processing', 'in_progress', 'shipped', 'delivered', 'cancelled'].includes(normalizedStatus)) {
         updateData.status = normalizedStatus
       } else if (normalizedStatus === 'failed') {
         updateData.invoiceStatus = 'failed'

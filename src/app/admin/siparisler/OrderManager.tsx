@@ -6,6 +6,7 @@ import { Package, Truck, CheckCircle, Clock, XCircle, Search, FileText, External
 const statusMap: any = {
   pending: { label: 'Ödeme Bekliyor', color: 'bg-orange-100 text-orange-800 border-orange-200' },
   processing: { label: 'Yeni (Ödendi)', color: 'bg-green-100 text-green-800 border-green-200' },
+  in_progress: { label: 'İşleme Alındı', color: 'bg-sky-100 text-sky-800 border-sky-200' },
   shipped: { label: 'Kargolandı', color: 'bg-indigo-100 text-indigo-800 border-indigo-200' },
   delivered: { label: 'Teslim Edildi', color: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
   cancelled: { label: 'İptal / Ödeme Başarısız', color: 'bg-red-100 text-red-800 border-red-200' }
@@ -631,6 +632,7 @@ export function OrderManager() {
                   >
                     <option value="pending">Ödeme Bekliyor</option>
                     <option value="processing">Yeni (Ödendi)</option>
+                    <option value="in_progress">İşleme Alındı</option>
                     <option value="shipped">Kargolandı</option>
                     <option value="delivered">Teslim Edildi</option>
                     <option value="cancelled">İptal / Ödeme Başarısız</option>
