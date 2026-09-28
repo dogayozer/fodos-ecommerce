@@ -535,6 +535,17 @@ export function OrderManager() {
                           >
                             <Printer className="w-4 h-4" />
                           </button>
+                          {order.shippingCompany === 'HepsiJET' && order.trackingNumber && (
+                            <a
+                              href={`/api/admin/orders/hepsijet/label?id=${order.id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="HepsiJET Kargo Etiketi (PDF)"
+                              className="p-1.5 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                            >
+                              <Truck className="w-4 h-4" />
+                            </a>
+                          )}
                           <button
                             onClick={() => openEditModal(order)}
                             className="bg-trust-blue-50 text-trust-blue-600 hover:bg-trust-blue-100 px-3 py-1.5 rounded-lg font-semibold text-xs transition-colors"
@@ -717,6 +728,16 @@ export function OrderManager() {
                   )}
                   {hepsijetMsg && (
                     <p className={`mt-1.5 text-xs font-medium ${hepsijetMsg.ok ? 'text-emerald-700' : 'text-red-600'}`}>{hepsijetMsg.text}</p>
+                  )}
+                  {selectedOrder.shippingCompany === 'HepsiJET' && selectedOrder.trackingNumber && (
+                    <a
+                      href={`/api/admin/orders/hepsijet/label?id=${selectedOrder.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-600 text-white hover:bg-orange-700 text-xs font-semibold"
+                    >
+                      <Printer className="w-3.5 h-3.5" /> HepsiJET Etiketini Yazdır (PDF)
+                    </a>
                   )}
                 </div>
               </div>

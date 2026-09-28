@@ -151,6 +151,28 @@ async function sendDeliveryOrder(order: HepsijetOrderInput, deliveryType: 'RETAI
   }
 }
 
+// HepsiJET'in zorunlu "ortak barkod" etiketi (10x15 cm), PDF olarak. Barkod = customerDeliveryNo.
+export async function getHepsijetLabelPdf(barcode: string): Promise<Buffer> {
+  const token = await getToken()
+  const res = await fetch(`${BASE_URL}/delivery/barcodes-label?format=PDF`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Auth-Token': token,
+      'X-Origin': 'integration',
+      'X-Client-Id': 'hj-integration',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify({ barcodes: [barcode] }),
+  })
+  const json: any = await res.json()
+  const dataUrl: string | undefined = json?.data?.labels?.[0]
+  if (!res.ok || json?.status !== 'OK' || !dataUrl) {
+    throw new Error(json?.message || `HTTP ${res.status}`)
+  }
+  return Buffer.from(dataUrl.split(',')[1], 'base64')
+}
+
 /**
  * Bir siparişi HepsiJET'e STD (Standart Teslimat) gönderisi olarak iletir.
  * Başarılı olursa barkod/takip numarasını döner; hata durumunda süreci
