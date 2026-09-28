@@ -13,6 +13,8 @@ export function MarketplaceOrderNotifier() {
 
   useEffect(() => {
     const checkLatestOrder = async () => {
+      // Arka planda açık kalan admin sekmesi Neon'u 7/24 uyanık tutmasın (compute maliyeti)
+      if (document.hidden) return
       try {
         const res = await fetch('/api/admin/marketplace/latest', { cache: 'no-store' })
         if (!res.ok) return

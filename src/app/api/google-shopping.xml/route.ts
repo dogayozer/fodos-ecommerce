@@ -1,15 +1,25 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+// ~25 MB'lık feed her istekte 16k ürünü DB'den çekiyordu (Neon ağ trafiği/compute maliyeti); saatte bir üretilir.
+export const revalidate = 3600
+
 export async function GET() {
   try {
     const products = await prisma.product.findMany({
       where: {
         status: 'active',
       },
-      include: {
-        images: true,
-        category: true,
+      select: {
+        slug: true,
+        title: true,
+        brand: true,
+        barcode: true,
+        stock_qty: true,
+        sale_price: true,
+        description_raw: true,
+        images: { select: { url: true }, orderBy: { order: 'asc' }, take: 1 },
+        category: { select: { name: true } },
       }
     })
 
