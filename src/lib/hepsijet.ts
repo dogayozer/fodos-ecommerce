@@ -6,6 +6,7 @@
 // ortamında doğrulanmış varsayılanlar kullanılır).
 
 const BASE_URL = process.env.HEPSIJET_BASE_URL || 'https://integration-apitest.hepsijet.com'
+export const HEPSIJET_IS_TEST = BASE_URL.includes('apitest')
 const USERNAME = process.env.HEPSIJET_USERNAME || 'fodos_integration'
 const PASSWORD = process.env.HEPSIJET_PASSWORD || 'T!SO22Pz9E'
 

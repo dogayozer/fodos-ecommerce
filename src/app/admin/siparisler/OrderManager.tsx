@@ -39,6 +39,8 @@ export function OrderManager() {
   const [editTaxOffice, setEditTaxOffice] = useState('')
   const [editCompanyTitle, setEditCompanyTitle] = useState('')
   const [saving, setSaving] = useState(false)
+  const [hepsijetSending, setHepsijetSending] = useState(false)
+  const [hepsijetMsg, setHepsijetMsg] = useState<{ ok: boolean; text: string } | null>(null)
 
   const fetchOrders = async () => {
     setLoading(true)
@@ -95,7 +97,37 @@ export function OrderManager() {
     }
   }
 
+  const handleSendHepsijet = async () => {
+    if (!selectedOrder) return
+    if (!confirm(`#${selectedOrder.orderNumber} için HepsiJET gönderisi oluşturulsun mu?`)) return
+    setHepsijetSending(true)
+    setHepsijetMsg(null)
+    try {
+      const res = await fetch('/api/admin/orders/hepsijet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: selectedOrder.id }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setHepsijetMsg({ ok: false, text: data.error || 'Gönderi oluşturulamadı.' })
+        return
+      }
+      // Pencere açık kalırken sonraki "Kaydet" bu değerleri eskiyle ezmesin diye hem orijinali hem formu güncelle
+      setSelectedOrder({ ...selectedOrder, shippingCompany: 'HepsiJET', trackingNumber: data.trackingNumber })
+      setEditCompany('HepsiJET')
+      setEditTracking(data.trackingNumber)
+      setHepsijetMsg({ ok: true, text: `HepsiJET gönderisi oluşturuldu${data.test ? ' (TEST ortamı)' : ''}. Takip no: ${data.trackingNumber}` })
+      fetchOrders()
+    } catch {
+      setHepsijetMsg({ ok: false, text: 'Bağlantı hatası.' })
+    } finally {
+      setHepsijetSending(false)
+    }
+  }
+
   const openEditModal = (order: any) => {
+    setHepsijetMsg(null)
     setSelectedOrder(order)
     setEditStatus(order.status)
     setEditCompany(order.shippingCompany || '')
@@ -672,6 +704,20 @@ export function OrderManager() {
                     className="w-full border rounded-lg p-2 text-sm font-mono focus:ring-2 focus:ring-trust-blue-500"
                     placeholder="Kargo takip kodu..."
                   />
+                  {!(selectedOrder.shippingCompany === 'HepsiJET' && selectedOrder.trackingNumber) && (
+                    <button
+                      type="button"
+                      onClick={handleSendHepsijet}
+                      disabled={hepsijetSending || ['pending', 'cancelled'].includes(selectedOrder.status)}
+                      className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 text-xs font-semibold disabled:opacity-50"
+                    >
+                      <Truck className="w-3.5 h-3.5" />
+                      {hepsijetSending ? 'Gönderiliyor...' : "HepsiJET'e Gönder (gönderi oluştur)"}
+                    </button>
+                  )}
+                  {hepsijetMsg && (
+                    <p className={`mt-1.5 text-xs font-medium ${hepsijetMsg.ok ? 'text-emerald-700' : 'text-red-600'}`}>{hepsijetMsg.text}</p>
+                  )}
                 </div>
               </div>
 
