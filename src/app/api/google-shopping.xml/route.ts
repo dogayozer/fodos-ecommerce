@@ -1,15 +1,24 @@
 import { NextResponse } from 'next/server'
+import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 
-// ~25 MB'lık feed her istekte 16k ürünü DB'den çekiyordu (Neon ağ trafiği/compute maliyeti); saatte bir üretilir.
-export const revalidate = 3600
+// Feed ~25 MB: her istekte 16k ürünü DB'den çekmek Neon ağ trafiği/compute maliyeti yaratıyordu.
+// Tüm cevap ISR (19 MB sınırı) ve CDN önbelleğine sığmadığı için DB sonucu, veri önbelleğinin
+// öğe başına ~2 MB sınırının altında kalacak parçalar halinde saatte bir yenilenerek saklanır.
+export const maxDuration = 60
 
-export async function GET() {
-  try {
-    const products = await prisma.product.findMany({
-      where: {
-        status: 'active',
-      },
+const CHUNK_SIZE = 800
+const where = { status: 'active' }
+
+const getActiveCount = unstable_cache(() => prisma.product.count({ where }), ['feed-active-count'], { revalidate: 3600 })
+
+const getChunk = unstable_cache(
+  (index: number) =>
+    prisma.product.findMany({
+      where,
+      orderBy: { id: 'asc' },
+      skip: index * CHUNK_SIZE,
+      take: CHUNK_SIZE,
       select: {
         slug: true,
         title: true,
@@ -20,8 +29,18 @@ export async function GET() {
         description_raw: true,
         images: { select: { url: true }, orderBy: { order: 'asc' }, take: 1 },
         category: { select: { name: true } },
-      }
-    })
+      },
+    }),
+  ['feed-products-chunk'],
+  { revalidate: 3600 }
+)
+
+export async function GET() {
+  try {
+    const chunkCount = Math.ceil((await getActiveCount()) / CHUNK_SIZE)
+    // Sırayla: paralel istek Prisma bağlantı havuzunu tüketip zaman aşımına düşüyor
+    const products = []
+    for (let i = 0; i < chunkCount; i++) products.push(...(await getChunk(i)))
 
     const siteUrl = 'https://www.fodos.com.tr'
 
