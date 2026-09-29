@@ -11,7 +11,7 @@ const DISMISS_DAYS = 7
 // Alışveriş/ödeme ve üyelik akışını bölmemek için bu sayfalarda gösterilmez
 const HIDDEN_PREFIXES = ['/admin', '/odeme', '/sepet', '/kayit-ol', '/giris', '/bayi']
 
-export function DealerSplash() {
+export function DealerSplash({ waitForCampaign = false }: { waitForCampaign?: boolean }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState({ name: '', phone: '', email: '', businessType: '', marketingConsent: false })
@@ -23,13 +23,15 @@ export function DealerSplash() {
   useEffect(() => {
     if (hidden) return
     try {
+      // Aktif kampanya pop-up'ı ziyaretçiye henüz gösterilmediyse önce o çıksın, iki pop-up üst üste binmesin
+      if (waitForCampaign && !localStorage.getItem('campaignSplash')) return
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null')
       if (saved?.status === 'subscribed') return
       if (saved?.status === 'dismissed' && Date.now() - saved.at < DISMISS_DAYS * 24 * 60 * 60 * 1000) return
     } catch {}
     const timer = setTimeout(() => setOpen(true), 3000)
     return () => clearTimeout(timer)
-  }, [hidden])
+  }, [hidden, waitForCampaign])
 
   useEffect(() => {
     if (!open) return

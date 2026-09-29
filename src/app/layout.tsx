@@ -40,6 +40,9 @@ import { prisma } from "@/lib/prisma";
 import Link from 'next/link';
 import { SmartAssistant } from "@/components/SmartAssistant";
 import { DealerSplash } from "@/components/DealerSplash";
+import { CampaignSplash } from "@/components/CampaignSplash";
+import { CAMPAIGN } from "@/lib/campaignConfig";
+import { getCampaignShowcase } from "@/lib/campaign";
 
 export default async function RootLayout({
   children,
@@ -48,6 +51,8 @@ export default async function RootLayout({
 }>) {
   const tree = await getCategoryTree();
   const settings = await prisma.storeSettings.findUnique({ where: { id: 'default' } });
+  const showcase = CAMPAIGN.active ? await getCampaignShowcase() : null;
+  const campaignLive = !!showcase && showcase.items.length > 0;
 
   return (
     <html
@@ -76,6 +81,14 @@ export default async function RootLayout({
           />
         </noscript>
         {/* End Google Tag Manager (noscript) */}
+        {campaignLive && (
+          <Link
+            href={CAMPAIGN.path}
+            className="block bg-action-orange-500 hover:bg-action-orange-600 text-white text-center text-xs sm:text-sm font-semibold py-2 px-3 transition-colors"
+          >
+            {CAMPAIGN.name} başladı{showcase!.maxDiscount > 0 ? ` — %${showcase!.maxDiscount}'e varan indirim` : ''} · Kampanyalı adaptörlere git →
+          </Link>
+        )}
         <Header tree={tree} />
         <div className="flex flex-1 max-w-7xl mx-auto w-full">
           <Sidebar tree={tree} />
@@ -110,7 +123,8 @@ export default async function RootLayout({
         </footer>
         <WhatsAppButton />
         <SmartAssistant />
-        <DealerSplash />
+        {campaignLive && <CampaignSplash items={showcase!.items} maxDiscount={showcase!.maxDiscount} total={showcase!.total} />}
+        <DealerSplash waitForCampaign={campaignLive} />
       </body>
     </html>
   );

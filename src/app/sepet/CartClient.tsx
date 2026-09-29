@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowRight, ShieldCheck, Trash2, Plus, Minus } from 'lucide-react'
 import { ShippingCounter } from './ShippingCounter'
+import { CAMPAIGN } from '@/lib/campaignConfig'
 
 export function CartClient({ targetTimeMs, message, shippingFee, shippingThreshold }: { targetTimeMs: number, message: string, shippingFee: number, shippingThreshold: number }) {
   const [cart, setCart] = useState<any[]>([])
@@ -111,7 +112,21 @@ export function CartClient({ targetTimeMs, message, shippingFee, shippingThresho
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       <div className="md:col-span-2 space-y-4">
         <ShippingCounter targetTimeMs={targetTimeMs} message={message} />
-        
+
+        {CAMPAIGN.active && (
+          <Link
+            href={CAMPAIGN.path}
+            className="flex items-center justify-between gap-3 rounded-xl border border-action-orange-500/40 bg-action-orange-50 px-4 py-3 hover:border-action-orange-500 transition-colors"
+          >
+            <span className="text-sm text-neutral-900">
+              <strong className="text-action-orange-600">{CAMPAIGN.name}</strong> devam ediyor — sepetinize kampanyalı adaptör ekleyin.
+            </span>
+            <span className="flex items-center gap-1 text-xs sm:text-sm font-bold text-action-orange-600 whitespace-nowrap">
+              Kampanyalı adaptörlere git <ArrowRight size={16} />
+            </span>
+          </Link>
+        )}
+
         {cart.length === 0 ? (
           <div className="bg-neutral-0 p-6 rounded-xl border border-neutral-200 shadow-[var(--shadow-card)]">
             <p className="text-neutral-500 text-center py-8">Sepetinizde ürün bulunmamaktadır.</p>

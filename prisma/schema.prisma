@@ -46,6 +46,7 @@ model Product {
   updatedAt           DateTime         @updatedAt
   last_synced_at      DateTime?
   has_real_photo      Boolean          @default(false) // Trendyol import placeholder'ı değil, gerçek/benzersiz ürün fotoğrafı var mı
+  campaign            String?          // Aktif kampanya anahtarı (örn. "adaptor"); null = kampanyada değil
   dealerPrice         DealerPrice?
 }
 

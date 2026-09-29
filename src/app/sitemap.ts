@@ -22,6 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/hakkimizda',
     '/gizlilik-ve-guvenlik',
     '/kargo-takibi',
+    '/kampanya/adaptor',
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     changeFrequency: 'weekly' as const,
