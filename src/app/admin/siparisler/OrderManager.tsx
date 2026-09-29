@@ -97,6 +97,35 @@ export function OrderManager() {
     }
   }
 
+  const handleCancelHepsijet = async () => {
+    if (!selectedOrder) return
+    if (!confirm(`#${selectedOrder.orderNumber} için HepsiJET gönderisi İPTAL edilsin mi? (Kargo henüz teslim alınmamış olmalı; sonra yeniden gönderebilirsiniz.)`)) return
+    setHepsijetSending(true)
+    setHepsijetMsg(null)
+    try {
+      const res = await fetch('/api/admin/orders/hepsijet/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: selectedOrder.id }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setHepsijetMsg({ ok: false, text: data.error || 'İptal edilemedi.' })
+        return
+      }
+      // Kaydet'in eski değerleri geri yazmaması için hem orijinali hem formu temizle
+      setSelectedOrder({ ...selectedOrder, shippingCompany: null, trackingNumber: null })
+      setEditCompany('')
+      setEditTracking('')
+      setHepsijetMsg({ ok: true, text: `HepsiJET gönderisi iptal edildi${data.test ? ' (TEST ortamı)' : ''}. Doğru bilgilerle yeniden gönderebilirsiniz.` })
+      fetchOrders()
+    } catch {
+      setHepsijetMsg({ ok: false, text: 'Bağlantı hatası.' })
+    } finally {
+      setHepsijetSending(false)
+    }
+  }
+
   const handleSendHepsijet = async () => {
     if (!selectedOrder) return
     if (!confirm(`#${selectedOrder.orderNumber} için HepsiJET gönderisi oluşturulsun mu?`)) return
@@ -738,6 +767,16 @@ export function OrderManager() {
                     >
                       <Printer className="w-3.5 h-3.5" /> HepsiJET Etiketini Yazdır (PDF)
                     </a>
+                  )}
+                  {selectedOrder.shippingCompany === 'HepsiJET' && selectedOrder.trackingNumber && !['shipped', 'delivered'].includes(selectedOrder.status) && (
+                    <button
+                      type="button"
+                      onClick={handleCancelHepsijet}
+                      disabled={hepsijetSending}
+                      className="mt-2 ml-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 text-xs font-semibold disabled:opacity-50"
+                    >
+                      <XCircle className="w-3.5 h-3.5" /> HepsiJET Gönderisini İptal Et
+                    </button>
                   )}
                 </div>
               </div>

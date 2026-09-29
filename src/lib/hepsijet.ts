@@ -152,6 +152,30 @@ async function sendDeliveryOrder(order: HepsijetOrderInput, deliveryType: 'RETAI
   }
 }
 
+// Gönderiyi siler (kargo henüz teslim alınmamışken). Silinen barkod aynı numarayla yeniden gönderilebilir;
+// silinmeden aynı numara tekrar gönderilirse HepsiJET "Gönderi numarası sistemde kayıtlı" der.
+export async function cancelHepsijetOrder(barcode: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const token = await getToken()
+    const res = await fetch(`${BASE_URL}/delivery/deleteDeliveryOrder/${encodeURIComponent(barcode)}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Auth-Token': token,
+        'X-Origin': 'integration',
+        'X-Client-Id': 'hj-integration',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({ deleteReason: 'IPTAL' }),
+    })
+    const json: any = await res.json()
+    if (!res.ok || json?.status !== 'OK') return { success: false, error: json?.message || `HTTP ${res.status}` }
+    return { success: true }
+  } catch (e: any) {
+    return { success: false, error: e.message || 'Bilinmeyen hata' }
+  }
+}
+
 // HepsiJET'in zorunlu "ortak barkod" etiketi (10x15 cm), PDF olarak. Barkod = customerDeliveryNo.
 export async function getHepsijetLabelPdf(barcode: string): Promise<Buffer> {
   const token = await getToken()
