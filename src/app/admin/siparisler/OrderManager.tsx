@@ -39,6 +39,8 @@ export function OrderManager() {
   const [editTaxOffice, setEditTaxOffice] = useState('')
   const [editCompanyTitle, setEditCompanyTitle] = useState('')
   const [saving, setSaving] = useState(false)
+  const [hepsijetSyncing, setHepsijetSyncing] = useState(false)
+  const [hepsijetSyncMsg, setHepsijetSyncMsg] = useState<{ ok: boolean; text: string } | null>(null)
   const [hepsijetSending, setHepsijetSending] = useState(false)
   const [hepsijetMsg, setHepsijetMsg] = useState<{ ok: boolean; text: string } | null>(null)
 
@@ -55,8 +57,31 @@ export function OrderManager() {
     }
   }
 
+  // HepsiJET'te kurye paketi aldıysa "Kargolandı", teslim ettiyse "Teslim Edildi" yapar.
+  const syncHepsijet = async (manual = false) => {
+    setHepsijetSyncing(true)
+    try {
+      const res = await fetch('/api/admin/orders/hepsijet/sync', { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) {
+        if (manual) setHepsijetSyncMsg({ ok: false, text: data.error || 'Güncellenemedi.' })
+        return
+      }
+      if (data.updated?.length) {
+        await fetchOrders()
+        setHepsijetSyncMsg({ ok: true, text: `${data.updated.length} sipariş güncellendi: ${data.updated.map((u: any) => `${u.orderNumber} → ${statusMap[u.to]?.label || u.to}`).join(', ')}` })
+      } else if (manual) {
+        setHepsijetSyncMsg({ ok: true, text: `${data.checked} HepsiJET gönderisi kontrol edildi, değişiklik yok.${data.errors?.length ? ` (${data.errors.length} gönderi sorgulanamadı: ${data.errors.join(', ')})` : ''}` })
+      }
+    } catch {
+      if (manual) setHepsijetSyncMsg({ ok: false, text: 'Bağlantı hatası.' })
+    } finally {
+      setHepsijetSyncing(false)
+    }
+  }
+
   useEffect(() => {
-    fetchOrders()
+    fetchOrders().then(() => syncHepsijet())
   }, [])
 
   const handleUpdate = async () => {
@@ -422,8 +447,20 @@ export function OrderManager() {
               className="w-full pl-9 pr-3 py-2 bg-neutral-0 border border-neutral-200 rounded-lg text-xs focus:ring-2 focus:ring-trust-blue-500 focus:outline-none"
             />
           </div>
+
+          <button
+            type="button"
+            onClick={() => syncHepsijet(true)}
+            disabled={hepsijetSyncing}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 text-xs font-semibold disabled:opacity-60 whitespace-nowrap"
+          >
+            <Truck className="w-3.5 h-3.5" /> {hepsijetSyncing ? 'Kontrol ediliyor...' : 'HepsiJET Durumlarını Güncelle'}
+          </button>
         </div>
       </div>
+      {hepsijetSyncMsg && (
+        <p className={`mb-3 text-xs font-medium ${hepsijetSyncMsg.ok ? 'text-emerald-700' : 'text-red-600'}`}>{hepsijetSyncMsg.text}</p>
+      )}
 
       {/* Orders Table */}
       <div className="bg-neutral-0 rounded-xl shadow-[var(--shadow-card)] border border-neutral-200 overflow-hidden">

@@ -152,6 +152,44 @@ async function sendDeliveryOrder(order: HepsijetOrderInput, deliveryType: 'RETAI
   }
 }
 
+export type HepsijetTracking = { deliveryStatus: string | null; lastTransaction: string | null; moved: boolean }
+
+// Gönderi hareketlerini sorgular. Kurye paketi okutmadan önce yanıt sadece {status:'OK'} olur (moved=false);
+// paket alınınca `transactions` dolar (COLLECTED, TRANSFERRING_*, DELIVERING…), teslimde deliveryStatus='DELIVERED'.
+// Bilinmeyen barkod HTTP 400 döner → null.
+export async function getHepsijetTracking(barcode: string): Promise<HepsijetTracking | null> {
+  const token = await getToken()
+  const res = await fetch(`${BASE_URL}/deliveryTransaction/getDeliveryTracking`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Auth-Token': token,
+      'X-Origin': 'integration',
+      'X-Client-Id': 'hj-integration',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify({ deliveries: [{ customerDeliveryNo: barcode }] }),
+  })
+  const json: any = await res.json()
+  if (!res.ok || json?.status !== 'OK') return null
+  const d = json?.data?.[0]
+  if (!d) return { deliveryStatus: null, lastTransaction: null, moved: false }
+  return {
+    deliveryStatus: d.deliveryStatus ?? null,
+    lastTransaction: d.lastTransaction ?? null,
+    moved: Array.isArray(d.transactions) && d.transactions.length > 0,
+  }
+}
+
+// Sipariş durumunu sadece ileri taşır (processing → in_progress → shipped → delivered);
+// pending/cancelled ve geri gitmeye asla dokunmaz.
+export function orderStatusFromTracking(current: string, t: HepsijetTracking): 'shipped' | 'delivered' | null {
+  const next = t.deliveryStatus === 'DELIVERED' ? 'delivered' : t.moved ? 'shipped' : null
+  if (!next) return null
+  const rank: Record<string, number> = { processing: 1, in_progress: 2, shipped: 3, delivered: 4 }
+  return (rank[current] ?? 99) < rank[next] ? next : null
+}
+
 // Gönderiyi siler (kargo henüz teslim alınmamışken). Silinen barkod aynı numarayla yeniden gönderilebilir;
 // silinmeden aynı numara tekrar gönderilirse HepsiJET "Gönderi numarası sistemde kayıtlı" der.
 export async function cancelHepsijetOrder(barcode: string): Promise<{ success: boolean; error?: string }> {

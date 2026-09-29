@@ -38,9 +38,17 @@ async function handleGetOrders(req: Request) {
     }
 
     if (status && status !== 'all') {
-      // BirFatura paneli 'processing' durumunu çekecek şekilde ayarlı; elle 'İşleme Alındı'ya
-      // taşınan siparişlerin de kuyruktan düşmemesi için bu durumu da dahil et.
-      whereClause.status = status === 'processing' ? { in: ['processing', 'in_progress'] } : status
+      // BirFatura paneli 'processing' durumunu çekecek şekilde ayarlı; siparişler faturalanmadan
+      // 'İşleme Alındı'ya ya da (HepsiJET kurye aldığında) 'Kargolandı'ya geçse de kuyruktan düşmesin:
+      // faturası kesilmemiş kargolanmış/teslim edilmiş siparişler de dahil.
+      if (status === 'processing') {
+        whereClause.OR = [
+          { status: { in: ['processing', 'in_progress'] } },
+          { status: { in: ['shipped', 'delivered'] }, invoiceStatus: { in: ['pending', 'failed'] } },
+        ]
+      } else {
+        whereClause.status = status
+      }
     } else {
       // Ödenmemiş (pending) ve başarısız (cancelled) siparişler asla faturalanmaya gönderilmez.
       whereClause.status = { notIn: ['pending', 'cancelled'] }

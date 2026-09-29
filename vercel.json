@@ -1,0 +1,5 @@
+{
+  "crons": [
+    { "path": "/api/cron/hepsijet-sync", "schedule": "0 17 * * *" }
+  ]
+}
