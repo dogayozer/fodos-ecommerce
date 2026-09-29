@@ -14,7 +14,8 @@ const COMPANY_NAME = process.env.HEPSIJET_COMPANY_NAME || 'FODOS'
 const COMPANY_CODE = process.env.HEPSIJET_COMPANY_CODE || 'FODOS'
 const XDOCK_CODE = process.env.HEPSIJET_XDOCK_CODE || 'FODOSFATIH'
 
-const SENDER_ADDRESS_ID = process.env.HEPSIJET_SENDER_ADDRESS_ID || 'hfodo-fodos-611'
+// Gönderici adres kodu test ve canlı ortamda farklı: test 'hfodo-fodos-611', canlı 'fodo-fodos-611' (HepsiJET bildirdi).
+const SENDER_ADDRESS_ID = process.env.HEPSIJET_SENDER_ADDRESS_ID || (HEPSIJET_IS_TEST ? 'hfodo-fodos-611' : 'fodo-fodos-611')
 const SENDER_CITY = process.env.HEPSIJET_SENDER_CITY || 'İstanbul'
 const SENDER_TOWN = process.env.HEPSIJET_SENDER_TOWN || 'FATİH'
 const SENDER_DISTRICT = process.env.HEPSIJET_SENDER_DISTRICT || 'DEMİRTAŞ'
