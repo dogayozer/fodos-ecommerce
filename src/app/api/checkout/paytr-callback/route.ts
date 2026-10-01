@@ -12,6 +12,7 @@ export async function POST(req: Request) {
     const hash = formData.get('hash') as string
     const failed_reason_code = formData.get('failed_reason_code') as string
     const failed_reason_msg = formData.get('failed_reason_msg') as string
+    const test_mode = formData.get('test_mode') as string | null
 
     if (!merchant_oid || !status || !hash) {
       return new NextResponse('Bad Request', { status: 400 })
@@ -32,9 +33,26 @@ export async function POST(req: Request) {
     if (status === 'success') {
       const existingOrder = await prisma.order.findUnique({
         where: { orderNumber: merchant_oid },
-        select: { status: true }
+        select: { status: true, adminNote: true }
       })
-      
+
+      // PayTR mağaza test modundayken (veya canlıda test işleminde) bildirime test_mode=1 ekler;
+      // bu durumda gerçek tahsilat yoktur: siparişi ONAYLAMA (faturalanıp kargolanmasın), nota işle.
+      if (test_mode === '1') {
+        if (existingOrder && existingOrder.status === 'pending') {
+          await prisma.order.update({
+            where: { orderNumber: merchant_oid },
+            data: {
+              adminNote: [existingOrder.adminNote, `PayTR TEST modunda işlem — gerçek tahsilat yok, sipariş onaylanmadı. Tutar: ${parseFloat(total_amount) / 100} TL`]
+                .filter(Boolean)
+                .join('\n'),
+            }
+          })
+        }
+        console.warn('PayTR TEST modu ödemesi, sipariş onaylanmadı:', merchant_oid)
+        return new NextResponse('OK', { status: 200 })
+      }
+
       // Sadece 'pending' veya 'cancelled' ise 'processing' yap.
       // Eğer admin zaten 'shipped' veya 'delivered' yaptıysa PayTR webhook'u bunu geri almasın!
       if (existingOrder && (existingOrder.status === 'pending' || existingOrder.status === 'cancelled')) {
