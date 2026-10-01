@@ -494,14 +494,14 @@ export function OrderManager() {
                   <th className="p-4 font-semibold">Sipariş Durumu</th>
                   <th className="p-4 font-semibold">Fatura (BirFatura)</th>
                   <th className="p-4 font-semibold">Kargo</th>
-                  <th className="p-4 font-semibold text-right">İşlemler</th>
+                  <th className="p-4 font-semibold text-right sticky right-0 bg-neutral-50 shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.12)]">İşlemler</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-200">
                 {filteredOrders.map(order => {
                   const isInvoiced = order.invoiceStatus === 'invoiced'
                   return (
-                    <tr key={order.id} className="hover:bg-neutral-50 transition-colors">
+                    <tr key={order.id} className="group hover:bg-neutral-50 transition-colors">
                       <td className="p-4">
                         <div className="flex items-center gap-1.5">
                           <div className="font-bold text-neutral-900 font-mono">{order.orderNumber}</div>
@@ -535,7 +535,7 @@ export function OrderManager() {
                         )}
                       </td>
                       <td className="p-4">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${statusMap[order.status]?.color || 'bg-neutral-100 text-neutral-900'}`}>
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${statusMap[order.status]?.color || 'bg-neutral-100 text-neutral-900'} whitespace-nowrap`}>
                           {statusMap[order.status]?.label || order.status}
                         </span>
                         {isUnpaid(order) && order.adminNote && (
@@ -601,7 +601,7 @@ export function OrderManager() {
                           <span className="text-xs text-neutral-500">-</span>
                         )}
                       </td>
-                      <td className="p-4 text-right">
+                      <td className="p-4 text-right sticky right-0 bg-neutral-0 group-hover:bg-neutral-50 transition-colors shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.12)]">
                         <div className="flex items-center justify-end gap-2">
                           {order.invoiceUrl && (
                             <a
