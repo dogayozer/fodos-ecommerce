@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authenticateBirfatura } from '@/lib/birfatura'
+import { sendShippedMail, safeMail } from '@/lib/orderMail'
 
 /**
  * BirFatura Fatura / Kargo Durumu Güncelleme Webhook Endpoint'i
@@ -110,6 +111,7 @@ export async function POST(req: Request) {
       where: { id: existingOrder.id },
       data: updateData
     })
+    await safeMail(() => sendShippedMail(updatedOrder.orderNumber))
 
     return NextResponse.json({
       status: true,

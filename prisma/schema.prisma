@@ -132,6 +132,9 @@ model Order {
   invoiceNumber String?     // E-Fatura / E-Arşiv No
   invoiceUrl    String?     // BirFatura Fatura PDF URL
   invoicedAt    DateTime?   // Faturalanma Tarihi
+  adminNotifiedAt DateTime? // Telefona "yeni sipariş" bildirimi gönderildi mi (tekrar göndermeyi önler)
+  confirmMailAt DateTime?  // Müşteriye "sipariş özeti" maili gönderildi mi
+  shippedMailAt DateTime?  // Müşteriye "kargoya verildi" maili gönderildi mi
   taxNumber     String?     // TC Kimlik No veya Vergi No
   taxOffice     String?     // Vergi Dairesi
   companyTitle  String?     // Şirket Unvanı
@@ -282,4 +285,12 @@ model MarketplaceSyncLog {
   errorMessage String?
   startedAt    DateTime @default(now())
   completedAt  DateTime?
+}
+
+model AdminPushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
 }

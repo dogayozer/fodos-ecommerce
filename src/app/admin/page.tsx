@@ -8,6 +8,7 @@ import { verifyAdminSessionToken } from '@/lib/adminSession'
 export const metadata: Metadata = {
   title: "Admin Panel | Fodos",
   robots: { index: false, follow: false },
+  manifest: '/admin-manifest.webmanifest',
 };
 
 export default async function AdminPage() {

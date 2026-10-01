@@ -8,6 +8,7 @@ import { CouponManager } from './CouponManager'
 import { CategoryManager } from './CategoryManager'
 import { DealerPriceManager } from './DealerPriceManager'
 import { OrderNotifier, playNotificationSound } from '@/components/OrderNotifier'
+import { AdminPushToggle } from '@/components/AdminPushToggle'
 import { Users, Package, XCircle } from 'lucide-react'
 
 interface DashboardStats {
@@ -183,7 +184,8 @@ export function Dashboard({ stats }: { stats: DashboardStats }) {
             <h1 className="text-2xl font-bold text-trust-blue-600">Admin Dashboard</h1>
             <span className="bg-trust-blue-100 text-trust-blue-600 text-xs font-bold px-2 py-1 rounded">v2.1</span>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-start">
+            <AdminPushToggle />
             <button
               onClick={() => playNotificationSound()}
               className="text-sm px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold rounded-md transition-colors"

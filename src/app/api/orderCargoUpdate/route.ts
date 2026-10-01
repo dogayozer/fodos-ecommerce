@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { sendOrderConfirmationMail, sendShippedMail, safeMail } from '@/lib/orderMail'
 import { prisma } from '@/lib/prisma'
 import { authenticateBirfatura, findOrderByBirfaturaId, readJsonBody, statusFromId } from '@/lib/birfatura'
 
@@ -23,6 +24,7 @@ export async function POST(req: Request) {
     if (status && order.status !== 'cancelled') data.status = status
 
     await prisma.order.update({ where: { id: order.id }, data })
+    await safeMail(() => sendShippedMail(order.orderNumber))
     return NextResponse.json({ status: true })
   } catch (error: any) {
     console.error('BirFatura cargo update error:', error)

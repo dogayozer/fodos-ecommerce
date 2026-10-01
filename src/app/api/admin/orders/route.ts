@@ -1,3 +1,4 @@
+import { sendOrderConfirmationMail, sendShippedMail, safeMail } from '@/lib/orderMail'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
@@ -64,6 +65,9 @@ export async function PUT(req: Request) {
       where: { id },
       data: updateData
     })
+    if (updatedOrder.status === 'shipped' || updatedOrder.status === 'delivered') {
+      await safeMail(() => sendShippedMail(updatedOrder.orderNumber))
+    }
 
     return NextResponse.json({ success: true, order: updatedOrder })
   } catch (error: any) {

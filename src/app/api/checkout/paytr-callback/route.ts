@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import crypto from 'crypto'
+import { notifyPaidOrder } from '@/lib/adminPush'
+import { sendOrderConfirmationMail, sendShippedMail, safeMail } from '@/lib/orderMail'
 
 export async function POST(req: Request) {
   try {
@@ -60,6 +62,8 @@ export async function POST(req: Request) {
           where: { orderNumber: merchant_oid },
           data: { status: 'processing' }
         })
+        try { await notifyPaidOrder(merchant_oid) } catch (e) { console.error('Push bildirimi hatası:', e) }
+        await safeMail(() => sendOrderConfirmationMail(merchant_oid))
         // HepsiJET gönderisi burada otomatik açılmaz: siparişlerin bir kısmı Aras ile gidiyor,
         // gönderi admin panelindeki "HepsiJET'e Gönder" butonuyla sipariş bazında açılır.
       }

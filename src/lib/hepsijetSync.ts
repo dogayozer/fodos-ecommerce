@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { sendOrderConfirmationMail, sendShippedMail, safeMail } from '@/lib/orderMail'
 import { getHepsijetTracking, orderStatusFromTracking, HEPSIJET_IS_TEST } from '@/lib/hepsijet'
 
 // HepsiJET gönderilerini sorgular: kurye paketi aldıysa "Kargolandı", teslim ettiyse "Teslim Edildi" yapar.
@@ -27,6 +28,7 @@ export async function syncHepsijetOrders() {
       const next = orderStatusFromTracking(order.status, tracking)
       if (next) {
         await prisma.order.update({ where: { id: order.id }, data: { status: next } })
+        await safeMail(() => sendShippedMail(order.orderNumber))
         updated.push({ orderNumber: order.orderNumber, from: order.status, to: next, last: tracking.lastTransaction })
       }
     } catch {
