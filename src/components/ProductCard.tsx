@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ShoppingCart } from 'lucide-react'
+import { CAMPAIGN } from '@/lib/campaignConfig'
 
 export function ProductCard({ product }: { product: any }) {
   const outOfStock = product.stock_qty <= 0
@@ -13,7 +14,7 @@ export function ProductCard({ product }: { product: any }) {
     <Link href={`/urun/${product.slug}`} className="group bg-neutral-0 rounded-[var(--radius-xl)] border border-neutral-200 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] transition-all duration-normal overflow-hidden flex flex-col h-full relative">
       {hasDiscount && (
         <div className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-action-orange-500 text-white text-[9px] sm:text-xs font-bold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-[var(--radius-sm)] z-10 shadow-[var(--shadow-button)] whitespace-nowrap">
-          {product.campaign ? 'Kampanya' : 'Web'} %{discountPercent} İndirim
+          {product.campaign && CAMPAIGN.active ? 'Kampanya' : 'Web'} %{discountPercent} İndirim
         </div>
       )}
       <div className="aspect-square bg-neutral-50 flex items-center justify-center p-2 sm:p-4 relative overflow-hidden">

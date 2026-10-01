@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { ProductCard } from '@/components/ProductCard'
 import { CAMPAIGN, discountPercent, getCampaignProducts } from '@/lib/campaign'
 
@@ -24,7 +24,8 @@ export default async function AdaptorKampanyasiPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  if (!CAMPAIGN.active) notFound()
+  // Kampanya kapalıyken bağlantısı olanlar 404 görmesin: geçici (307) olarak şarj kategorisine
+  if (!CAMPAIGN.active) redirect('/kategori/sarj-aleti-sarj-kablosu')
 
   const sp = await searchParams
   const sirala: SortKey = typeof sp.sirala === 'string' && sp.sirala in SORTS ? (sp.sirala as SortKey) : 'indirim'

@@ -1,11 +1,12 @@
 // Client bileşenlerinin de import edebilmesi için prisma içermeyen kampanya sabitleri.
-// Bitirmek için active=false yap (pop-up, üst şerit ve sepet hatırlatması kalkar)
-// ve ürünlerdeki Product.campaign alanını temizle.
+// active=false: pop-up, üst şerit, sepet hatırlatması, kart etiketi kalkar; kampanya sayfası kategoriye
+// yönlendirir ve sitemap'ten çıkar. (Fiyatlar ayrıdır: geri almak için kampanya yedeğinden yazılır.)
+// Yeniden açmak için active=true yapıp yayına al.
 export const CAMPAIGN = {
   key: 'adaptor',
   path: '/kampanya/adaptor',
   name: 'Adaptör Kampanyası',
-  active: true,
+  active: false,
 }
 
 export type CampaignProduct = {
