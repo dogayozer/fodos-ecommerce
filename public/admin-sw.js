@@ -1,4 +1,13 @@
-// Fodos Admin — yalnızca yeni sipariş bildirimi (web push) için; önbellekleme yapmaz.
+// Fodos Admin — yeni sipariş bildirimi (web push) için; önbellekleme yapmaz.
+// Chrome'un "uygulamayı yükle" ölçütü fetch işleyicisi aradığı için sayfa istekleri doğrudan ağa iletilir.
+self.addEventListener('install', () => self.skipWaiting())
+self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()))
+self.addEventListener('fetch', (event) => {
+  if (event.request.mode === 'navigate') {
+    event.respondWith(fetch(event.request).catch(() => new Response('Bağlantı yok. İnternete bağlanıp tekrar deneyin.', { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' } })))
+  }
+})
+
 self.addEventListener('push', (event) => {
   let data = {}
   try { data = event.data ? event.data.json() : {} } catch {}

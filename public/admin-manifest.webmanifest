@@ -1,4 +1,5 @@
 {
+  "id": "/admin",
   "name": "Fodos Admin",
   "short_name": "Fodos Admin",
   "start_url": "/admin/siparisler",
