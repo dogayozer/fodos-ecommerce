@@ -3,8 +3,8 @@ import { prisma } from '@/lib/prisma'
 // Müşteri mailleri Resend ile gider (RESEND_API_KEY Vercel env'inde). Anahtar yoksa sessizce atlanır.
 // Gönderen adresler, Resend'de doğrulanmış alan adlarına ait olmalı.
 const BRANDS = {
-  fodos: { name: 'Fodos', from: 'Fodos <siparis@fodos.com.tr>', site: 'https://www.fodos.com.tr', support: 'destek@fodos.com.tr', color: '#ea580c' },
-  mpm: { name: 'Mobil Parça Merkezi', from: 'Mobil Parça Merkezi <siparis@mobilparcamerkezi.com>', site: 'https://www.mobilparcamerkezi.com', support: 'destek@mobilparcamerkezi.com', color: '#ea580c' },
+  fodos: { name: 'Fodos', from: 'Fodos <siparis@fodos.com.tr>', site: 'https://www.fodos.com.tr', phone: '0532 232 44 99', color: '#ea580c' },
+  mpm: { name: 'Mobil Parça Merkezi', from: 'Mobil Parça Merkezi <siparis@mobilparcamerkezi.com>', site: 'https://www.mobilparcamerkezi.com', phone: '0532 232 44 99', color: '#ea580c' },
 }
 
 const HEPSIJET_TRACK_URL = 'https://www.hepsijet.com/'
@@ -13,7 +13,7 @@ const PAID = ['processing', 'in_progress', 'shipped', 'delivered']
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 const tl = (n: number) => `${n.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL`
 
-async function sendMail(from: string, to: string, subject: string, html: string) {
+export async function sendMail(from: string, to: string, subject: string, html: string) {
   const key = process.env.RESEND_API_KEY
   if (!key) return false
   const res = await fetch('https://api.resend.com/emails', {
@@ -26,12 +26,21 @@ async function sendMail(from: string, to: string, subject: string, html: string)
   return true
 }
 
-function layout(brand: (typeof BRANDS)['fodos'], title: string, body: string) {
+type Company = { companyName: string | null; address: string | null }
+
+function layout(brand: (typeof BRANDS)['fodos'], title: string, body: string, company: Company) {
+  const legal = [company.companyName, company.address].filter(Boolean).map((x) => esc(String(x))).join(' — ')
+  const link = (path: string, label: string) => `<a href="${brand.site}/${path}" style="color:#777">${label}</a>`
   return `<div style="background:#f5f5f5;padding:24px 12px;font-family:Arial,Helvetica,sans-serif;color:#222">
 <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e5e5e5">
 <div style="background:${brand.color};color:#fff;padding:18px 24px;font-size:20px;font-weight:bold">${brand.name}</div>
 <div style="padding:24px"><h2 style="margin:0 0 12px;font-size:18px">${title}</h2>${body}
-<p style="margin:24px 0 0;font-size:12px;color:#777">Sorularınız için ${brand.support} adresine yazabilir veya <a href="${brand.site}" style="color:${brand.color}">${brand.site.replace('https://', '')}</a> üzerinden bize ulaşabilirsiniz.</p>
+<p style="margin:24px 0 0;font-size:13px">Sorularınız için bize <b>${brand.phone}</b> numaralı hattan (arama / WhatsApp) veya <a href="${brand.site}" style="color:${brand.color}">${brand.site.replace('https://', '')}</a> üzerinden ulaşabilirsiniz.</p>
+</div>
+<div style="background:#fafafa;border-top:1px solid #eee;padding:16px 24px;font-size:11px;line-height:1.6;color:#777">
+Bu e-posta, sitemizden verdiğiniz sipariş nedeniyle otomatik olarak gönderilmiştir; lütfen bu e-postayı yanıtlamayınız.<br>
+Cayma hakkı, iade ve garanti koşulları için: ${link('iade-ve-garanti', 'İade ve Garanti')} · ${link('mesafeli-satis-sozlesmesi', 'Mesafeli Satış Sözleşmesi')} · ${link('kvkk', 'KVKK Aydınlatma Metni')}<br>
+${legal}
 </div></div></div>`
 }
 
@@ -40,6 +49,11 @@ async function loadOrder(orderNumber: string) {
     where: { orderNumber },
     include: { customer: { select: { name: true, email: true } }, items: { include: { product: { select: { title: true } } } } },
   })
+}
+
+async function loadCompany(): Promise<Company> {
+  const st = await prisma.storeSettings.findUnique({ where: { id: 'default' }, select: { companyName: true, address: true } })
+  return { companyName: st?.companyName ?? null, address: st?.address ?? null }
 }
 
 const realEmail = (e?: string | null) => (e && !e.startsWith('guest_') ? e : null)
@@ -67,10 +81,11 @@ export async function sendOrderConfirmationMail(orderNumber: string) {
     `<tr><td style="padding:4px 0;${bold ? 'font-weight:bold;' : ''}">${label}</td><td style="padding:4px 0;text-align:right;${bold ? 'font-weight:bold;' : ''}">${v}</td></tr>`
   const addr = [order.shippingAddress, order.shippingDistrict, order.shippingCity].filter(Boolean).map((x) => esc(String(x))).join(', ')
 
+  const company = await loadCompany()
   const html = layout(
     brand,
     'Siparişiniz alındı, teşekkür ederiz!',
-    `<p style="margin:0 0 12px">Merhaba ${esc(order.customer?.name || '')},<br>ödemeniz onaylandı ve siparişiniz hazırlanmaya başlandı. Sipariş özetiniz:</p>
+    `<p style="margin:0 0 12px">Merhaba ${esc(order.customer?.name || '')},<br>ödemeniz onaylandı ve siparişiniz hazırlanmaya başlandı. Sipariş özetiniz aşağıdadır:</p>
 <p style="margin:0 0 8px"><b>Sipariş No:</b> ${order.orderNumber}<br><b>Tarih:</b> ${order.createdAt.toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul', dateStyle: 'short', timeStyle: 'short' })}</p>
 <table style="width:100%;border-collapse:collapse;font-size:14px">${rows}</table>
 <table style="width:100%;border-collapse:collapse;font-size:14px;margin-top:8px">
@@ -78,7 +93,8 @@ ${order.discountApplied > 0 ? line('İndirim', '-' + tl(order.discountApplied)) 
 ${line('Kargo', order.shippingCost > 0 ? tl(order.shippingCost) : 'Ücretsiz')}
 ${line('Toplam', tl(order.totalAmount), true)}</table>
 ${addr ? `<p style="margin:16px 0 0;font-size:14px"><b>Teslimat adresi:</b><br>${addr}</p>` : ''}
-<p style="margin:16px 0 0;font-size:14px">Siparişiniz kargoya verildiğinde takip bilgisiyle birlikte ayrıca haber vereceğiz.</p>`
+<p style="margin:16px 0 0;font-size:14px">Siparişiniz kargoya verildiğinde takip bilgisiyle birlikte ayrıca haber vereceğiz.</p>`,
+    company
   )
   await sendMail(brand.from, to, `Siparişiniz alındı — ${order.orderNumber}`, html)
 }
@@ -97,6 +113,7 @@ export async function sendShippedMail(orderNumber: string) {
   const brand = BRANDS[order.store === 'mpm' ? 'mpm' : 'fodos']
   const isHepsijet = (order.shippingCompany || '').toLowerCase().includes('hepsijet')
 
+  const company = await loadCompany()
   const html = layout(
     brand,
     'Siparişiniz kargoya verildi',
@@ -105,7 +122,8 @@ export async function sendShippedMail(orderNumber: string) {
 ${order.shippingCompany ? `<tr><td style="padding:4px 16px 4px 0;color:#777">Kargo firması</td><td><b>${esc(order.shippingCompany)}</b></td></tr>` : ''}
 ${order.trackingNumber ? `<tr><td style="padding:4px 16px 4px 0;color:#777">Takip no</td><td><b>${esc(order.trackingNumber)}</b></td></tr>` : ''}
 </table>
-${isHepsijet ? `<p style="margin:16px 0"><a href="${HEPSIJET_TRACK_URL}" style="display:inline-block;background:${brand.color};color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold">Kargomu Takip Et</a></p><p style="margin:0;font-size:12px;color:#777">HepsiJET sitesinde gönderi takibi bölümüne yukarıdaki takip numarasını girerek kargonuzu izleyebilirsiniz.</p>` : ''}`
+${isHepsijet ? `<p style="margin:16px 0"><a href="${HEPSIJET_TRACK_URL}" style="display:inline-block;background:${brand.color};color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold">Kargomu Takip Et</a></p><p style="margin:0;font-size:12px;color:#777">HepsiJET sitesinde gönderi takibi bölümüne yukarıdaki takip numarasını girerek kargonuzu izleyebilirsiniz.</p>` : ''}`,
+    company
   )
   await sendMail(brand.from, to, `Siparişiniz kargoya verildi — ${order.orderNumber}`, html)
 }
