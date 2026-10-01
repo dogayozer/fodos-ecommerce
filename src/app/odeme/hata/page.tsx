@@ -1,9 +1,11 @@
 import Link from 'next/link'
 import { XCircle } from 'lucide-react'
+import PaymentReturn from '@/components/PaymentReturn'
 
 export default function PaymentFailPage() {
   return (
     <div className="flex-1 w-full flex items-center justify-center py-20 px-4">
+      <PaymentReturn />
       <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center">
         <XCircle className="mx-auto text-red-500 mb-6" size={64} />
         <h1 className="text-3xl font-bold text-gray-900 mb-4">Ödeme Başarısız</h1>

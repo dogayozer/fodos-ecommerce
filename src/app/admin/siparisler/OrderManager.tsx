@@ -12,6 +12,11 @@ const statusMap: any = {
   cancelled: { label: 'İptal / Ödeme Başarısız', color: 'bg-red-100 text-red-800 border-red-200' }
 }
 
+// Ödemesi PayTR (veya admin) tarafından onaylanmış siparişler; pending/cancelled ödenmemiş sayılır
+const PAID_STATUSES = ['processing', 'in_progress', 'shipped', 'delivered']
+const isPaid = (o: any) => PAID_STATUSES.includes(o.status)
+const isUnpaid = (o: any) => o.status === 'pending' || o.status === 'cancelled'
+
 const invoiceStatusMap: any = {
   invoiced: { label: 'Faturalandı', color: 'bg-emerald-100 text-emerald-800 border-emerald-300' },
   pending: { label: 'Fatura Bekliyor', color: 'bg-amber-50 text-amber-700 border-amber-200' },
@@ -22,7 +27,7 @@ const invoiceStatusMap: any = {
 export function OrderManager() {
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('all')
+  const [activeTab, setActiveTab] = useState('paid')
   const [storeFilter, setStoreFilter] = useState<'all' | 'fodos' | 'mpm'>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedOrder, setSelectedOrder] = useState<any>(null)
@@ -324,12 +329,16 @@ export function OrderManager() {
 
     // Tab filter
     if (activeTab === 'all') return true
-    if (activeTab === 'pending_invoice') return (o.invoiceStatus === 'pending' || !o.invoiceStatus) && o.status !== 'cancelled'
+    if (activeTab === 'paid') return isPaid(o)
+    if (activeTab === 'unpaid') return isUnpaid(o)
+    if (activeTab === 'pending_invoice') return (o.invoiceStatus === 'pending' || !o.invoiceStatus) && isPaid(o)
     if (activeTab === 'invoiced') return o.invoiceStatus === 'invoiced'
     return o.status === activeTab
   })
 
-  const uninvoicedCount = orders.filter(o => (o.invoiceStatus === 'pending' || !o.invoiceStatus) && o.status !== 'cancelled').length
+  const paidCount = orders.filter(isPaid).length
+  const unpaidCount = orders.filter(isUnpaid).length
+  const uninvoicedCount = orders.filter(o => (o.invoiceStatus === 'pending' || !o.invoiceStatus) && isPaid(o)).length
   const invoicedCount = orders.filter(o => o.invoiceStatus === 'invoiced').length
 
   return (
@@ -381,6 +390,12 @@ export function OrderManager() {
       <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center mb-6">
         <div className="flex space-x-2 overflow-x-auto pb-2 md:pb-0">
           <button
+            onClick={() => setActiveTab('paid')}
+            className={`px-3 py-2 rounded-lg font-medium text-xs whitespace-nowrap transition-colors ${activeTab === 'paid' ? 'bg-trust-blue-600 text-white' : 'bg-neutral-0 text-neutral-500 hover:bg-neutral-100 border border-neutral-200'}`}
+          >
+            Ödemesi Alınanlar ({paidCount})
+          </button>
+          <button
             onClick={() => setActiveTab('all')}
             className={`px-3 py-2 rounded-lg font-medium text-xs whitespace-nowrap transition-colors ${activeTab === 'all' ? 'bg-trust-blue-600 text-white' : 'bg-neutral-0 text-neutral-500 hover:bg-neutral-100 border border-neutral-200'}`}
           >
@@ -401,10 +416,10 @@ export function OrderManager() {
             Faturalananlar ({invoicedCount})
           </button>
           <button
-            onClick={() => setActiveTab('pending')}
-            className={`px-3 py-2 rounded-lg font-medium text-xs whitespace-nowrap transition-colors ${activeTab === 'pending' ? 'bg-yellow-500 text-white' : 'bg-neutral-0 text-neutral-500 hover:bg-neutral-100 border border-neutral-200'}`}
+            onClick={() => setActiveTab('unpaid')}
+            className={`px-3 py-2 rounded-lg font-medium text-xs whitespace-nowrap transition-colors ${activeTab === 'unpaid' ? 'bg-yellow-500 text-white' : 'bg-neutral-0 text-neutral-500 hover:bg-neutral-100 border border-neutral-200'}`}
           >
-            Bekleyenler
+            Ödenmemiş / Başarısız ({unpaidCount})
           </button>
           <button
             onClick={() => setActiveTab('shipped')}
@@ -523,6 +538,11 @@ export function OrderManager() {
                         <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${statusMap[order.status]?.color || 'bg-neutral-100 text-neutral-900'}`}>
                           {statusMap[order.status]?.label || order.status}
                         </span>
+                        {isUnpaid(order) && order.adminNote && (
+                          <div className="mt-1 text-[10px] leading-tight text-neutral-500 max-w-[200px]" title={order.adminNote}>
+                            {order.adminNote.replace(/^PayTR Ödeme Başarısız: /, '').slice(0, 70)}
+                          </div>
+                        )}
                       </td>
                       <td className="p-4">
                         {isInvoiced ? (
@@ -559,10 +579,10 @@ export function OrderManager() {
                               </div>
                             )}
                           </div>
-                        ) : order.status === 'cancelled' ? (
+                        ) : isUnpaid(order) ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-neutral-100 text-neutral-500 border border-neutral-200">
                             <span className="w-1.5 h-1.5 rounded-full bg-neutral-400"></span>
-                            Faturaya Gerek Yok
+                            {order.status === 'cancelled' ? 'Faturaya Gerek Yok' : 'Ödeme Bekleniyor'}
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">

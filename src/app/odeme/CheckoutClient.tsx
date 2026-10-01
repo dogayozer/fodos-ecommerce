@@ -112,10 +112,8 @@ export function CheckoutClient({ shippingFee, shippingThreshold }: { shippingFee
         throw new Error(data.error || 'Sipariş oluşturulamadı')
       }
 
-      // Clear cart
-      localStorage.removeItem('cart')
-      localStorage.removeItem('appliedCoupon')
-      window.dispatchEvent(new Event('cartUpdated'))
+      // Sepet burada temizlenmez: ödeme başarısız olursa müşteri sepetine dönüp tekrar deneyebilsin.
+      // Başarılı ödemede /odeme/basarili sayfası (PaymentReturn) temizler.
 
       // Set Token to show PayTR iFrame
       setPaytrToken(data.token)
