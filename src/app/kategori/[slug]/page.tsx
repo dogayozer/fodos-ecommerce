@@ -27,7 +27,9 @@ export async function generateMetadata({
   }
 
   const name = toTitleCase(data.category.name)
-  const pageTitle = `${name} | Fodos`.length <= MAX_TITLE ? `${name} | Fodos` : name.slice(0, MAX_TITLE - 1).trim() + '…'
+  // Aranan kelimeler ("... fiyatları") başlıkta olsun; sığmazsa sırayla kısalt
+  const pageTitle = [`${name} Fiyatları ve Modelleri | Fodos`, `${name} Fiyatları | Fodos`, `${name} | Fodos`].find((t) => t.length <= MAX_TITLE)
+    ?? name.slice(0, MAX_TITLE - 1).trim() + '…'
   const desc = `${name} çeşitleri uygun fiyatlarla Fodos'ta. Orijinal, test edilmiş yedek parçalar, aynı gün kargo ve stoktan teslim.`
   const pageDescription = desc.length > MAX_DESC ? desc.slice(0, MAX_DESC - 1).trim() + '…' : desc
 

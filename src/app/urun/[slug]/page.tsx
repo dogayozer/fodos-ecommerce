@@ -45,6 +45,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   // kesiliyor. Ürüne özel başlık her zaman genel Fodos ekinden daha değerli anahtar
   // kelime içerdiği için önceliklendiriliyor; ek ancak sığdığı kadar ekleniyor.
   const MAX_TITLE = 60
+  // Uzun başlığı kelimenin ortasından değil, son tam kelimede keser ("…" eklemez): Google kesik "Dü…" yerine
+  // tam anahtar kelimeleri gösterir.
+  const cutAtWord = (t: string, max: number) => {
+    const cut = t.slice(0, max)
+    const i = cut.lastIndexOf(' ')
+    return (i > max * 0.6 && t[max] !== ' ' ? cut.slice(0, i) : cut).trim()
+  }
   const MAX_DESC = 155
   const shortSuffix = ' | Fodos'
   const pageTitle =
@@ -52,7 +59,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       ? `${product.title}${shortSuffix}`
       : product.title.length <= MAX_TITLE
         ? product.title
-        : product.title.slice(0, MAX_TITLE - 1).trim() + '…'
+        : cutAtWord(product.title, MAX_TITLE)
 
   const rawDesc = (product.description_raw || defaultDescription).replace(/;/g, ' ').replace(/\s+/g, ' ').trim()
   const pageDescription = rawDesc.length > MAX_DESC ? rawDesc.slice(0, MAX_DESC - 1).trim() + '…' : rawDesc
