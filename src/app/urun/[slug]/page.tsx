@@ -36,10 +36,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     model && categoryName ? `${model} ${categoryName.toLowerCase()}` : '',
     'uyumlu yedek parça',
     'telefon yedek parça',
+    'cep telefonu yedek parça',
+    'cep telefonu parçası',
     'kaliteli telefon parçası'
   ].filter(Boolean)
 
-  const defaultDescription = `${product.title} modeli için uyumlu ve kaliteli ${categoryName.toLowerCase()}. Sirkeci toptan telefon parçası güvencesiyle en uygun fiyatlarla Fodos'ta. Aynı gün kargo ve stoktan teslim!`
+  const defaultDescription = `${product.title} modeli için uyumlu ve kaliteli ${categoryName.toLowerCase()}. Sirkeci'den cep telefonu parçası güvencesiyle en uygun fiyatlarla Fodos'ta. Aynı gün kargo ve stoktan teslim!`
 
   // Google arama sonuçlarında <title> ~60, meta description ~155 karakterden sonra
   // kesiliyor. Ürüne özel başlık her zaman genel Fodos ekinden daha değerli anahtar

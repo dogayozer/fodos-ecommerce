@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 import { ProductCard } from '@/components/ProductCard'
 import { HomeSearchForm } from '@/components/HomeSearchForm'
 import { RotatingHeroText } from '@/components/RotatingHeroText'
+import { HomeFaq } from '@/components/HomeFaq'
 
 export const revalidate = 300; // 5 dakikada bir sayfayı yenile — vitrin galerisindeki rastgele
 // dış CDN görsellerinin Next.js önbelleğinde daha uzun kalması için (60sn'de bir değişince her
@@ -188,7 +189,22 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-      
+
+      {/* SEO metni: aranan ifadeler sayfada görünür içerikte de geçsin */}
+      <section className="py-12 bg-neutral-50">
+        <div className="px-4 sm:px-6 lg:px-8 max-w-4xl">
+          <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-3">Cep Telefonu Yedek Parça ve Tamir Malzemeleri</h2>
+          <p className="text-sm sm:text-base text-neutral-600 leading-relaxed">
+            Fodos&apos;ta Apple, Samsung, Xiaomi, Huawei, Oppo ve daha birçok markanın modeline uygun cep telefonu yedek parça
+            seçeneklerini bulabilirsiniz. Ekran, batarya, şarj soketi, arka kapak, kamera ve flex kablo gibi her cep telefonu
+            parçası stoktan, test edilerek gönderilir. Teknik servisler ve bireysel kullanıcılar için Sirkeci&apos;den toptan ve
+            perakende cep telefonu parçası tedariği; siparişleriniz aynı gün kargoda.
+          </p>
+        </div>
+      </section>
+
+      <HomeFaq />
+
     </main>
   )
 }
