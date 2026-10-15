@@ -185,6 +185,32 @@ export function OrderManager() {
     }
   }
 
+  const handleExtraHepsijet = async () => {
+    if (!selectedOrder) return
+    if (!confirm(`#${selectedOrder.orderNumber} için EK bir HepsiJET gönderisi (yeni barkod) oluşturulsun mu? Ana gönderi etkilenmez.`)) return
+    setHepsijetSending(true)
+    setHepsijetMsg(null)
+    try {
+      const res = await fetch('/api/admin/orders/hepsijet/extra', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: selectedOrder.id }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setHepsijetMsg({ ok: false, text: data.error || 'Ek gönderi oluşturulamadı.' })
+        return
+      }
+      setSelectedOrder({ ...selectedOrder, extraTrackingNumbers: data.extraTrackingNumbers })
+      setHepsijetMsg({ ok: true, text: `Ek HepsiJET gönderisi oluşturuldu${data.test ? ' (TEST ortamı)' : ''}. Barkod: ${data.barcode}` })
+      fetchOrders()
+    } catch {
+      setHepsijetMsg({ ok: false, text: 'Bağlantı hatası.' })
+    } finally {
+      setHepsijetSending(false)
+    }
+  }
+
   const openEditModal = (order: any) => {
     setHepsijetMsg(null)
     setSelectedOrder(order)
@@ -825,6 +851,30 @@ export function OrderManager() {
                       <Printer className="w-3.5 h-3.5" /> HepsiJET Etiketini Yazdır (PDF)
                     </a>
                   )}
+                  {selectedOrder.shippingCompany === 'HepsiJET' && selectedOrder.trackingNumber && !['pending', 'cancelled'].includes(selectedOrder.status) && (
+                    <button
+                      type="button"
+                      onClick={handleExtraHepsijet}
+                      disabled={hepsijetSending}
+                      className="mt-2 ml-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 text-xs font-semibold disabled:opacity-50"
+                    >
+                      <Truck className="w-3.5 h-3.5" /> Ek Gönderi Oluştur (eksik ürün / yeniden gönderim)
+                    </button>
+                  )}
+                  {(selectedOrder.extraTrackingNumbers || '').split(',').filter(Boolean).map((b: string) => (
+                    <div key={b} className="mt-2 flex items-center gap-2 text-xs">
+                      <span className="font-semibold text-neutral-900">Ek gönderi:</span>
+                      <span className="font-mono text-neutral-500">{b}</span>
+                      <a
+                        href={`/api/admin/orders/hepsijet/label?id=${selectedOrder.id}&barcode=${encodeURIComponent(b)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-orange-600 text-white hover:bg-orange-700 font-semibold"
+                      >
+                        <Printer className="w-3 h-3" /> Etiket (PDF)
+                      </a>
+                    </div>
+                  ))}
                   {selectedOrder.shippingCompany === 'HepsiJET' && selectedOrder.trackingNumber && !['shipped', 'delivered'].includes(selectedOrder.status) && (
                     <button
                       type="button"

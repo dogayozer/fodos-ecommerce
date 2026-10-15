@@ -100,6 +100,9 @@ export default async function SiparislerimPage() {
                       <div>
                         <span className="block text-xs text-gray-500">Kargo Firması: <strong className="text-gray-900">{order.shippingCompany}</strong></span>
                         <span className="block text-sm font-bold text-gray-900">Takip No: {order.trackingNumber}</span>
+                        {(order.extraTrackingNumbers || '').split(',').filter(Boolean).map((b: string) => (
+                          <span key={b} className="block text-sm font-bold text-gray-900">Ek Gönderi Takip No: {b}</span>
+                        ))}
                       </div>
                       <a 
                         href={`https://www.google.com/search?q=${order.shippingCompany}+kargo+takip+${order.trackingNumber}`}

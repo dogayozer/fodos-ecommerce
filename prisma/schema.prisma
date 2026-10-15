@@ -124,6 +124,7 @@ model Order {
   shippingAddress String?
   shippingCompany String?     // Kargo Firması (Örn: Yurtiçi Kargo)
   trackingNumber  String?     // Kargo Takip No
+  extraTrackingNumbers String? // Ek HepsiJET gönderi barkodları (eksik/yeniden gönderim), virgülle ayrılmış
   status        String      @default("pending") // pending, processing, shipped, delivered, cancelled
   store         String      @default("fodos") // fodos, mpm — hangi markadan geldiği
   adminNote     String?     // Admin tarafından siparişe eklenen özel not

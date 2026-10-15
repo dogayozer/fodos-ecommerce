@@ -64,6 +64,7 @@ function splitName(fullName: string): { firstName: string; lastName: string } {
 
 export interface HepsijetOrderInput {
   orderNumber: string
+  barcode?: string // verilmezse barkod = sipariş no; ek gönderilerde "<sipariş no>-2"
   customerName: string
   customerPhone: string
   customerEmail?: string | null
@@ -84,7 +85,7 @@ function buildDeliveryBody(order: HepsijetOrderInput, deliveryType: 'RETAIL' | '
   return {
     company: { name: COMPANY_NAME, abbreviationCode: COMPANY_CODE },
     delivery: {
-      customerDeliveryNo: order.orderNumber,
+      customerDeliveryNo: order.barcode || order.orderNumber,
       customerOrderId: order.orderNumber,
       totalParcels: '1',
       desi: '1',
