@@ -47,7 +47,7 @@ ${legal}
 async function loadOrder(orderNumber: string) {
   return prisma.order.findUnique({
     where: { orderNumber },
-    include: { customer: { select: { name: true, email: true } }, items: { include: { product: { select: { title: true } } } } },
+    include: { customer: { select: { name: true, email: true } }, items: { include: { product: { select: { title: true, category: { select: { slug: true } } } } } } },
   })
 }
 
@@ -93,7 +93,11 @@ ${order.discountApplied > 0 ? line('İndirim', '-' + tl(order.discountApplied)) 
 ${line('Kargo', order.shippingCost > 0 ? tl(order.shippingCost) : 'Ücretsiz')}
 ${line('Toplam', tl(order.totalAmount), true)}</table>
 ${addr ? `<p style="margin:16px 0 0;font-size:14px"><b>Teslimat adresi:</b><br>${addr}</p>` : ''}
-<p style="margin:16px 0 0;font-size:14px">Siparişiniz kargoya verildiğinde takip bilgisiyle birlikte ayrıca haber vereceğiz.</p>`,
+<p style="margin:16px 0 0;font-size:14px">${
+      order.items.length > 0 && order.items.every((i) => i.product.category?.slug === 'yazilim')
+        ? 'Siparişiniz dijital üründür, kargo yoktur. Lisans anahtarınız aynı gün WhatsApp üzerinden size iletilecektir.'
+        : 'Siparişiniz kargoya verildiğinde takip bilgisiyle birlikte ayrıca haber vereceğiz.'
+    }</p>`,
     company
   )
   await sendMail(brand.from, to, `Siparişiniz alındı — ${order.orderNumber}`, html)

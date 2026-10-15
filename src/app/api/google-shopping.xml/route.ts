@@ -8,7 +8,8 @@ import { prisma } from '@/lib/prisma'
 export const maxDuration = 60
 
 const CHUNK_SIZE = 800
-const where = { status: 'active' }
+// Dijital (yazılım lisansı) ürünler fiziksel ürün feed'ine girmez: barkodları GTIN değil, kargo yok.
+const where = { status: 'active', NOT: { category: { slug: 'yazilim' } } }
 
 const getActiveCount = unstable_cache(() => prisma.product.count({ where }), ['feed-active-count'], { revalidate: 3600 })
 

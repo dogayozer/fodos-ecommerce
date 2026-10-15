@@ -133,16 +133,27 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           
           {/* Trust Indicators (Moved below images) */}
           <div className="mt-6 flex flex-col sm:flex-row flex-wrap gap-4 text-sm sm:text-base font-bold text-neutral-900 bg-neutral-50 p-4 sm:p-6 rounded-2xl border border-neutral-200 shadow-[var(--shadow-card)]">
-            <div className="flex items-center flex-1">
-              <ShieldCheck size={24} className="mr-2 text-badge-certified flex-shrink-0" /> 
-              15 Gün İade Garantisi
-            </div>
-            <div className="flex items-center flex-1">
-              <Zap size={24} className="mr-2 text-action-orange-500 flex-shrink-0" /> 
-              <span>
-                Aynı Gün Kargo - <span className="animate-pulse text-action-orange-600">Hızlı Teslimat</span>
-              </span>
-            </div>
+            {product.category?.slug === 'yazilim' ? (
+              <div className="flex items-center flex-1">
+                <Zap size={24} className="mr-2 text-action-orange-500 flex-shrink-0" />
+                <span>
+                  Dijital Ürün - <span className="text-action-orange-600">Aynı gün teslim: lisans anahtarı WhatsApp ile iletilir, kargo yoktur</span>
+                </span>
+              </div>
+            ) : (
+              <>
+              <div className="flex items-center flex-1">
+                <ShieldCheck size={24} className="mr-2 text-badge-certified flex-shrink-0" /> 
+                15 Gün İade Garantisi
+              </div>
+              <div className="flex items-center flex-1">
+                <Zap size={24} className="mr-2 text-action-orange-500 flex-shrink-0" /> 
+                <span>
+                  Aynı Gün Kargo - <span className="animate-pulse text-action-orange-600">Hızlı Teslimat</span>
+                </span>
+              </div>
+              </>
+            )}
           </div>
         </div>
 
