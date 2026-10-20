@@ -24,6 +24,7 @@ export default async function SiparislerimPage() {
     where: { customerId: customer.id, store: 'fodos' },
     orderBy: { createdAt: 'desc' },
     include: {
+      licenseKeys: { orderBy: { createdAt: 'asc' } },
       items: {
         include: {
           product: {
@@ -94,6 +95,15 @@ export default async function SiparislerimPage() {
                       </a>
                     )}
                   </div>
+
+                  {order.licenseKeys.length > 0 && (
+                    <div className="bg-gray-50 px-4 py-2 rounded-lg border border-gray-200">
+                      <span className="block text-xs text-gray-500">Lisans Anahtarınız</span>
+                      {order.licenseKeys.map((k: any) => (
+                        <span key={k.id} className="block font-mono text-sm font-bold text-gray-900">{k.key}</span>
+                      ))}
+                    </div>
+                  )}
 
                   {order.trackingNumber && (
                     <div className="flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-lg border border-gray-200">

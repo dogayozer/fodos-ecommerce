@@ -53,3 +53,22 @@ export async function notifyPaidOrder(orderNumber: string) {
     })
   )
 }
+
+// Sipariş dışı genel admin bildirimi (örn. lisans üretimi başarısız). VAPID yoksa sessizce atlanır.
+export async function notifyAdmin(title: string, body: string, tag = 'admin') {
+  if (!configure()) return
+  const subs = await prisma.adminPushSubscription.findMany()
+  if (subs.length === 0) return
+  const payload = JSON.stringify({ title, body, tag, url: '/admin/siparisler' })
+  await Promise.all(
+    subs.map(async (s) => {
+      try {
+        await webpush.sendNotification({ endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } }, payload)
+      } catch (e: any) {
+        if (e?.statusCode === 404 || e?.statusCode === 410) {
+          await prisma.adminPushSubscription.deleteMany({ where: { endpoint: s.endpoint } })
+        }
+      }
+    })
+  )
+}

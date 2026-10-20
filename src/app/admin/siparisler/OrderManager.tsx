@@ -211,6 +211,33 @@ export function OrderManager() {
     }
   }
 
+  const handleLicense = async () => {
+    if (!selectedOrder) return
+    const has = (selectedOrder.licenseKeys || []).length > 0
+    if (!confirm(has ? `#${selectedOrder.orderNumber} lisans anahtarı müşteriye yeniden mail ile gönderilsin mi?` : `#${selectedOrder.orderNumber} için lisans anahtarı alınıp müşteriye mail atılsın mı?`)) return
+    setHepsijetSending(true)
+    setHepsijetMsg(null)
+    try {
+      const res = await fetch('/api/admin/orders/licenses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: selectedOrder.id }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setHepsijetMsg({ ok: false, text: data.error || 'İşlem başarısız.' })
+        return
+      }
+      setSelectedOrder({ ...selectedOrder, licenseKeys: (data.keys || []).map((key: string) => ({ key })) })
+      setHepsijetMsg({ ok: true, text: data.action === 'resent' ? 'Lisans anahtarı müşteriye yeniden gönderildi.' : 'Lisans anahtarı alındı ve müşteriye gönderildi.' })
+      fetchOrders()
+    } catch {
+      setHepsijetMsg({ ok: false, text: 'Bağlantı hatası.' })
+    } finally {
+      setHepsijetSending(false)
+    }
+  }
+
   const openEditModal = (order: any) => {
     setHepsijetMsg(null)
     setSelectedOrder(order)
@@ -898,6 +925,33 @@ export function OrderManager() {
                   placeholder="Siparişle ilgili özel notlar..."
                 />
               </div>
+
+              {/* Dijital ürün: lisans anahtarları */}
+              {selectedOrder.items?.some((i: any) => i.product?.barcode?.startsWith('KUCUKIS-')) && (
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-900 mb-2">Lisans Anahtarları (dijital ürün)</label>
+                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 space-y-2">
+                    {(selectedOrder.licenseKeys || []).length > 0 ? (
+                      (selectedOrder.licenseKeys as any[]).map((k: any) => (
+                        <div key={k.key} className="font-mono text-sm bg-neutral-0 border border-neutral-200 rounded px-2 py-1">{k.key}</div>
+                      ))
+                    ) : (
+                      <p className="text-xs text-neutral-500">Henüz anahtar alınmadı.</p>
+                    )}
+                    <button
+                      type="button"
+                      onClick={handleLicense}
+                      disabled={hepsijetSending || ['pending', 'cancelled'].includes(selectedOrder.status)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 text-xs font-semibold disabled:opacity-50"
+                    >
+                      {(selectedOrder.licenseKeys || []).length > 0 ? 'Anahtarı müşteriye yeniden gönder' : 'Lisans anahtarı al ve gönder / yeniden dene'}
+                    </button>
+                    {hepsijetMsg && (
+                      <p className={`text-xs font-medium ${hepsijetMsg.ok ? 'text-emerald-700' : 'text-red-600'}`}>{hepsijetMsg.text}</p>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Sipariş İçeriği */}
               <div>

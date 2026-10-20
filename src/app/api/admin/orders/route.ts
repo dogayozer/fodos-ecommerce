@@ -7,6 +7,7 @@ export async function GET() {
     const orders = await prisma.order.findMany({
       include: {
         customer: true,
+        licenseKeys: { orderBy: { createdAt: 'asc' } },
         items: {
           include: {
             product: true

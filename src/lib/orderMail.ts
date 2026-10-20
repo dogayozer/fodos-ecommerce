@@ -95,7 +95,9 @@ ${line('Toplam', tl(order.totalAmount), true)}</table>
 ${addr ? `<p style="margin:16px 0 0;font-size:14px"><b>Teslimat adresi:</b><br>${addr}</p>` : ''}
 <p style="margin:16px 0 0;font-size:14px">${
       order.items.length > 0 && order.items.every((i) => i.product.category?.slug === 'yazilim')
-        ? 'Siparişiniz dijital üründür, kargo yoktur. Lisans anahtarınız aynı gün WhatsApp üzerinden size iletilecektir.'
+        ? process.env.LISANS_ISSUE_TOKEN
+          ? 'Siparişiniz dijital üründür, kargo yoktur. Lisans anahtarınız ayrıca e-posta ile size iletilecektir.'
+          : 'Siparişiniz dijital üründür, kargo yoktur. Lisans anahtarınız aynı gün WhatsApp üzerinden size iletilecektir.'
         : 'Siparişiniz kargoya verildiğinde takip bilgisiyle birlikte ayrıca haber vereceğiz.'
     }</p>`,
     company
@@ -114,6 +116,7 @@ export async function sendShippedMail(orderNumber: string) {
   const order = await loadOrder(orderNumber)
   const to = realEmail(order?.customer?.email)
   if (!order || !to) return
+  if (order.items.length > 0 && order.items.every((i) => i.product.category?.slug === 'yazilim')) return // dijital: kargo yok
   const brand = BRANDS[order.store === 'mpm' ? 'mpm' : 'fodos']
   const isHepsijet = (order.shippingCompany || '').toLowerCase().includes('hepsijet')
 
@@ -135,4 +138,53 @@ ${isHepsijet ? `<p style="margin:16px 0"><a href="${HEPSIJET_TRACK_URL}" style="
 // Hata ödeme/kargo akışını bozmasın diye sarmalayıcı
 export async function safeMail(fn: () => Promise<void>) {
   try { await fn() } catch (e) { console.error('Müşteri maili gönderilemedi:', e) }
+}
+
+// ---- Dijital ürün: lisans anahtarı maili (anahtarlar LicenseKey tablosundan) ----
+const LICENSE_APP_NAMES: Record<string, string> = {
+  satis: 'Barkodlu Satış',
+  mobil: 'Kargo Kolay Mobil',
+  tamir: 'Servis & Oto Tamir Kolay',
+  otopark: 'Otopark & Yıkama Kolay',
+  apartman: 'Apartman Yönetimi Kolay',
+  guvenlik: 'Güvenlik Kolay (Windows)',
+}
+const SETUP_URL_ANDROID = 'https://kucukis.com/destek/kurulum-apk/'
+const SETUP_URL_GUVENLIK = 'https://kucukis.com/plaka-tanima-giris-cikis-guvenlik-programi/'
+
+// Saklanan lisans anahtarlarını müşteriye yollar. Otomatik üretimden sonra bir kez; admin "yeniden gönder" düğmesi tekrar çağırır.
+export async function sendLicenseMail(orderNumber: string) {
+  if (!process.env.RESEND_API_KEY) return false
+  const order = await prisma.order.findUnique({
+    where: { orderNumber },
+    include: { customer: { select: { name: true, email: true } }, licenseKeys: { orderBy: { createdAt: 'asc' } } },
+  })
+  const to = realEmail(order?.customer?.email)
+  if (!order || !to || order.licenseKeys.length === 0) return false
+  const brand = BRANDS[order.store === 'mpm' ? 'mpm' : 'fodos']
+
+  const byProduct = new Map<string, string[]>()
+  for (const k of order.licenseKeys) byProduct.set(k.product, [...(byProduct.get(k.product) || []), k.key])
+  const blocks = [...byProduct.entries()]
+    .map(([product, keys]) => {
+      const setup = product === 'guvenlik' ? SETUP_URL_GUVENLIK : SETUP_URL_ANDROID
+      return `<div style="margin:16px 0;padding:14px;border:1px solid #eee;border-radius:8px">
+<div style="font-weight:bold;margin-bottom:6px">${esc(LICENSE_APP_NAMES[product] || product)}</div>
+${keys.map((k) => `<div style="font-family:monospace;font-size:16px;letter-spacing:1px;background:#f5f5f5;padding:8px 10px;border-radius:6px;margin:4px 0">${esc(k)}</div>`).join('')}
+<div style="margin-top:8px;font-size:13px">Kurulum: <a href="${setup}" style="color:${brand.color}">${setup.replace('https://', '')}</a></div>
+</div>`
+    })
+    .join('')
+
+  const html = layout(
+    brand,
+    'Lisans anahtarınız hazır',
+    `<p style="margin:0 0 12px">Merhaba ${esc(order.customer?.name || '')},<br><b>${order.orderNumber}</b> numaralı siparişinizin lisans anahtarı aşağıdadır.</p>
+${blocks}
+<p style="margin:12px 0 0;font-size:14px">Anahtarı uygulamada <b>Ayarlar &gt; Lisans</b> bölümüne girin. Lisans, ilk girildiği cihaza bağlanır. Cihaz değiştirirseniz WhatsApp üzerinden (+90 532 391 31 41) yazın, bağlantıyı taşıyalım.</p>
+<p style="margin:12px 0 0;font-size:12px;color:#777">Anahtarınızı başkalarıyla paylaşmayın.</p>`,
+    await loadCompany()
+  )
+  await sendMail(brand.from, to, `Lisans anahtarınız — ${order.orderNumber}`, html)
+  return true
 }

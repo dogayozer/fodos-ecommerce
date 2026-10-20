@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import crypto from 'crypto'
 import { notifyPaidOrder } from '@/lib/adminPush'
 import { sendOrderConfirmationMail, sendShippedMail, safeMail } from '@/lib/orderMail'
+import { issueLicensesForOrder } from '@/lib/licenseIssue'
 
 export async function POST(req: Request) {
   try {
@@ -64,6 +65,7 @@ export async function POST(req: Request) {
         })
         try { await notifyPaidOrder(merchant_oid) } catch (e) { console.error('Push bildirimi hatası:', e) }
         await safeMail(() => sendOrderConfirmationMail(merchant_oid))
+        await safeMail(async () => { await issueLicensesForOrder(merchant_oid) })
         // HepsiJET gönderisi burada otomatik açılmaz: siparişlerin bir kısmı Aras ile gidiyor,
         // gönderi admin panelindeki "HepsiJET'e Gönder" butonuyla sipariş bazında açılır.
       }
