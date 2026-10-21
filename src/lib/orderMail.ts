@@ -95,9 +95,7 @@ ${line('Toplam', tl(order.totalAmount), true)}</table>
 ${addr ? `<p style="margin:16px 0 0;font-size:14px"><b>Teslimat adresi:</b><br>${addr}</p>` : ''}
 <p style="margin:16px 0 0;font-size:14px">${
       order.items.length > 0 && order.items.every((i) => i.product.category?.slug === 'yazilim')
-        ? process.env.LISANS_ISSUE_TOKEN
-          ? 'Siparişiniz dijital üründür, kargo yoktur. Lisans anahtarınız ayrıca e-posta ile size iletilecektir.'
-          : 'Siparişiniz dijital üründür, kargo yoktur. Lisans anahtarınız aynı gün WhatsApp üzerinden size iletilecektir.'
+        ? 'Siparişiniz dijital üründür, kargo yoktur. Lisans anahtarınız aynı gün e-posta ile size iletilecektir.'
         : 'Siparişiniz kargoya verildiğinde takip bilgisiyle birlikte ayrıca haber vereceğiz.'
     }</p>`,
     company

@@ -137,7 +137,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               <div className="flex items-center flex-1">
                 <Zap size={24} className="mr-2 text-action-orange-500 flex-shrink-0" />
                 <span>
-                  Dijital Ürün - <span className="text-action-orange-600">Aynı gün teslim: lisans anahtarı WhatsApp ile iletilir, kargo yoktur</span>
+                  Dijital Ürün - <span className="text-action-orange-600">Aynı gün teslim: lisans anahtarı mail ile iletilir, kargo yoktur</span>
                 </span>
               </div>
             ) : (
