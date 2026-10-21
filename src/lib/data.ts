@@ -49,7 +49,8 @@ export const getCachedCategoryData = unstable_cache(
     
     if (!category) return null
 
-    const whereClause: any = { categoryId: category.id }
+    // Pasif ürünler kategori listesinde gösterilmez (ürün sayfası adresi hâlâ açılır); MPM de aynı şekilde filtreler
+    const whereClause: any = { categoryId: category.id, status: { not: 'inactive' } }
     if (brand) whereClause.brand = brand
     if (model) whereClause.model_code = model
 
@@ -69,7 +70,7 @@ export const getCachedCategoryData = unstable_cache(
     let availableModels: string[] = []
     if (brand) {
       const modelsResult = await prisma.product.findMany({
-        where: { categoryId: category.id, brand: brand },
+        where: { categoryId: category.id, brand: brand, status: { not: 'inactive' } },
         select: { model_code: true },
         distinct: ['model_code']
       })
