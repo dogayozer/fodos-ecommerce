@@ -15,7 +15,14 @@ const PRODUCT_BY_BARCODE: Record<string, string> = {
   'KUCUKIS-SERVIS-OTO-TAMIR-01': 'tamir',
   'KUCUKIS-OTOPARK-YIKAMA-01': 'otopark',
   'KUCUKIS-APARTMAN-YONETIM-01': 'apartman',
-  'KUCUKIS-GUVENLIK-KOLAY-01': 'guvenlik',
+  'KUCUKIS-GUVENLIK-KOLAY-01': 'guvenlik', // Windows
+  'KUCUKIS-GUVENLIK-KOLAY-MOBIL-01': 'otopark', // Android; lisans sunucusunda otopark ürünüyle üretilir (Windows 'guvenlik' ile karıştırma)
+}
+
+// Aynı lisans sunucusu ürün koduna (otopark) giden iki farklı ürün aynı siparişte olabilir; ref+product tekrarı AYNI anahtarı
+// döndüreceği için Güvenlik Kolay Mobil'in ref'ine sabit ek konur (ref = siparişNo + ek).
+const REF_SUFFIX_BY_BARCODE: Record<string, string> = {
+  'KUCUKIS-GUVENLIK-KOLAY-MOBIL-01': '-gm',
 }
 
 type IssueOptions = { requireFresh?: boolean }
@@ -74,7 +81,7 @@ export async function issueLicensesForOrder(orderNumber: string, opts: IssueOpti
       const res = await fetch(ISSUE_URL, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ product, ref: order.orderNumber, count: item.quantity, customer: order.customer?.name || 'Müşteri' }),
+        body: JSON.stringify({ product, ref: order.orderNumber + (REF_SUFFIX_BY_BARCODE[item.product.barcode] || ''), count: item.quantity, customer: order.customer?.name || 'Müşteri' }),
         signal: AbortSignal.timeout(10000),
       })
       const json: any = await res.json().catch(() => null)

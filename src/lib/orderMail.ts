@@ -155,19 +155,26 @@ export async function sendLicenseMail(orderNumber: string) {
   if (!process.env.RESEND_API_KEY) return false
   const order = await prisma.order.findUnique({
     where: { orderNumber },
-    include: { customer: { select: { name: true, email: true } }, licenseKeys: { orderBy: { createdAt: 'asc' } } },
+    include: { customer: { select: { name: true, email: true } }, licenseKeys: { orderBy: { createdAt: 'asc' } }, items: { select: { id: true, product: { select: { title: true } } } } },
   })
   const to = realEmail(order?.customer?.email)
   if (!order || !to || order.licenseKeys.length === 0) return false
   const brand = BRANDS[order.store === 'mpm' ? 'mpm' : 'fodos']
 
-  const byProduct = new Map<string, string[]>()
-  for (const k of order.licenseKeys) byProduct.set(k.product, [...(byProduct.get(k.product) || []), k.key])
-  const blocks = [...byProduct.entries()]
-    .map(([product, keys]) => {
+  // Anahtarlar sipariş kalemine göre gruplanır; başlık olarak kalemin ürün adı (kısaltılmış) kullanılır
+  const titleByItem = new Map(order.items.map((i) => [i.id, i.product.title.split(/\||\s-\s/)[0].replace(/\s+(Android|Windows)?\s*Lisans[ıi]\s*$/i, '').trim()]))
+  const byProduct = new Map<string, { product: string; name: string; keys: string[] }>()
+  for (const k of order.licenseKeys) {
+    const gk = k.orderItemId || k.product
+    const g = byProduct.get(gk) || { product: k.product, name: (k.orderItemId && titleByItem.get(k.orderItemId)) || LICENSE_APP_NAMES[k.product] || k.product, keys: [] }
+    g.keys.push(k.key)
+    byProduct.set(gk, g)
+  }
+  const blocks = [...byProduct.values()]
+    .map(({ product, name, keys }) => {
       const setup = product === 'guvenlik' ? SETUP_URL_GUVENLIK : SETUP_URL_ANDROID
       return `<div style="margin:16px 0;padding:14px;border:1px solid #eee;border-radius:8px">
-<div style="font-weight:bold;margin-bottom:6px">${esc(LICENSE_APP_NAMES[product] || product)}</div>
+<div style="font-weight:bold;margin-bottom:6px">${esc(name)}</div>
 ${keys.map((k) => `<div style="font-family:monospace;font-size:16px;letter-spacing:1px;background:#f5f5f5;padding:8px 10px;border-radius:6px;margin:4px 0">${esc(k)}</div>`).join('')}
 <div style="margin-top:8px;font-size:13px">Kurulum: <a href="${setup}" style="color:${brand.color}">${setup.replace('https://', '')}</a></div>
 </div>`
