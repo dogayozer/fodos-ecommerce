@@ -63,7 +63,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         ? product.title
         : cutAtWord(product.title, MAX_TITLE)
 
-  const rawDesc = (product.description_raw || defaultDescription).replace(/;/g, ' ').replace(/\s+/g, ' ').trim()
+  // Dijital ürün açıklaması HTML (resimli); meta/JSON-LD için düz metne çevrilir
+  const stripHtml = (t: string) => t.replace(/<[^>]*>/g, ' ').replace(/&#x27;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&gt;/g, '>').replace(/&lt;/g, '<')
+  const plainDesc = product.category?.slug === 'yazilim' && product.description_raw ? stripHtml(product.description_raw) : product.description_raw
+  const rawDesc = (plainDesc || defaultDescription).replace(/;/g, ' ').replace(/\s+/g, ' ').trim()
   const pageDescription = rawDesc.length > MAX_DESC ? rawDesc.slice(0, MAX_DESC - 1).trim() + '…' : rawDesc
 
   return {
@@ -105,7 +108,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     '@type': 'Product',
     name: product.title,
     image: product.images.map(img => img.url),
-    description: product.description_raw || `${product.title} en uygun fiyata Fodos'ta!`,
+    description: (product.category?.slug === 'yazilim' && product.description_raw ? product.description_raw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() : product.description_raw) || `${product.title} en uygun fiyata Fodos'ta!`,
     brand: {
       '@type': 'Brand',
       name: product.brand || 'Fodos',
@@ -236,7 +239,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       {/* Product Description Section */}
       <div className="mt-16 pt-12 border-t border-neutral-200 max-w-4xl">
         <h2 className="text-2xl font-bold text-neutral-900 mb-8">Ürün Açıklaması</h2>
-        <div className="prose prose-blue max-w-none text-neutral-900">
+        <div className="prose prose-blue max-w-none text-neutral-900 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_figure]:my-4 [&_figcaption]:text-sm [&_figcaption]:text-neutral-600">
           {product.description_raw ? (
             <div dangerouslySetInnerHTML={{ __html: product.description_raw.replace(/\n/g, '<br/>') }} />
           ) : (
