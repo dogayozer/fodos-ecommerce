@@ -10,7 +10,8 @@ const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fodos-sup
 
 export async function POST(req: Request) {
   try {
-    const { name, email, phone, password, city: rawCity, district: rawDistrict, address, accountType: rawAccountType, businessType: rawBusinessType } = await req.json()
+    const { name, email, phone, password, city: rawCity, district: rawDistrict, address, accountType: rawAccountType, businessType: rawBusinessType, acceptMarketing } = await req.json()
+    const consent = acceptMarketing === true ? { marketingConsent: true, marketingConsentAt: new Date(), marketingConsentStore: 'fodos' } : {}
     const city = matchIl(rawCity) || null
     const district = (city && matchIlce(city, rawDistrict)) || null
 
@@ -43,7 +44,8 @@ export async function POST(req: Request) {
             address,
             isGuest: false,
             accountType: account.accountType,
-            businessType: account.businessType
+            businessType: account.businessType,
+            ...consent
           }
         })
 
@@ -75,7 +77,8 @@ export async function POST(req: Request) {
         address,
         isGuest: false,
         accountType: account.accountType,
-        businessType: account.businessType
+        businessType: account.businessType,
+        ...consent
       }
     })
 

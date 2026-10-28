@@ -179,7 +179,7 @@ export default function RegisterPage() {
                 className="mt-1 w-4 h-4 text-trust-blue-600 rounded border-gray-300 focus:ring-trust-blue-500"
               />
               <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
-                Kampanya, indirim ve yeni ürünlerden haberdar olmak için tarafıma Ticari Elektronik İleti gönderilmesine izin veriyorum. (İsteğe bağlı)
+                Kampanya, indirim ve yeni ürünlerden haberdar olmak için tarafıma e-posta, SMS ve WhatsApp ile Ticari Elektronik İleti gönderilmesine izin veriyorum. (İsteğe bağlı)
               </span>
             </label>
           </div>

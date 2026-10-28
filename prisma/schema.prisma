@@ -94,6 +94,9 @@ model Customer {
   businessType String?  // isletme ise: Cep Telefonu Tamiri, Cep Telefonu Mağazası, Diğer
   isDealer       Boolean   @default(false) // admin onayıyla verilen bayi statüsü — accountType'tan ayrı, admin panelinden Üyeler sayfasında değiştirilir
   dealerApprovedAt DateTime?
+  marketingConsent      Boolean   @default(false) // ticari elektronik ileti (e-posta/SMS/WhatsApp) izni; yalnız müşteri işaretlerse true
+  marketingConsentAt    DateTime?
+  marketingConsentStore String?   // iznin verildiği site: fodos | mpm
   orders      Order[]
   createdAt   DateTime @default(now())
 }

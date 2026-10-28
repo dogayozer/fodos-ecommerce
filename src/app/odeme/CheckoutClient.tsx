@@ -20,7 +20,8 @@ export function CheckoutClient({ shippingFee, shippingThreshold }: { shippingFee
     district: '',
     address: '',
     acceptTerms: false,
-    acceptKvkk: false
+    acceptKvkk: false,
+    acceptMarketing: false
   })
 
   const [loading, setLoading] = useState(false)
@@ -55,7 +56,8 @@ export function CheckoutClient({ shippingFee, shippingThreshold }: { shippingFee
             district: matchIlce(city, data.user.district),
             address: data.user.address || '',
             acceptTerms: false,
-            acceptKvkk: false
+            acceptKvkk: false,
+            acceptMarketing: false
           })
         }
       })
@@ -316,6 +318,18 @@ export function CheckoutClient({ shippingFee, shippingThreshold }: { shippingFee
                     />
                     <span className="text-sm text-neutral-500 group-hover:text-neutral-900 transition-colors">
                       Kişisel verilerimin işlenmesine ilişkin <Link href="/kvkk" target="_blank" className="text-trust-blue-600 hover:underline font-semibold">KVKK Aydınlatma Metni</Link>'ni okudum.
+                    </span>
+                  </label>
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      name="acceptMarketing"
+                      checked={formData.acceptMarketing}
+                      onChange={handleChange}
+                      className="mt-1 w-4 h-4 text-trust-blue-600 rounded border-neutral-200 focus:ring-trust-blue-500"
+                    />
+                    <span className="text-sm text-neutral-500 group-hover:text-neutral-900 transition-colors">
+                      Kampanya, indirim ve yeni ürünlerden haberdar olmak için tarafıma e-posta, SMS ve WhatsApp ile Ticari Elektronik İleti gönderilmesine izin veriyorum. (İsteğe bağlı)
                     </span>
                   </label>
                 </div>

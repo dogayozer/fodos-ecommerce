@@ -80,6 +80,14 @@ export async function POST(req: Request) {
       }
     }
 
+    // Ticari ileti izni: yalnız müşteri kutuyu işaretlediyse kaydedilir; var olan izin bu yolla geri alınmaz
+    if (customerInfo.acceptMarketing === true && !dbCustomer.marketingConsent) {
+      await prisma.customer.update({
+        where: { id: dbCustomer.id },
+        data: { marketingConsent: true, marketingConsentAt: new Date(), marketingConsentStore: 'fodos' }
+      })
+    }
+
     // 2. Fetch Settings
     const settings = await prisma.storeSettings.findUnique({ where: { id: 'default' } })
     const shippingFee = settings?.shippingFee ?? 110
