@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Search, ShoppingCart, Menu, X, Smartphone, User, LogOut, Store } from 'lucide-react'
 
 import { SidebarNav } from './SidebarNav'
@@ -10,6 +11,9 @@ export function Header({ tree }: { tree: any[] }) {
   const [query, setQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const pathname = usePathname()
+  // Menüdeki bir bağlantıya (Giriş Yap, Üye Ol, Bayi Girişi...) basınca sayfa değişir; menü açık kalıp yeni sayfayı örtmesin
+  useEffect(() => { setMobileMenuOpen(false) }, [pathname])
   const [cartCount, setCartCount] = useState(0)
   const [user, setUser] = useState<any>(null)
 
