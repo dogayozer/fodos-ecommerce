@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { X } from 'lucide-react'
 import { BUSINESS_TYPES } from '@/lib/accountTypes'
+import { HOLIDAY_KEY, holidayActive } from '@/lib/holiday'
 
 const STORAGE_KEY = 'dealerSplash'
 const DISMISS_DAYS = 7
@@ -25,6 +26,8 @@ export function DealerSplash({ waitForCampaign = false }: { waitForCampaign?: bo
     try {
       // Aktif kampanya pop-up'ı ziyaretçiye henüz gösterilmediyse önce o çıksın, iki pop-up üst üste binmesin
       if (waitForCampaign && !localStorage.getItem('campaignSplash')) return
+      // Bayram görseli aktifken önce o çıksın
+      if (holidayActive() && !localStorage.getItem(HOLIDAY_KEY)) return
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null')
       if (saved?.status === 'subscribed') return
       if (saved?.status === 'dismissed' && Date.now() - saved.at < DISMISS_DAYS * 24 * 60 * 60 * 1000) return

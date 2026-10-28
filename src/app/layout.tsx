@@ -41,6 +41,7 @@ import Link from 'next/link';
 import { SmartAssistant } from "@/components/SmartAssistant";
 import { DealerSplash } from "@/components/DealerSplash";
 import { CampaignSplash } from "@/components/CampaignSplash";
+import { HolidaySplash } from "@/components/HolidaySplash";
 import { CAMPAIGN } from "@/lib/campaignConfig";
 import { getCampaignShowcase } from "@/lib/campaign";
 
@@ -124,6 +125,7 @@ export default async function RootLayout({
         <WhatsAppButton />
         <SmartAssistant />
         {campaignLive && <CampaignSplash items={showcase!.items} maxDiscount={showcase!.maxDiscount} total={showcase!.total} />}
+        <HolidaySplash />
         <DealerSplash waitForCampaign={campaignLive} />
       </body>
     </html>
