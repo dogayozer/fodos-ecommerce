@@ -60,7 +60,12 @@ export const getCachedCategoryData = unstable_cache(
     // "iyi çalışılmış" sayıp yanlış öne çıkarıyordu)
     const products = await prisma.product.findMany({
       where: whereClause,
-      include: { images: true },
+      // Yalnız kartın kullandığı alanlar: tüm sütun + tüm resimlerle en büyük kategori ~6 MB'a çıkıp önbelleğe sığmıyor ve her istekte DB'den çekiliyordu
+      select: {
+        id: true, slug: true, title: true, brand: true, sale_price: true, reference_price: true,
+        stock_qty: true, campaign: true,
+        images: { select: { url: true }, orderBy: { order: 'asc' }, take: 1 }
+      },
       orderBy: [
         { has_real_photo: 'desc' },
         { createdAt: 'desc' }
