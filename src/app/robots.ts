@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: '*',
         allow: '/',
         // /kategori/*? : marka/model/sıralama filtreli adresler (her biri önbelleksiz sunucu işi ve DB sorgusu)
-        disallow: ['/admin/', '/api/', '/sepet', '/odeme', '/giris', '/kayit-ol', '/hesabim', '/kategori/*?'],
+        disallow: ['/admin/', '/api/', '/sepet', '/odeme', '/giris', '/kayit-ol', '/hesabim', '/kategori/*?', '/arama'],
       },
     ],
     sitemap: 'https://www.fodos.com.tr/sitemap.xml',
