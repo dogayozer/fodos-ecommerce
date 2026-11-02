@@ -16,6 +16,7 @@ const PRODUCT_BY_BARCODE: Record<string, string> = {
   'KUCUKIS-OTOPARK-YIKAMA-01': 'otopark',
   'KUCUKIS-APARTMAN-YONETIM-01': 'apartman',
   'KUCUKIS-GUVENLIK-KOLAY-01': 'guvenlik', // Windows
+  'KUCUKIS-KARGO-KOLAY-WINDOWS-01': 'masaustu', // lisans makine kimliğine bağlanır; anahtar KKD-XXXX-XXXX-XXXX
   'KUCUKIS-GUVENLIK-KOLAY-MOBIL-01': 'otopark', // Android; lisans sunucusunda otopark ürünüyle üretilir (Windows 'guvenlik' ile karıştırma)
 }
 
