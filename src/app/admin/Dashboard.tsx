@@ -254,6 +254,16 @@ export function Dashboard({ stats }: { stats: DashboardStats }) {
             </a>
           </div>
 
+          <div className="p-6 bg-neutral-0 border border-green-100 rounded-xl shadow-[var(--shadow-card)] flex flex-col justify-between">
+            <div>
+              <h2 className="text-xl font-bold mb-1 text-green-800">Ürün Yönetimi</h2>
+              <p className="text-sm text-neutral-500 mb-4">Ürünlerin adını, fiyatını (Fodos / MPM / bayi), stoğunu, durumunu, açıklamasını ve resimlerini düzenleyin.</p>
+            </div>
+            <a href="/admin/urunler" className="bg-green-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-700 transition-colors shadow-[var(--shadow-button)] text-center inline-block">
+              Ürünlere Git
+            </a>
+          </div>
+
           <div className="p-6 bg-neutral-0 border border-action-orange-500/20 rounded-xl shadow-[var(--shadow-card)] flex flex-col justify-between">
             <div>
               <h2 className="text-xl font-bold mb-1 text-action-orange-600">Pazaryeri Siparişleri</h2>
