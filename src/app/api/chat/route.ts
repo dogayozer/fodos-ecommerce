@@ -1,3 +1,4 @@
+import { isPriceOnRequest } from '@/lib/priceOnRequest'
 import { generateText, tool, stepCountIs } from 'ai'
 import { google } from '@ai-sdk/google'
 import { z } from 'zod'
@@ -79,7 +80,8 @@ export async function POST(req: Request) {
                 title: true,
                 sale_price: true,
                 reference_price: true,
-                slug: true
+                slug: true,
+                category: { select: { slug: true } }
               },
               orderBy: [{ has_real_photo: 'desc' }, { stock_qty: 'desc' }],
               take: 3
@@ -88,7 +90,12 @@ export async function POST(req: Request) {
             if (products.length === 0) {
               return { success: false, message: "Aranan kriterlere uygun ürün bulunamadı." }
             }
-            return { success: true, products }
+            return {
+              success: true,
+              products: products.map(({ category, ...p }) =>
+                isPriceOnRequest(category?.slug) ? { ...p, sale_price: null, reference_price: null, note: 'Fiyat gösterilmez: müşteriye "Fiyat Sorunuz, stok ve fiyat için WhatsApp ile iletişime geçin" de.' } : p
+              ),
+            }
           },
         }),
       }

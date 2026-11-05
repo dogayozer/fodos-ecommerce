@@ -4,6 +4,7 @@ import { AddToCart } from './AddToCart'
 import { ProductGallery } from './ProductGallery'
 import { ShieldAlert, Info, ShieldCheck, Zap, AlertTriangle, Star } from 'lucide-react'
 import { Metadata } from 'next'
+import { isPriceOnRequest, PRICE_ON_REQUEST_LABEL, PRICE_ON_REQUEST_NOTE, priceOnRequestWaUrl } from '@/lib/priceOnRequest'
 import Link from 'next/link'
 
 export const revalidate = 60
@@ -97,7 +98,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     notFound()
   }
 
-  const hasDiscount = product.reference_price && product.reference_price > product.sale_price
+  const priceOnRequest = isPriceOnRequest(product.category?.slug)
+  const hasDiscount = !priceOnRequest && product.reference_price && product.reference_price > product.sale_price
   const discountPercent = hasDiscount 
     ? Math.round(((product.reference_price! - product.sale_price) / product.reference_price!) * 100)
     : 0
@@ -113,14 +115,14 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       '@type': 'Brand',
       name: product.brand || 'Fodos',
     },
-    offers: {
+    ...(priceOnRequest ? {} : { offers: {
       '@type': 'Offer',
       url: `https://www.fodos.com.tr/urun/${product.slug}`,
       priceCurrency: 'TRY',
       price: product.sale_price,
       itemCondition: 'https://schema.org/NewCondition',
       availability: product.stock_qty > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-    }
+    } })
   }
 
   return (
@@ -199,10 +201,19 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                 </span>
               </div>
             )}
-            <div className="text-4xl font-extrabold text-action-orange-600">
-              {Number(product.sale_price).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL
-            </div>
-            <div className="text-xs text-neutral-500 mt-2">KDV Dahildir</div>
+            {priceOnRequest ? (
+              <>
+                <div className="text-4xl font-extrabold text-trust-blue-600">{PRICE_ON_REQUEST_LABEL}</div>
+                <div className="text-sm text-neutral-600 mt-3">{PRICE_ON_REQUEST_NOTE}</div>
+              </>
+            ) : (
+              <>
+                <div className="text-4xl font-extrabold text-action-orange-600">
+                  {Number(product.sale_price).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL
+                </div>
+                <div className="text-xs text-neutral-500 mt-2">KDV Dahildir</div>
+              </>
+            )}
           </div>
 
           {/* Trust Badges based on template_type */}
@@ -221,7 +232,23 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <hr className="border-neutral-200" />
 
           {/* Add To Cart Component */}
-          <AddToCart product={product} />
+          {priceOnRequest ? (
+            <div className="mt-8">
+              <a
+                href={priceOnRequestWaUrl(product.title, product.barcode)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebe5b] text-white shadow-[var(--shadow-button)] transition-colors"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6" aria-hidden="true">
+                  <path d="M12.031 2c-5.508 0-9.986 4.478-9.986 9.986 0 1.956.51 3.844 1.48 5.513L2 22l4.636-1.488c1.61.895 3.42 1.365 5.395 1.365 5.508 0 9.986-4.478 9.986-9.986 0-5.508-4.478-9.986-9.986-9.986zm5.352 14.364c-.22.623-1.282 1.182-1.782 1.282-.44.088-.992.176-2.904-.572-2.31-1.04-3.795-3.41-3.905-3.553-.11-.143-.935-1.243-.935-2.376 0-1.133.583-1.694.792-1.914.21-.22.45-.275.605-.275.154 0 .308 0 .44.011.143.011.33.055.517.506.242.583.594 1.452.65 1.562.055.11.088.242.011.396-.077.154-.121.253-.242.385-.121.132-.253.286-.363.396-.121.121-.253.253-.11.506.143.253.638 1.056 1.364 1.705.935.836 1.716 1.1 1.958 1.22.242.121.385.11.528-.055.143-.165.616-.715.781-.968.165-.253.33-.21.55-.121.22.088 1.397.66 1.639.781.242.121.407.187.462.286.055.11.055.627-.165 1.254z" />
+                </svg>
+                WhatsApp ile Fiyat ve Stok Sorun
+              </a>
+            </div>
+          ) : (
+            <AddToCart product={product} />
+          )}
 
 
           {/* Trendyol Bridge */}

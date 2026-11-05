@@ -6,6 +6,7 @@ import { ProductCard } from '@/components/ProductCard'
 import { ModelFilter } from '@/components/ModelFilter'
 import { getCachedCategoryData } from '@/lib/data'
 import { toTitleCase } from '@/lib/utils'
+import { isPriceOnRequest } from '@/lib/priceOnRequest'
 import type { Metadata } from 'next'
 
 export const revalidate = 60; // ISR cache
@@ -96,7 +97,7 @@ export default async function CategoryPage({
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
           {products.map(product => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} product={{ ...product, priceOnRequest: isPriceOnRequest(category.slug) }} />
           ))}
         </div>
       )}

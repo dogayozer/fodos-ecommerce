@@ -65,7 +65,7 @@ export default async function SearchPage({
 
       products = await prisma.product.findMany({
         where: whereClause,
-        include: { images: true },
+        include: { images: true, category: { select: { slug: true } } },
         orderBy: [
           { has_real_photo: 'desc' },
           { createdAt: 'desc' }

@@ -20,7 +20,7 @@ export default async function HomePage() {
       { createdAt: 'desc' }
     ],
     take: 4,
-    include: { images: true }
+    include: { images: true, category: { select: { slug: true } } }
   })
 
   // Mock Best Sellers (Çok Satanlar)
@@ -31,7 +31,7 @@ export default async function HomePage() {
       { stock_qty: 'desc' }
     ],
     take: 4,
-    include: { images: true }
+    include: { images: true, category: { select: { slug: true } } }
   })
 
   // Fetch products to display random images at the top
@@ -40,7 +40,7 @@ export default async function HomePage() {
       status: { not: 'inactive' }, // pasife alınan ürünler (ve harici/güvenilmez görsel domain'leri) vitrine hiç girmesin
       has_real_photo: true, // Trendyol import placeholder'ı değil, gerçek/benzersiz fotoğrafı olan ürünler
     },
-    include: { images: true },
+    include: { images: true, category: { select: { slug: true } } },
     take: 50 // Fetch up to 50 to shuffle
   })
 

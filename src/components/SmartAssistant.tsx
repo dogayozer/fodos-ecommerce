@@ -235,7 +235,7 @@ export function SmartAssistant() {
                                   className="block bg-neutral-0 border border-neutral-200 p-2 rounded-lg hover:border-trust-blue-400 transition-colors"
                                 >
                                   <div className="font-semibold text-neutral-900 text-xs line-clamp-2" title={p.title}>{p.title}</div>
-                                  <div className="font-bold text-trust-blue-600 mt-1 text-xs">{p.sale_price?.toLocaleString('tr-TR')} TL</div>
+                                  <div className="font-bold text-trust-blue-600 mt-1 text-xs">{p.priceOnRequest ? 'Fiyat Sorunuz' : `${p.sale_price?.toLocaleString('tr-TR')} TL`}</div>
                                 </Link>
                               ))}
                             </div>

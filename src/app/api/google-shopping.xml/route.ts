@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
+import { PRICE_ON_REQUEST_SLUGS } from '@/lib/priceOnRequest'
 
 // Feed ~25 MB: her istekte 16k ürünü DB'den çekmek Neon ağ trafiği/compute maliyeti yaratıyordu.
 // Tüm cevap ISR (19 MB sınırı) ve CDN önbelleğine sığmadığı için DB sonucu, veri önbelleğinin
@@ -9,7 +10,7 @@ export const maxDuration = 60
 
 const CHUNK_SIZE = 800
 // Dijital (yazılım lisansı) ürünler fiziksel ürün feed'ine girmez: barkodları GTIN değil, kargo yok.
-const where = { status: 'active', NOT: { category: { slug: 'yazilim' } } }
+const where = { status: 'active', NOT: { category: { slug: { in: ['yazilim', ...PRICE_ON_REQUEST_SLUGS] } } } }
 
 const getActiveCount = unstable_cache(() => prisma.product.count({ where }), ['feed-active-count'], { revalidate: 3600 })
 

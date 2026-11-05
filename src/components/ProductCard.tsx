@@ -2,10 +2,12 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ShoppingCart } from 'lucide-react'
 import { CAMPAIGN } from '@/lib/campaignConfig'
+import { isPriceOnRequest, PRICE_ON_REQUEST_LABEL } from '@/lib/priceOnRequest'
 
 export function ProductCard({ product }: { product: any }) {
+  const priceOnRequest = !!product.priceOnRequest || isPriceOnRequest(product.category?.slug)
   const outOfStock = product.stock_qty <= 0
-  const hasDiscount = !outOfStock && product.reference_price && product.reference_price > product.sale_price
+  const hasDiscount = !outOfStock && !priceOnRequest && product.reference_price && product.reference_price > product.sale_price
   const discountPercent = hasDiscount
     ? Math.round(((product.reference_price - product.sale_price) / product.reference_price) * 100)
     : 0
@@ -35,7 +37,11 @@ export function ProductCard({ product }: { product: any }) {
         <h3 className="text-xs sm:text-sm font-semibold text-neutral-900 mb-1 sm:mb-2 line-clamp-2 group-hover:text-trust-blue-600 transition-colors leading-tight">{product.title}</h3>
 
         <div className="mt-auto pt-2 sm:pt-4">
-          {outOfStock ? (
+          {priceOnRequest ? (
+            <div className="text-xs sm:text-sm font-bold text-trust-blue-600 bg-trust-blue-50 border border-trust-blue-100 rounded-[var(--radius-sm)] px-2 py-1.5 text-center">
+              {PRICE_ON_REQUEST_LABEL}
+            </div>
+          ) : outOfStock ? (
             <div className="text-[10px] sm:text-xs font-bold text-neutral-900 bg-neutral-100 border border-neutral-200 rounded-[var(--radius-sm)] px-2 py-1.5 text-center">
               Stok ve Güncel Fiyat için sorunuz!
             </div>

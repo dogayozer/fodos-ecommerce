@@ -1,3 +1,4 @@
+import { isPriceOnRequest } from '@/lib/priceOnRequest'
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
@@ -103,13 +104,16 @@ export async function POST(req: Request) {
     for (const item of cart) {
       const dbProduct = await prisma.product.findUnique({
         where: { id: item.id },
-        select: { id: true, sale_price: true, title: true }
+        select: { id: true, sale_price: true, title: true, category: { select: { slug: true } } }
       })
       
       if (!dbProduct) {
         return NextResponse.json({ error: `Ürün bulunamadı: ${item.title}` }, { status: 400 })
       }
       
+      if (isPriceOnRequest(dbProduct.category?.slug)) {
+        return NextResponse.json({ error: `"${dbProduct.title}" ürünü için fiyat ve stok bilgisini WhatsApp'tan sorunuz; lütfen sepetinizden çıkarın.` }, { status: 400 })
+      }
       const realPrice = dbProduct.sale_price
       cartTotal += realPrice * item.qty
       
