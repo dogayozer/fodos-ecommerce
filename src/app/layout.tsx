@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const revalidate = 60; // 60 saniyede bir önbelleği otomatik yenile
+export const revalidate = 3600; // 1 saatte bir yenile (sayfa seviyesindeki değer en düşük olanla birleşir; admin düzenlemesi anında yansır)
 
 import { getCategoryTree } from "@/lib/data";
 import { prisma } from "@/lib/prisma";

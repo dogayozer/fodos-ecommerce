@@ -9,7 +9,7 @@ import { toTitleCase } from '@/lib/utils'
 import { isPriceOnRequest } from '@/lib/priceOnRequest'
 import type { Metadata } from 'next'
 
-export const revalidate = 60; // ISR cache
+export const revalidate = 3600; // ISR cache (admin düzenlemesi revalidatePath ile anında yenilenir)
 
 const MAX_TITLE = 60
 const MAX_DESC = 155

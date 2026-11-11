@@ -7,7 +7,7 @@ import { Metadata } from 'next'
 import { isPriceOnRequest, PRICE_ON_REQUEST_LABEL, PRICE_ON_REQUEST_NOTE, priceOnRequestWaUrl } from '@/lib/priceOnRequest'
 import Link from 'next/link'
 
-export const revalidate = 60
+export const revalidate = 3600
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params
