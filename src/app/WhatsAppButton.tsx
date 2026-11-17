@@ -12,8 +12,9 @@ export function WhatsAppButton() {
       href={waUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-lg hover:scale-110 transition-transform duration-300 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-green-300"
+      className="fixed bottom-24 right-6 z-50 flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-lg hover:scale-110 transition-transform duration-300 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-green-300 group"
       aria-label="WhatsApp üzerinden iletişime geçin"
+      title="WhatsApp Destek Hattı"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
