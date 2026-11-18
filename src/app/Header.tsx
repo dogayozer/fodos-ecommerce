@@ -106,7 +106,7 @@ export function Header({ tree }: { tree: any[] }) {
           <div className="hidden md:flex items-center space-x-6">
             <div className="flex flex-col items-end mr-2">
               <span className="text-xs text-neutral-500 font-medium">WhatsApp Sipariş</span>
-              <a href="https://wa.me/905322324499" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-neutral-900 hover:text-[#25D366] transition-colors">0532 232 44 99</a>
+              <a href="https://wa.me/905445774257" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-neutral-900 hover:text-[#25D366] transition-colors">0544 577 42 57</a>
             </div>
 
             <Link href="/bayi" className="flex items-center px-3.5 py-1.5 rounded-full border border-action-orange-500 text-action-orange-600 hover:bg-action-orange-50 transition-colors font-semibold text-sm">
@@ -200,7 +200,7 @@ export function Header({ tree }: { tree: any[] }) {
 
             <div className="pt-4 flex flex-col items-center bg-neutral-50 rounded-xl p-4">
               <span className="text-xs text-neutral-500 mb-1">WhatsApp Sipariş Hattı</span>
-              <a href="https://wa.me/905322324499" target="_blank" rel="noopener noreferrer" className="text-lg font-bold text-trust-blue-600 hover:text-[#25D366] transition-colors">0532 232 44 99</a>
+              <a href="https://wa.me/905445774257" target="_blank" rel="noopener noreferrer" className="text-lg font-bold text-trust-blue-600 hover:text-[#25D366] transition-colors">0544 577 42 57</a>
             </div>
           </div>
         </div>

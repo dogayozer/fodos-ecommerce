@@ -9,7 +9,7 @@ export const PRICE_ON_REQUEST_LABEL = 'Fiyat Sorunuz'
 export const PRICE_ON_REQUEST_NOTE =
   'Tedarik sürecinde aksilik yaşanmaması için Stok ve Fiyat Bilgisi için lütfen iletişime geçin.'
 
-const WA_PHONE = '905322324499'
+const WA_PHONE = '905445774257'
 
 export const priceOnRequestWaUrl = (title: string, barcode?: string | null) =>
   `https://wa.me/${WA_PHONE}?text=${encodeURIComponent(

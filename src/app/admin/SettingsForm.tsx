@@ -96,7 +96,7 @@ export function SettingsForm() {
         </div>
         <div>
           <label className="block text-sm font-medium text-neutral-900 mb-1">Telefon Numarası</label>
-          <input name="phone" value={formData.phone} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="Örn: 0532 232 44 99" />
+          <input name="phone" value={formData.phone} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-trust-blue-500" placeholder="Örn: 0544 577 42 57" />
         </div>
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-neutral-900 mb-1">Firma Adresi</label>

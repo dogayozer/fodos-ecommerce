@@ -3,8 +3,8 @@ import { prisma } from '@/lib/prisma'
 // Müşteri mailleri Resend ile gider (RESEND_API_KEY Vercel env'inde). Anahtar yoksa sessizce atlanır.
 // Gönderen adresler, Resend'de doğrulanmış alan adlarına ait olmalı.
 const BRANDS = {
-  fodos: { name: 'Fodos', from: 'Fodos <siparis@fodos.com.tr>', site: 'https://www.fodos.com.tr', phone: '0532 232 44 99', color: '#ea580c' },
-  mpm: { name: 'Mobil Parça Merkezi', from: 'Mobil Parça Merkezi <siparis@mobilparcamerkezi.com>', site: 'https://www.mobilparcamerkezi.com', phone: '0532 232 44 99', color: '#ea580c' },
+  fodos: { name: 'Fodos', from: 'Fodos <siparis@fodos.com.tr>', site: 'https://www.fodos.com.tr', phone: '0544 577 42 57', color: '#ea580c' },
+  mpm: { name: 'Mobil Parça Merkezi', from: 'Mobil Parça Merkezi <siparis@mobilparcamerkezi.com>', site: 'https://www.mobilparcamerkezi.com', phone: '0544 577 42 57', color: '#ea580c' },
 }
 
 const HEPSIJET_TRACK_URL = 'https://www.hepsijet.com/'

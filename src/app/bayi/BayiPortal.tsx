@@ -112,7 +112,7 @@ function NotYetDealer({ name }: { name: string | null }) {
           bayi fiyat listesine ulaşabilirsiniz.
         </p>
         <a
-          href="https://wa.me/905322324499" target="_blank" rel="noopener noreferrer"
+          href="https://wa.me/905445774257" target="_blank" rel="noopener noreferrer"
           className="inline-block py-3 px-6 bg-cta-background hover:bg-cta-hover text-white rounded-lg font-bold shadow-[var(--shadow-button)] transition-colors"
         >
           WhatsApp ile İletişime Geç

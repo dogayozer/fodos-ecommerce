@@ -93,7 +93,7 @@ export async function POST(req: Request) {
     const settings = await prisma.storeSettings.findUnique({ where: { id: 'default' } })
     const shippingFee = settings?.shippingFee ?? 110
     const shippingThreshold = settings?.shippingThreshold ?? 500
-    const waPhone = settings?.whatsappPhone || '905322324499'
+    const waPhone = settings?.whatsappPhone || '905445774257'
 
     // 3. Calculate Totals
     let cartTotal = 0
